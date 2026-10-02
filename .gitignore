@@ -2,9 +2,14 @@
 /build
 /dist
 /output
+/.venv-build
 /tables
 /data
 main.spec
 /node_translator/__pycache__
 /relic_translator/__pycache__
 .cache
+.settings.json
+/.qa
+/.qa-*
+/tests/__pycache__

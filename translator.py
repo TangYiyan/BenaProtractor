@@ -1,8 +1,9 @@
 import json
+from app_paths import app_path
 
-ANNE_DICTIONARY_PATH = "translation/anne_dictionary.json"
+ANNE_DICTIONARY_PATH = app_path("translation", "anne_dictionary.json")
 ANNE_DICTIONARY = None
-BENA_DICTIONARY_PATH = "translation/bena_dictionary.json"
+BENA_DICTIONARY_PATH = app_path("translation", "bena_dictionary.json")
 BENA_DICTIONARY = None
 
 # 读取字典数据

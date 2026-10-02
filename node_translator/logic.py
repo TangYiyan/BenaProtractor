@@ -34,7 +34,7 @@ def node_AlwaysNext(node):
 def node_Loop(node):
     loop_time = ""
     result = {
-        "sub_nodes" : node["_loopBody"]
+        "sub_nodes" : list(node["_loopBody"] or [])
     }
     if node["_useMappingList"]: # 按数据循环
         key_mapping_list = node["_keyMappingList"]

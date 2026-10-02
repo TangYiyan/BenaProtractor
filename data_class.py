@@ -25,9 +25,9 @@ class Node:
             self.translation = {"main" : "YJ的棍木"}
             return
         # 去除Node前后缀方便解析
-        node_name = node_data["$type"]
+        node_name = node_data.get("$type", "Unknown")
         if node_name.startswith("Torappu."):
-            node_name = node_name[28:-17]
+            node_name = node_name.split(",", 1)[0].rsplit("+", 1)[-1]
         self.node_name = node_name
         self.node_data = node_data
         #self.node_data["$type"] = node_name
