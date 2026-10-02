@@ -353,7 +353,7 @@ def node_TriggerPalsy(node):
 
 # 添加麻痹
 def node_PalsyBuffAdd(node):
-    target_name = anne_dictionary("target",node["_target"])
+    target_name = anne_dictionary("target",node["_targetType"])
     return {
         "main" : f"令{target_name}的麻痹控制器添加一层麻痹",
         "description" : "即\"若单位已有麻痹Buff，令该Buff叠层直至上限；并记录溢出层数...\""
