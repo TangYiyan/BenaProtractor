@@ -496,6 +496,10 @@ def translate_whole_global_buff(gbuff: GlobalBuff,relic_selector: dict = None):
 
 # 翻译一整个BuffTemplate
 def translate_whole_buff_template(buff_template: BuffTemplate):
+    # Callers apply their own blackboards to the result. Never share cached
+    # node translations across independent Buffs or mutate the template data.
+    import copy
+    buff_template = copy.deepcopy(buff_template)
     print("[安妮]尝试翻译Buff模板 "+buff_template.buff_key)
     translation = {
         "main" : buff_template.buff_key,

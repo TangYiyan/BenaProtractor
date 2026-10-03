@@ -1,28 +1,62 @@
-import zipfile
-import os
+"""Create the release archive only after the executable and resources are ready."""
 import datetime
+import os
+from pathlib import Path
+import sys
+import tempfile
+import zipfile
 
-def add_folder_to_zip(zip_file, folder_name):
-    for root, dirs, files in os.walk("./"+folder_name):
-        for file in files:
-            file_path = os.path.join(root, file)
-            zip_file.write(file_path)
 
-#创建压缩包并删除
-if __name__ == "__main__":
-    if not os.path.exists("output"):
-        os.makedirs("output")
-    now = datetime.datetime.now()
-    year = now.year
-    month = now.month
-    day = now.day
-    with zipfile.ZipFile(f"output/贝娜的量角器 {year}.{month}.{day}.zip", 'w') as _z:
-        _z.write("./dist/main.exe","./贝娜的量角器.exe")
-        _z.write("./icon/icon.ico","./icon/icon.ico")
-        _z.write("./translation/bena_dictionary.json","./translation/bena_dictionary.json")
-        _z.write("./translation/anne_dictionary.json","./translation/anne_dictionary.json")
-        # 临时：直接加入global_buff_dummy.json
-        _z.write("./dummy/global_buff_dummy.json","./dummy/global_buff_dummy.json")
-        #add_folder_to_zip(_z,"data")
-        #add_folder_to_zip(_z,"tables")
-        #add_folder_to_zip(_z,"translation")
+SOURCE_DIR = Path(__file__).resolve().parent
+RESOURCES = (
+    'icon/icon.ico',
+    'translation/bena_dictionary.json',
+    'translation/anne_dictionary.json',
+    'dummy/global_buff_dummy.json',
+)
+
+
+def create_archive(source_dir=None, output_dir=None, date=None):
+    source_dir = Path(source_dir or SOURCE_DIR).resolve()
+    output_dir = Path(output_dir or source_dir / 'output').resolve()
+    date = date or datetime.date.today()
+    executable = source_dir / 'dist' / 'main.exe'
+    files = [(executable, '贝娜的量角器.exe')]
+    files.extend((source_dir / name, name) for name in RESOURCES)
+    missing = [str(path) for path, _ in files if not path.is_file()]
+    if missing:
+        raise FileNotFoundError('Missing package files: ' + ', '.join(missing))
+    if not executable.stat().st_size:
+        raise ValueError('The built executable is empty.')
+
+    output_dir.mkdir(parents=True, exist_ok=True)
+    archive = output_dir / f'贝娜的量角器 {date.year}.{date.month}.{date.day}.zip'
+    descriptor, temporary = tempfile.mkstemp(prefix='.package-', suffix='.tmp', dir=output_dir)
+    os.close(descriptor)
+    temporary = Path(temporary)
+    try:
+        with zipfile.ZipFile(temporary, 'w', compression=zipfile.ZIP_DEFLATED) as package:
+            for path, name in files:
+                package.write(path, arcname=name)
+        with zipfile.ZipFile(temporary) as package:
+            invalid = package.testzip()
+            if invalid:
+                raise ValueError('Invalid archive entry: ' + invalid)
+        os.replace(temporary, archive)
+    finally:
+        temporary.unlink(missing_ok=True)
+    return archive
+
+
+def main():
+    try:
+        archive = create_archive()
+    except (OSError, ValueError, zipfile.BadZipFile) as error:
+        print(f'Packaging failed: {error}', file=sys.stderr)
+        return 1
+    print(f'Package created: {archive}')
+    return 0
+
+
+if __name__ == '__main__':
+    raise SystemExit(main())
