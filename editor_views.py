@@ -143,7 +143,7 @@ class TranslationView(TextPane):
 
     def apply_palette(self):
         super().apply_palette()
-        for role, color in {'heading': COLORS['keyword'], 'section': COLORS['type'], 'condition': COLORS['purple'],
+        for role, color in {'heading': COLORS['text'], 'section': COLORS['type'], 'condition': COLORS['purple'],
                             'description': COLORS['muted'], 'body': COLORS['text']}.items():
             self.text.tag_configure(role, foreground=color)
         for tag in self.links:

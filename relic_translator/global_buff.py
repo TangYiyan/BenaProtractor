@@ -9,10 +9,8 @@ from .analyzer import analyze_selector, analyze_timing
 def rogue_global_buff_normal(item_type,blackboard):
     timing = analyze_timing(item_type,blackboard)
     global_buff_key = blackboard["key"]
-    buff_name = translate_buff_name(blackboard["key"])
     result = {
-        "main" : f"{timing}生效全局Buff：{buff_name}",
-        "link" : "global_buff."+global_buff_key,
+        "main" : f"{timing}生效全局Buff：<{global_buff_key}>",
         "global_buff" : global_buff_key,
         "children" : []
     }

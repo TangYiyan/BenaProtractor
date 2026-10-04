@@ -25,7 +25,9 @@
 		"wang_stone2_t[damage][token]" : "棋子_2技能[伤害][召唤物]",
 		"wang_stone3_s" : "棋子_3技能",
 		"wang_stone3_t[damage]" : "棋子_3技能[伤害]",
-		"wang_stone3_t[damage][token]" : "棋子_3技能[伤害][召唤物]"
+		"wang_stone3_t[damage][token]" : "棋子_3技能[伤害][召唤物]",
+		"free_summon[card]" : "召唤师_X模组_免费召唤[手卡]",
+		"free_summon[token]" : "召唤师_X模组_免费召唤[召唤物]"
 	},
 	"buff_prefix" : {
 		"mainline12" : "惊霆无声",
@@ -36,7 +38,10 @@
 		"act1autochess" : "卫戍盟约",
 		"act1vautochess" : "卫戍废案",
 		"act2autochess" : "卫戍下半",
-		"legion" : "保全派驻",
+		"legion" : {
+			"cddiff" : "保全派驻_战术装备整理箱",
+			"" : "保全派驻"
+		},
 		"cooperate" : "促融共竞",
 		"halfidle" : "次生预案",
 		"halfIdle" : "次生预案",
@@ -142,6 +147,8 @@
 		"motter" : "机械水獭",
 		"prost" : "重构体",
 		"prosts" : "重构体",
+		"icetgt" : "保护目标（冻结状态）",
+
 		"char" : {
 			"chilc" : "齐尔查克"
 		},
@@ -336,15 +343,7 @@
 			"resistance" : "庇护"
 		},
 		"immune" : {
-			"common" : "通用异常免疫",
-			"by" : {
-				"respawn" : {
-					"cnt" : "阶段性多项免疫"
-				}
-			},
-			"env" : {
-				"damage" : "环境伤害免疫"
-			}
+			"common" : "通用异常免疫"
 		},
 		"palsy" : {
 			"prob" : {
@@ -353,8 +352,13 @@
 		}
 	},
 	"buff_element" : {
-		"buff" : "buff",
-		"flag" : "flag",
+		"buff" : "Buff",
+		"mark" : "标记",
+		"flag" : "标识",
+		"player" : "玩家",
+		"deck" : "卡组",
+		"card" : "手卡",
+
 		"s" : {
 			"1" : "一技能",
 			"2" : "二技能",
@@ -372,10 +376,12 @@
 			"2" : "二天赋",
 			"3" : "三天赋",
 			"4" : "四天赋",
+			"0" : "原始天赋",
 			"001" : "一天赋",
 			"002" : "二天赋",
 			"003" : "三天赋",
 			"004" : "三天赋",
+			"000" : "原始天赋",
 			"10" : "追加天赋",
 			"" : "天赋"
 		},
@@ -473,16 +479,23 @@
 			"damage" : "法术伤害",
 			"" : "法术"
 		},
-		"mag" : "法术",
+		"mag" : "法",
 		"pure" : "真实",
-		"phy" : "物理",
-		"phys" : "物理",
+		"phy" : {
+			"and" : {
+				"mag" : "物+法"
+			},
+			"" : "物"
+		},
+		"phys" : "物",
 		"physic" : "物理",
+		"physics" : "物理",
 		"physical" : "物理",
 		"melee" : "近战",
 		"ranged" : "远程",
 		"splash" : "溅射",
 		"atkscale" : "攻击倍率",
+		"predelay" : "前摇",
 		"damage" : {
 			"block" : "伤害格挡",
 			"scale" : "伤害倍率",
@@ -513,6 +526,11 @@
 			"penetrate" : "伤害穿透",
 			"up" : "增伤",
 			"" : "伤"
+		},
+		"reduce" : {
+			"damage" : "减少伤害",
+			"cost" : "减少费用",
+			"" : "减少"
 		},
 		"ep" : {
 			"sanity" : {
@@ -559,7 +577,44 @@
 			"damage" : "额外伤害",
 			"" : "额外"
 		},
-		"by" : "基于",
+		"create" : {
+			"buff" : "创建新Buff",
+			"" : "创建"
+		},
+		"by" : {
+			"source" : {
+				"in" : {
+					"attack" : {
+						"range" : "来自攻击范围内"
+					}
+				},
+				"" : "由来源"
+			},
+			"profession" : {
+				"cnt" : "根据职业数量",
+				"" : "根据职业"
+			},
+			"combat" : {
+				"state" : "阻挡状态下",
+				"" : "阻挡攻击时"
+			},
+			"max" : {
+				"ratio" : "根据比例",
+				"hp" : {
+					"ratio" : "根据生命比例",
+					"" : "根据最大生命值"
+				}
+			},
+			"hp" : {
+				"ratio" : "根据生命比例",
+				"" : "根据生命值"
+			},
+			"hpratio" : "根据生命比例",
+			"boss" : "被Boss",
+			"id" : "根据ID",
+			"interval" : "每隔一段时间",
+			"" : "根据"
+		},
 		"via" : {
 			"source" : {
 				"atk" : "基于来源攻击力"
@@ -629,7 +684,13 @@
 			"" : "挡"
 		},
 		"not" : {
-			"blocked" : "未阻挡"
+			"blocked" : "未阻挡",
+			"block" : {
+				"by" : {
+					"source" : "未被Buff来源阻挡"
+				},
+				"" : "未阻挡"
+			}
 		},
 		"ensure" : {
 			"block" : "确保阻挡数",
@@ -661,6 +722,21 @@
 		},
 		"critical" : "暴击",
 		"cirtical" : "暴击",
+		"immune" : {
+			"" : "免疫",
+			"by" : {
+				"respawn" : {
+					"cnt" : "阶段性多项免疫"
+				}
+			},
+			"env" : {
+				"damage" : "免疫环境伤害"
+			}
+		},
+
+		"build" : {
+			"cnt" : "已部署次数"
+		},
 
 		"negative" : "负",
 		"zero" : "零",
@@ -697,6 +773,7 @@
 		"core" : "核心",
 		"derive" : "附属",
 		"event" : "事件",
+		"holder" : "承载器",
 		"common" : "常规",
 		"limited" : "有限",
 		"unlimited" : "无限",
@@ -738,15 +815,21 @@
 		},
 		"switchbegin" : "切换开始",
 		"switchend" : "切换结束",
+		"begin" : "开始",
 		"passive" : "被动",
 		"delay" : "延迟",
 		"input" : "输入",
 		"output" : "输出",
 		"out" : "输出",
 		"cache" : "缓存",
-		"mark" : "标记",
 		"aura" : "光环",
 		"bonus" : "增益",
+		"enable" : "启用",
+		"disable" : "禁用",
+		"ban" : "禁止",
+		"remove" : "移除",
+		"gain" : "获得",
+		"take" : "受到",
 		"recover" : "恢复",
 		"recovery" : "恢复",
 		"mode" : "模式",
@@ -840,17 +923,32 @@
 		
 		"born" : "出场",
 		"finish" : "退场",
+		"auto" : "自动",
+		"link" : "连接",
 		"deploy" : {
 			"cnt" : "占用可部署数",
 			"" : "部署"
 		},
+		"respawn" : "再部署",
 		"die" : {
 			"to" : "死亡时",
+			"" : "死"
+		},
+		"dead" : {
+			"escape" : "死亡规避",
 			"" : "死亡"
+		},
+		"escape" : {
+			"dead" : "规避死亡",
+			"" : "逃跑"
 		},
 		"suicide" : "自杀",
 		"locate" : "部署",
 		"withdraw" : "撤退",
+		"enter" : "进入",
+		"leave" : "离开",
+		"select" : "选择",
+		"cooldown" : "冷却",
 		"undeadable" : {
 			"damage" : "非致命伤害"
 		},
@@ -880,14 +978,18 @@
 			"" : "在"
 		},
 		"on" : {
+			"finish" : "结束时",
 			"buff" : {
-				"finish" : "结束时"
+				"finish" : "Buff结束时"
 			},
 			"output" : {
-				"damage" : "出伤时"
+				"damage" : "输出伤害时"
 			},
 			"take" : {
-				"damage" : "受伤时"
+				"damage" : "受到伤害时"
+			},
+			"calculate" : {
+				"damage" : "计算伤害时"
 			},
 			"born" : "登场时",
 			"kill" : "死亡时",
@@ -960,10 +1062,14 @@
 					"sp" : "命中回复SP"
 				}
 			},
+			"by" : {
+				"print" : "受拓印伤害"
+			},
 			"" : "击"
 		},
 		"lighter" : "变轻",
 		"status" : "状态",
+		"env" : "环境",
 
 		"fx" : "特效",
 		"no" : {
@@ -977,7 +1083,13 @@
 		},
 		"maxhp" : "最大生命",
 		"hp" : {
-			"recovery" : "生命恢复",
+			"recovery" : {
+				"per" : {
+					"second" : "每秒生命恢复",
+					"sec" : "每秒生命恢复"
+				},
+				"" : "生命恢复"
+			},
 			"ratio" : "生命比例",
 			"" : "生命值"
 		},
@@ -1015,7 +1127,11 @@
 		"invisible" : "隐匿",
 		"undead" : "不死",
 		"blockfree" : "无法阻挡",
+		"attract" : "诱导",
+		"stun&cold&frozen" : "晕眩&寒冷&冻结",
 
+		"push" : "推",
+		"pull" : "拉",
 		"encourage" : "鼓舞",
 		"sluggish" : "停顿",
 		"steal" : "偷取",
@@ -1295,8 +1411,12 @@
 			"" : "起始"
 		},
 		"freeze" : {
-			"check" : "冰冻检测"
+			"check" : "寒冻检测",
+			"" : "寒冻"
 		},
+		"freezeattack2" : "寒冻攻击2",
+		"snow" : "雪",
+		"bird" : "鸟",
 
 		"blord2" : "杜卡雷",
 		"mcreep" : "矿工游击队",

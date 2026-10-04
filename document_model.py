@@ -14,21 +14,10 @@ def reference_parts(value, catalog, explicit=''):
     pattern = re.compile(r'<([^<>\n]+)>')
     parts, offset = [], 0
 
-    def append_plain(text):
-        last = 0
-        matches = catalog.key_pattern.finditer(text) if catalog.key_pattern else []
-        for match in matches:
-            if match.start() > last:
-                parts.append((text[last:match.start()], None))
-            entry = preferred.get(match.group()) or catalog.resolve(match.group())
-            parts.append((match.group(), entry.target if entry else None))
-            last = match.end()
-        if last < len(text):
-            parts.append((text[last:], None))
-
     value = str(value)
     for match in pattern.finditer(value):
-        append_plain(value[offset:match.start()])
+        if match.start() > offset:
+            parts.append((value[offset:match.start()], None))
         key = match.group(1)
         entry = preferred.get(key) or catalog.resolve(key)
         label = entry.name if entry else bena.translate_buff_name(key)
@@ -36,7 +25,8 @@ def reference_parts(value, catalog, explicit=''):
             label = f'{label}（{key}）'
         parts.append((label, entry.target if entry else None))
         offset = match.end()
-    append_plain(value[offset:])
+    if offset < len(value):
+        parts.append((value[offset:], None))
     return parts
 
 

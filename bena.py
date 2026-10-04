@@ -285,11 +285,22 @@ def translate_buff_name_in_text(text: str):
 # 字典深查询
 # 返回可处理部分和不可处理部分
 def deep_translate(catalogue,keys):
+    key_num = len(keys)
     read_value = bena_dictionary(catalogue,keys[0])
     if read_value != "":
+        # 单项匹配
+        if key_num == 1:
+            if isinstance(read_value,dict) and "" in read_value: # 如果此时还是个结构体，尝试取此处的默认值
+                return (read_value[""],[])
+            elif isinstance(read_value,str): # 如果是字符串，直接返回
+                return (read_value,[])
+            else:
+                return ("",keys) # 原路返回，表示无法翻译
+
+        # 深度翻译
         index = 1 # 0号已经用掉了
         if isinstance(read_value,dict): # 字典，尝试遍历
-            while(len(keys) > index):
+            while(key_num > index):
                 if keys[index] in read_value:
                     read_value = read_value[keys[index]] # 深入
                     index += 1
@@ -305,11 +316,11 @@ def deep_translate(catalogue,keys):
             read_value = read_value[""]
 
         if isinstance(read_value,str):
-            if len(keys) > index:
+            if key_num > index:
                 return (read_value,keys[index:])
             else:
                 return (read_value,[])
-    return ("",keys) # 原路返回
+    return ("",keys) # 原路返回，表示无法翻译
             
 
 # 尝试翻译buff的名字
@@ -331,9 +342,7 @@ def translate_buff_name(buff_key: str):
     extra_result = []
     if "[" in buff_key and "]" in buff_key:
         keys = buff_key.split("[",1)
-        for extra in keys[1].replace("[","").split("]"):
-            if extra != "":
-                extras.append(extra)
+        extras = keys[1].replace("]","").split("[")
         keys = keys[0].split("_")
     elif "_" in buff_key:
         keys = buff_key.split("_")
@@ -384,9 +393,8 @@ def translate_buff_name(buff_key: str):
             trans, keys = deep_translate("buff_element",keys)
             if trans != "":
                 result.append(trans)
-            else: # 无法翻译了，将剩余部分返还回去
-                result += keys
-                break
+            else: # 无法翻译了，返还回去
+                result.append(keys.pop(0))
     
     # 附加部分
     if len(extras) > 0:
@@ -400,14 +408,13 @@ def translate_buff_name(buff_key: str):
                     trans, extra_split = deep_translate("buff_element",extra_split)
                     if trans != "":
                         sub_result.append(trans)
-                    else: # 无法翻译了，将剩余部分返还回去
-                        sub_result += extra_split
-                        break
+                    else: # 无法翻译了，返还回去
+                        sub_result.append(extra_split.pop(0))
                 extra_result.append("_".join(sub_result))
             else:
                 trans, rest = deep_translate("buff_element",[extra])
                 if trans != "":
-                    extra_result.append(trans+"_".join(rest))
+                    extra_result.append(trans)
                 else:
                     extra_result.append(extra)
     

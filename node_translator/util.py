@@ -353,11 +353,36 @@ def node_TriggerPalsy(node):
 
 # 添加麻痹
 def node_PalsyBuffAdd(node):
-    target_name = anne_dictionary("target",node["_target"])
+    # 两者皆是，这就是答案
+    target_name = anne_dictionary("target",node.get("_target",node["_targetType"]))
     return {
         "main" : f"令{target_name}的麻痹控制器添加一层麻痹",
         "description" : "即\"若单位已有麻痹Buff，令该Buff叠层直至上限；并记录溢出层数...\""
     }
+
+# 召唤师X模组的免费召唤条件
+def node_CheckTheLeftSameDeployedToken(node):
+    if node["_minCnt"] == 0:
+        return {
+            "main" : "检查场上的同类同源召唤物（不包括自己）的剩余数量",
+            "true" : "若剩余数量为0（即场上只剩下自己）",
+            "false" : "若剩余数量不为0"
+        }
+    else:
+        return {
+            "main" : "检查场上的同类同源召唤物（不包括自己）的剩余数量",
+            "true" : f"若剩余数量不超过{node['_minCnt']}个",
+            "false" : f"若剩余数量超过{node['_minCnt']}个"
+        }
+
+# 召唤师X模组的免费召唤实现
+def node_SetCharacterDontOccupyDeployCntFlag(node):
+    #target_name = anne_dictionary("target",node["_targetType"])
+    if node["_isUnset"]:
+        return {"main" : f"令手卡中的此召唤物不再享有\"免费召唤\"的特权"}
+    else:
+        return {"main" : f"令手卡中的此召唤物获得\"免费召唤\"的特权（下次部署不占用部署上限）"}
+
 
 # 播放音效
 def node_PlayAudio(node):

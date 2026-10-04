@@ -335,3 +335,14 @@ def node_AssignPlayTimeToBB(node):
         "main" : f"将当前的战斗计时记录至黑板 [{node['_blackboardKey']}]",
         "description" : "战斗计时为从战斗开始到现在的时间，单位为秒，上限为10000"
     }
+
+# 将单位已部署的次数记录至黑板
+def node_SetBuildCntToBlackboard(node):
+    target_name = anne_dictionary("target",node["_targetType"])
+    if node["_force"]: # 这个词怎么是“包括非手动”的意思
+        return {
+            "main" : f"将{target_name}已部署的次数记录至黑板 [{node['_blackboardKey']}] （不论手动/自动部署）"
+        }
+    return {
+        "main" : f"将{target_name}已手动部署的次数记录至黑板 [{node['_blackboardKey']}] （仅限手动部署）"
+    }
