@@ -128,7 +128,7 @@ class Protractor:
         try:
             document = translators[entry.category](copy.deepcopy(entry.obj))
         except Exception as error:
-            log.exception('Translation failed: %s', target)
+            log.exception('翻译失败: %s', target)
             document = {'main': entry.name, 'children': [{'main': '翻译失败', 'description': str(error)}]}
         self.translation.show(document, self.catalog)
         obj = entry.obj

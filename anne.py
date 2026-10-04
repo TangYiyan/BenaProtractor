@@ -42,7 +42,7 @@ class AnneNode:
     def translate(self,node):
         node_name = node.node_name
         if node.translation == None:
-            print(f"[安妮]尝试翻译节点 {node_name}")
+            #print(f"[安妮]尝试翻译节点 {node_name}")
             method = getattr(self.translator, "node_"+node_name, "")
             try:
                 if method != "" :

@@ -70,23 +70,37 @@ class DocumentRow:
     explicit: str = ''
     foldable: bool = False
 
-
+# 文档嵌套解析
 def document_rows(document, collapsed=frozenset()):
-    def visit(node, path=(), depth=0):
-        if isinstance(node, list):
-            for i, child in enumerate(node):
+    def visit(part, path=(), depth=0):
+        if isinstance(part, list):
+            for i, child in enumerate(part):
                 yield from visit(child, path + (i,), depth)
-        elif not isinstance(node, dict):
-            yield DocumentRow(path, depth, str(node))
-        elif node.get('main') is not None:
-            children = node.get('children') or []
-            foldable = bool(children or node.get('description') or node.get('true') or node.get('false'))
+        elif not isinstance(part, dict):
+            yield DocumentRow(path, depth, str(part))
+        else:
+            # 正文
+            children = part.get('children') or []
+            foldable = bool(children or part.get('description'))
             role = 'heading' if depth == 0 else 'section' if children else 'body'
-            yield DocumentRow(path, depth, str(node['main']), role, node.get('link', ''), foldable)
+            if part.get('main'):
+                if part.get('true'):
+                    yield DocumentRow(path, depth, str(part['main'])+"，"+str(part['true'])+"...", role, part.get('link', ''), foldable)
+                elif part.get('false'):
+                    yield DocumentRow(path, depth, str(part['main'])+"，"+str(part['false'])+"，直接跳出", role, part.get('link', ''), foldable)
+                else:
+                    yield DocumentRow(path, depth, str(part['main']), role, part.get('link', ''), foldable)
+            elif part.get('true') :
+                yield DocumentRow(path, depth, str(part['true'])+"...", role, part.get('link', ''), foldable)
+            elif part.get('false'):
+                yield DocumentRow(path, depth, str(part['false'])+"，直接跳出", role, part.get('link', ''), foldable)
+            else:
+                yield DocumentRow(path, depth, "......", role, part.get('link', ''), foldable)
+
+            # 子部分
             if path not in collapsed:
-                for key in ('description', 'true', 'false'):
-                    if node.get(key):
-                        yield DocumentRow(path + (key,), depth + 1, str(node[key]), 'description' if key == 'description' else 'condition')
+                if part.get('description'):
+                    yield DocumentRow(path + ('description',), depth + 1, str(part['description']), 'description')
                 for i, child in enumerate(children):
                     yield from visit(child, path + (i,), depth + 1)
     return list(visit(document))
@@ -94,14 +108,14 @@ def document_rows(document, collapsed=frozenset()):
 
 def default_folds(document):
     paths = set()
-    def visit(node, path=()):
-        if isinstance(node, dict):
-            if node.get('style_closed'):
+    def visit(part, path=()):
+        if isinstance(part, dict):
+            if part.get('style_closed'):
                 paths.add(path)
-            for i, child in enumerate(node.get('children') or []):
+            for i, child in enumerate(part.get('children') or []):
                 visit(child, path + (i,))
-        elif isinstance(node, list):
-            for i, child in enumerate(node):
+        elif isinstance(part, list):
+            for i, child in enumerate(part):
                 visit(child, path + (i,))
     visit(document)
     return paths

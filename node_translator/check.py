@@ -159,8 +159,8 @@ def node_CheckFilterTag(node):
     if node["_bbKey"] != None and node["_bbKey"] != "":
         return {
             "main" : "",
-            "true" : f"若{target_name}具有黑板({node['_bbKey']})上记录的标签",
-            "false" : f"若{target_name}不具有黑板({node['_bbKey']})上记录的标签"
+            "true" : f"若{target_name}具有黑板 [{node['_bbKey']}] 上记录的标签",
+            "false" : f"若{target_name}不具有黑板 [{node['_bbKey']}] 上记录的标签"
         }
     else:
         return {
@@ -198,20 +198,20 @@ def node_CheckBlocked(node):
         if node["_checkBlockedBySourceToken"]:
             source_name += "或其召唤物"
         return {
-            "main" : f"根据单位类型，检查{target_name}的阻挡/被阻挡状态",
+            "main" : f"检查{target_name}的阻挡状态",
             "true" : f"若其正被{source_name}阻挡/阻挡着{source_name}",
             "false" : f"若其未被{source_name}阻挡/未阻挡{source_name}"
         }
     elif node["_checkBlockedBySourceToken"]:
         source_name = anne_dictionary("target",node["_sourceType"])+"的召唤物"
         return {
-            "main" : f"根据单位类型，检查{target_name}的阻挡/被阻挡状态",
+            "main" : f"检查{target_name}的阻挡状态",
             "true" : f"若其正被{source_name}阻挡/阻挡着{source_name}",
             "false" : f"若其未被{source_name}阻挡/未阻挡{source_name}"
         }
     else:
         return {
-            "main" : f"根据单位类型，检查{target_name}的阻挡/被阻挡状态",
+            "main" : f"检查{target_name}的阻挡状态",
             "true" : f"若其正被任意单位阻挡/阻挡着任意单位",
             "false" : f"若其未阻挡/未被阻挡"
         }

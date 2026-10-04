@@ -111,7 +111,7 @@ class TextPane(ttk.Frame):
         finally:
             popup.grab_release()
 
-
+# 原始伪代码界面
 class SourceView(TextPane):
     def __init__(self, master, size=11):
         super().__init__(master, size=size, code=True)
@@ -129,7 +129,7 @@ class SourceView(TextPane):
         self.text.yview_moveto(0)
         self.text.xview_moveto(0)
 
-
+# 伪代码中文翻译界面
 class TranslationView(TextPane):
     def __init__(self, master, navigate, size=11):
         self.navigate = navigate
@@ -143,7 +143,7 @@ class TranslationView(TextPane):
 
     def apply_palette(self):
         super().apply_palette()
-        for role, color in {'heading': COLORS['text'], 'section': COLORS['type'], 'condition': COLORS['purple'],
+        for role, color in {'heading': COLORS['keyword'], 'section': COLORS['type'], 'condition': COLORS['purple'],
                             'description': COLORS['muted'], 'body': COLORS['text']}.items():
             self.text.tag_configure(role, foreground=color)
         for tag in self.links:
