@@ -1,10 +1,10 @@
 #----------------------------------------
 # 治疗类Node
 #----------------------------------------
-from translator import anne_dictionary
+from dictionary import anne_dictionary
 
 # 固定数值治疗
-def node_FixedValueHeal(node):
+def node_FixedValueHeal(node,blackboard):
     source_name = anne_dictionary("target",node["_sourceType"])
     target_name = anne_dictionary("target",node["_targetType"])
     extra = ""
@@ -13,7 +13,7 @@ def node_FixedValueHeal(node):
     return {"main" : f"让{source_name}治疗{target_name} {node['_healValueKey']} 点生命值{extra}"}
 
 # 基于最大生命值的治疗
-def node_HealViaMaxHpRatio(node):
+def node_HealViaMaxHpRatio(node,blackboard):
     extra = ""
     if node["_ignoreHealFree"]:
         extra = "（无视禁疗）"
@@ -37,7 +37,7 @@ def node_HealViaMaxHpRatio(node):
     return result
 
 # 基于伤害的治疗
-def node_HealViaDamage(node):
+def node_HealViaDamage(node,blackboard):
     prefix = ""
     if node["_filterModifierCancelled"]:
         prefix = "若此次伤害未被取消，"

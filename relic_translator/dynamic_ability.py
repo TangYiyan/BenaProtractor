@@ -1,11 +1,11 @@
 #----------------------------------------
 # 额外能力相关效果
 #----------------------------------------
-from .analyzer import analyze_selector, analyze_timing
+from analyzer import analyze_selector, analyze_relic_timing
 
 # 给予目标额外的能力
 def rogue_char_ability_new(item_type,blackboard):
-    timing = analyze_timing(item_type,blackboard)
+    timing = analyze_relic_timing(item_type,blackboard)
     ability_name = blackboard["key"]
     selector = analyze_selector(blackboard)
     result = {

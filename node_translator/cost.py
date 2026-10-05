@@ -1,10 +1,10 @@
 #----------------------------------------
 # 费用相关的Node
 #----------------------------------------
-from translator import anne_dictionary
+from dictionary import anne_dictionary
 
 # 修改费用
-def node_ModifyCost(node):
+def node_ModifyCost(node,blackboard):
     source_name = anne_dictionary("target",node["_sourceType"])
     shared_flags = []
     if node["_forceToDisplayNumber"]: # 强制显示正数？
@@ -20,7 +20,7 @@ def node_ModifyCost(node):
         return {"main" : f"令持有的部署费用+[{node['_blackboardKey']}]"}
     
 # 检查费用
-def node_CheckCost(node):
+def node_CheckCost(node,blackboard):
     compare = anne_dictionary("compare",node["_compareType"])
     compare_not = anne_dictionary("compare_not",node["_compareType"])
     if node["_considerNegativeCost"]: # 考虑负费

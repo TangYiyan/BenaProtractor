@@ -1,5 +1,5 @@
 
-from .analyzer import *
+from analyzer import *
 from .outside import *
 from .attribute_rune import *
 from .attribute_final_scaler import *

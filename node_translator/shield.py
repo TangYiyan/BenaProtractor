@@ -1,10 +1,10 @@
 #----------------------------------------
 # 屏障相关Node
 #----------------------------------------
-from translator import anne_dictionary
+from dictionary import anne_dictionary
 
 # 获取当前已有屏障值
-def node_FilterByShieldValue(node):
+def node_FilterByShieldValue(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     compare = anne_dictionary("compare",node["_condType"])
     compare_not = anne_dictionary("compare_not",node["_condType"])

@@ -1,37 +1,37 @@
 #----------------------------------------
 # 逻辑类Node（通常不在这里处理）
 #----------------------------------------
-from translator import anne_dictionary
+from dictionary import anne_dictionary
 
 # 逻辑 如果+否则
-def node_IfElse(node):
+def node_IfElse(node,blackboard):
     return {"main" : "如果...","true":"如果是...","false":"如果不是..."}
 
 # 逻辑 如果全部+否则
-def node_IfConditions(node):
+def node_IfConditions(node,blackboard):
     return {"main" : "如果满足条件...","true":"如果是...","false":"如果不是..."}
 
 # 假节点，用于翻译占位
-def node_Dummy(node):
+def node_Dummy(node,blackboard):
     return {"main" : node["_dummy"]}
 
 # 假节点，带子节点列表，用于嵌套翻译
-def node_DummyWithSubNodes(node):
+def node_DummyWithSubNodes(node,blackboard):
     return {
         "main" : node['_dummy'],
         "sub_nodes" : node["_subNodes"]
     }
 
 # 否则
-def node_IfNot(node):
+def node_IfNot(node,blackboard):
     return {"main" : "（反转前一个节点执行成功/失败的结果）"}
 
 # 始终执行
-def node_AlwaysNext(node):
+def node_AlwaysNext(node,blackboard):
     return {"main" : "（不论前一个节点是否成功，始终继续执行）"}
 
 # 循环
-def node_Loop(node):
+def node_Loop(node,blackboard):
     loop_time = ""
     result = {
         "sub_nodes" : list(node["_loopBody"] or [])
@@ -77,7 +77,7 @@ def node_Loop(node):
     return result
 
 # 分区执行
-def node_AlwaysExecuteNodeList(node):
+def node_AlwaysExecuteNodeList(node,blackboard):
     result = {
         "main" : "分区执行以下节点：",
         "sub_nodes" : []

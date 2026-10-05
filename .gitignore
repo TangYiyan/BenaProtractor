@@ -13,3 +13,4 @@ main.spec
 /.qa
 /.qa-*
 /tests/__pycache__
+/analyzer/__pycache__

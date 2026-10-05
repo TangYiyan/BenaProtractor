@@ -1,10 +1,10 @@
 #----------------------------------------
 # 概率类Node
 #----------------------------------------
-from translator import anne_dictionary
+from dictionary import anne_dictionary
 
 # 骰子
-def node_Dice(node):
+def node_Dice(node,blackboard):
     return {
         "main" : "投掷一枚\"骰子\"，进行概率检定（取0.0~100.0之内的随机浮点数，不包括100.0）",
         "true" : f"若出值 ≤ [{node['_probKey']}] × 100（检定成功)",
@@ -12,7 +12,7 @@ def node_Dice(node):
     }
 
 # 骰子，伪随机分布算法
-def node_DicePRD(node):
+def node_DicePRD(node,blackboard):
     return {
         "main" : f"投掷一枚\"伪随机分布式骰子\"，进行概率检定（取0.0~100.0之内的随机浮点数，不包括100.0）",
         "description" : f"基础概率依[{node['_probKey']}]查询，每次失败增加一倍概率直至成功时重置；连续失败次数记录于全局黑板[{node['_prdKey']}]",
@@ -21,7 +21,7 @@ def node_DicePRD(node):
     }
 
 # 骰子，概率合并处理
-def node_DiceByBuffKeys(node):
+def node_DiceByBuffKeys(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     if node["_isReverseProb"]: # 成功一次
         return {
@@ -39,7 +39,7 @@ def node_DiceByBuffKeys(node):
         }
 
 # 区间随机小数
-def node_RandomSetter(node):
+def node_RandomSetter(node,blackboard):
     max_key = node["_targetKey"]+"_max" #别问，yj的逻辑真的这么写的
     min_key = node["_targetKey"]+"_min" #别问，yj的逻辑真的这么写的
     if node["_convertToInt"]: # 最终向下取整

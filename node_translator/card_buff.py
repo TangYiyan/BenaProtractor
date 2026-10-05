@@ -1,11 +1,11 @@
 #----------------------------------------
 # CardBuff类Node
 #----------------------------------------
-from translator import anne_dictionary
-from .analyzer import analyze_buff
+from dictionary import anne_dictionary
+from analyzer import analyze_buff
 
 # 创建CardBuff
-def node_CreateCardBuff(node):
+def node_CreateCardBuff(node,blackboard):
     target_name = anne_dictionary("target",node["_target"])
     descriptions = []
     cardbuff_type = "永久Cardbuff" 
@@ -43,10 +43,10 @@ def node_CreateCardBuff(node):
     return result
 
 # 结束CardBuff
-def node_FinishCardBuff(node):
+def node_FinishCardBuff(node,blackboard):
     return {"main" : f"结束本Buff相关的CardBuff"}
 
 # 结束自己召唤物的特定CardBuff
-def node_FinishTokenCardBuffByKey(node):
+def node_FinishTokenCardBuffByKey(node,blackboard):
     source_name = anne_dictionary("target",node["_sourceType"])
     return {"main" : f"结束{source_name}的召唤物的，名为 <{node['_cardBuffKey']}> 的CardBuff"}

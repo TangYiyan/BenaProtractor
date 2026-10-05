@@ -1,10 +1,10 @@
 #----------------------------------------
 # 状态机相关Node
 #----------------------------------------
-from translator import anne_dictionary
+from dictionary import anne_dictionary
 
 # 检查角色类单位是否为阻挡状态机
-def node_CheckCharacterInBornState(node):
+def node_CheckCharacterInBornState(node,blackboard):
     owner_name = anne_dictionary("target",node["_ownerType"])
     return {
         "main" : f"检查{owner_name}（角色类）的状态机",
@@ -13,7 +13,7 @@ def node_CheckCharacterInBornState(node):
     }
 
 # 检查敌人类单位是否为阻挡状态机
-def node_CheckEnemyInBornState(node):
+def node_CheckEnemyInBornState(node,blackboard):
     owner_name = anne_dictionary("target",node["_ownerType"])
     return {
         "main" : f"检查{owner_name}（敌人类）的状态机",
@@ -22,7 +22,7 @@ def node_CheckEnemyInBornState(node):
     }
 
 # 检查是否为阻挡状态机
-def node_CheckUnitInCombatState(node):
+def node_CheckUnitInCombatState(node,blackboard):
     owner_name = anne_dictionary("target",node["_ownerType"])
     return {
         "main" : f"检查{owner_name}的状态机",
@@ -31,7 +31,7 @@ def node_CheckUnitInCombatState(node):
     }
 
 # 检查是否为攻击状态机
-def node_CheckUnitInAttackState(node):
+def node_CheckUnitInAttackState(node,blackboard):
     owner_name = anne_dictionary("target",node["_ownerType"])
     return {
         "main" : f"检查{owner_name}的状态机",
@@ -40,7 +40,7 @@ def node_CheckUnitInAttackState(node):
     }
 
 # 检查是否为重生状态机
-def node_CheckUnitInRebornState(node):
+def node_CheckUnitInRebornState(node,blackboard):
     owner_name = anne_dictionary("target",node["_ownerType"])
     return {
         "main" : f"检查{owner_name}的状态机",
@@ -49,7 +49,7 @@ def node_CheckUnitInRebornState(node):
     }
 
 # 检查是否为消失状态机
-def node_CheckUnitInDisappearState(node):
+def node_CheckUnitInDisappearState(node,blackboard):
     owner_name = anne_dictionary("target",node["_ownerType"])
     return {
         "main" : f"检查{owner_name}的状态机",
@@ -58,7 +58,7 @@ def node_CheckUnitInDisappearState(node):
     }
 
 # 检查是否为移动状态机
-def node_CheckUnitInMoveState(node):
+def node_CheckUnitInMoveState(node,blackboard):
     owner_name = anne_dictionary("target",node["_ownerType"])
     return {
         "main" : f"检查{owner_name}的状态机",

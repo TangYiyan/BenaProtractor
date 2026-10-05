@@ -1,10 +1,10 @@
 #----------------------------------------
 # 卫戍协议的Node
 #----------------------------------------
-from translator import anne_dictionary
+from dictionary import anne_dictionary
 
 # 检查战斗中
-def node_AutoChessIsInBattle(node):
+def node_AutoChessIsInBattle(node,blackboard):
     return {
         "main" : "检查当前是否处于卫戍协议的战斗中（战斗未正式开始或已结束不计数）",
         "true" : "若当前处于战斗中",
@@ -12,7 +12,7 @@ def node_AutoChessIsInBattle(node):
     }
 
 # 检查难度
-def node_AutoChessCheckDifficulty(node):
+def node_AutoChessCheckDifficulty(node,blackboard):
     if node["_difficultyMode"] == "TRAINING":
         return {
             "main" : "检查当前卫戍协议的关卡难度",
@@ -33,7 +33,7 @@ def node_AutoChessCheckDifficulty(node):
         }
 
 # 在黑板记录盟约生效人数
-def node_AutoChessAssignBondCharCntToBB(node):
+def node_AutoChessAssignBondCharCntToBB(node,blackboard):
     # 未解析参数：_target、_filterAllSides
     bond_id = anne_dictionary("bond_id",node["_bondId"])
     if node["_filterCount"]: # 判断模式
@@ -50,7 +50,7 @@ def node_AutoChessAssignBondCharCntToBB(node):
         }
 
 # 在黑板记录盟约生效层数
-def node_AutoChessAssignBondStackCntToBB(node):
+def node_AutoChessAssignBondStackCntToBB(node,blackboard):
     # 未解析参数：_target、_assignAllPlayerIndex
     bond_id = "???"
     if node["_assignCurrentMaxBond"]:
@@ -73,7 +73,7 @@ def node_AutoChessAssignBondStackCntToBB(node):
     return result
 
 # 在黑板记录装备数量
-def node_AutochessAssignEquipCntToBlackboard(node):
+def node_AutochessAssignEquipCntToBlackboard(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     if node["_onlyGoldenEquip"]:
         return {
@@ -87,7 +87,7 @@ def node_AutochessAssignEquipCntToBlackboard(node):
         }
 
 # 在黑板记录同名/精锐人数
-def node_AutoChessAssignChessCntToBB(node):
+def node_AutoChessAssignChessCntToBB(node,blackboard):
     bb_key = node["_assignKey"]
     if node["_assignGoldenChess"]: # 罗素队的检查
         return {"main" : f"统计在场精锐单位，将数量记录至黑板[{bb_key}]"}
@@ -99,7 +99,7 @@ def node_AutoChessAssignChessCntToBB(node):
         
 
 # 检查角色是否已进阶
-def node_AutoChessFilterChess(node):
+def node_AutoChessFilterChess(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     if node["_filterGolden"]:
         return {
@@ -115,7 +115,7 @@ def node_AutoChessFilterChess(node):
         }
 
 # 检查角色/范围内角色是否属于XX盟约
-def node_AutoChessFilterCharacterBondIds(node):
+def node_AutoChessFilterCharacterBondIds(node,blackboard):
     bond_ids = [anne_dictionary("bond_id",bond) for bond in node["_bondIds"]]
     bond_filter = ""
     
@@ -151,7 +151,7 @@ def node_AutoChessFilterCharacterBondIds(node):
         }
 
 # 检查目标的InstID，或者检查黑板里是否有目标的UID
-def node_AutochessCheckTarget(node):
+def node_AutochessCheckTarget(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     if node["_checkCardUidInBlackboard"]:
         return {
@@ -174,6 +174,6 @@ def node_AutochessCheckTarget(node):
         }
 
 # 触发核心盟约能力
-def node_AutoChessTriggerGarrisonAbility(node):
+def node_AutoChessTriggerGarrisonAbility(node,blackboard):
     target_name = anne_dictionary("target",node["_target"])
     return {"main" : f"触发{target_name}自身的盟约特质（通常为叠层效果）"}

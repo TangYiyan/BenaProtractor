@@ -3,11 +3,11 @@
 #----------------------------------------
 from bena import ENEMY_NAMES, ask_bena_character, ask_bena_enemy
 
-from translator import anne_dictionary
-from .analyzer import analyze_FP, analyze_target_options
+from dictionary import anne_dictionary
+from analyzer import analyze_fp, analyze_target_options
 
 # 检查异常效果（带免疫）
-def node_CheckAbnormalFlag(node):
+def node_CheckAbnormalFlag(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     abnormal_flag = ""
     if node["_abnormalFlagKey"]:
@@ -28,7 +28,7 @@ def node_CheckAbnormalFlag(node):
         }
 
 # 检查异常免疫
-def node_CheckAbnormalImmune(node):
+def node_CheckAbnormalImmune(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     abnormal = anne_dictionary("abnormal",node["_abnormalFlag"])
     if node["_isUnset"]:
@@ -45,7 +45,7 @@ def node_CheckAbnormalImmune(node):
         }
 
 # 检查持有多个异常效果之一（带免疫）
-def node_CheckAbnormalFlags(node):
+def node_CheckAbnormalFlags(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     abnormal_flags = []
     if node["_abnormalFlags"] != None:
@@ -65,7 +65,7 @@ def node_CheckAbnormalFlags(node):
         }
 
 # 检查异常组合（带免疫）
-def node_CheckAbnormalCombo(node):
+def node_CheckAbnormalCombo(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     abnormal_combo = anne_dictionary("abnormal",node["_abnormalCombo"])+"异常组合"
     if node["_isUnset"]:
@@ -82,7 +82,7 @@ def node_CheckAbnormalCombo(node):
         }
 
 # 检查职业
-def node_CheckTargetProfession(node):
+def node_CheckTargetProfession(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     if node["_readProfessionFromBlackboard"]:
         return {
@@ -154,7 +154,7 @@ def node_CheckTargetProfession(node):
                 }
 
 # 检查标签
-def node_CheckFilterTag(node):
+def node_CheckFilterTag(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     if node["_bbKey"] != None and node["_bbKey"] != "":
         return {
@@ -170,7 +170,7 @@ def node_CheckFilterTag(node):
         }
 
 # 检查势力
-def node_CheckCharacterGroupTag(node):
+def node_CheckCharacterGroupTag(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     group_name = anne_dictionary("group_tag",node["_groupTag"])
     return {
@@ -181,7 +181,7 @@ def node_CheckCharacterGroupTag(node):
 
 
 # 检查阻挡模式
-def node_CheckBlockMode(node):
+def node_CheckBlockMode(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     block_mode = anne_dictionary("block_mode",node["_blockMode"])
     return {
@@ -191,7 +191,7 @@ def node_CheckBlockMode(node):
     }
 
 # 检查阻挡状态
-def node_CheckBlocked(node):
+def node_CheckBlocked(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     if node["_checkBlockedBySource"]:
         source_name = anne_dictionary("target",node["_sourceType"])
@@ -217,7 +217,7 @@ def node_CheckBlocked(node):
         }
 
 # 通用目标检查
-def node_IfTarget(node):
+def node_IfTarget(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     conditions = []
     last_type = ""
@@ -265,7 +265,7 @@ def node_IfTarget(node):
         }
 
 # 检查单位是否存活
-def node_CheckUnitAlive(node):
+def node_CheckUnitAlive(node,blackboard):
     owner_name = anne_dictionary("target",node["_ownerType"])
     return {
         "main" : f"检查{owner_name}目前是否存活",
@@ -274,7 +274,7 @@ def node_CheckUnitAlive(node):
     }
 
 # 检查单位是否可以被选中
-def node_VertifyTarget(node):
+def node_VertifyTarget(node,blackboard):
     source_name = anne_dictionary("target",node["_source"])
     target_name = anne_dictionary("target",node["_target"])
     if node["_targetOptions"] == None:
@@ -296,7 +296,7 @@ def node_VertifyTarget(node):
 
 
 # 检查绝对阵营
-def node_IfTargetSide(node):
+def node_IfTargetSide(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     if node["_sideMask"] in ["BOTH_ALLY_AND_ENEMY","ALL","NONE"]: # 无法判断的阵营类型
         #是的，沟槽的yj写的是全等于，因此这几个判定必定失败
@@ -313,7 +313,7 @@ def node_IfTargetSide(node):
     }
 
 # 检查相对阵营
-def node_IfDamageTargetSide(node):
+def node_IfDamageTargetSide(node,blackboard):
     source_name = anne_dictionary("target",node["_sourceType"])
     target_name = anne_dictionary("target",node["_targetType"])
     if node["_sideMask"] == "ALLY":
@@ -342,7 +342,7 @@ def node_IfDamageTargetSide(node):
     }
     
 # 是否属于干员
-def node_IsCharacter(node):
+def node_IsCharacter(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     return {
         "main" : f"检查{target_name}的单位是否为干员（为角色类且为八大职业之一）",
@@ -351,7 +351,7 @@ def node_IsCharacter(node):
     }
 
 # 是否属于角色类（干员、召唤物、装置）
-def node_IsCharacterOrTokenOrTrap(node):
+def node_IsCharacterOrTokenOrTrap(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     return {
         "main" : f"检查{target_name}的单位类型",
@@ -360,7 +360,7 @@ def node_IsCharacterOrTokenOrTrap(node):
     }
     
 # 是否属于敌人类
-def node_IsEnemy(node):
+def node_IsEnemy(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     return {
         "main" : f"检查{target_name}的单位类型",
@@ -369,7 +369,7 @@ def node_IsEnemy(node):
     }
 
 # 是否为同一人
-def node_IfTargetEqual(node):
+def node_IfTargetEqual(node,blackboard):
     left_target = "Buff来源" if node["_target1"] == "BUFF_SOURCE" else anne_dictionary("target",node["_target1"])
     right_target = "Buff来源" if node["_target1"] == "BUFF_SOURCE" else anne_dictionary("target",node["_target2"])
     if node["_equalIfBothNull"]:
@@ -401,7 +401,7 @@ def node_IfTargetEqual(node):
 
 # 另一种是否为同一人
 # 没有任何“多余”的处理
-def node_CheckEntityEquals(node):
+def node_CheckEntityEquals(node,blackboard):
     left_target = anne_dictionary("target",node["_lhsType"])
     right_target = anne_dictionary("target",node["_rhsType"])
     if left_target == right_target:
@@ -418,7 +418,7 @@ def node_CheckEntityEquals(node):
         }
     
 # 检查行动类型
-def node_CheckMotionMode(node):
+def node_CheckMotionMode(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     if node["_mode"] != "ALL":
         motion = anne_dictionary("motion",node["_mode"])
@@ -435,7 +435,7 @@ def node_CheckMotionMode(node):
         }
 
 # 检查单位实体类型
-def node_CheckTargetCategory(node):
+def node_CheckTargetCategory(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     entity_category = anne_dictionary("entity_category",node["_category"])
     return {
@@ -445,7 +445,7 @@ def node_CheckTargetCategory(node):
     }
 
 # 追溯角色类单位死亡原因
-def node_FilterCharacterLastDeathReason(node):
+def node_FilterCharacterLastDeathReason(node,blackboard):
     target_name = anne_dictionary("target",node["_characterType"])
     finish_reason = anne_dictionary("finish_reason",node["_finishReason"])
     return {
@@ -455,7 +455,7 @@ def node_FilterCharacterLastDeathReason(node):
     }
 
 # 检查单位本次死亡原因
-def node_FilterDeathReason(node):
+def node_FilterDeathReason(node,blackboard):
     target_name = anne_dictionary("target",node["_source"])
     finish_reason = anne_dictionary("finish_reason",node["_finishReason"])
     return {
@@ -465,7 +465,7 @@ def node_FilterDeathReason(node):
     }
 
 # 检查角色部署类型
-def node_CheckBuildableType(node):
+def node_CheckBuildableType(node,blackboard):
     target_name = anne_dictionary("target",node["_target"])
     buildable_type = anne_dictionary("buildable_type",node["_buildableType"])
     if node["_checkOriginCondition"]:
@@ -482,7 +482,7 @@ def node_CheckBuildableType(node):
         }
 
 # 检查敌人地位级别
-def node_CheckEnemyLevelMask(node):
+def node_CheckEnemyLevelMask(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     enemy_level = anne_dictionary("enemy_level",node["_targetLevelMask"])
     return {
@@ -492,7 +492,7 @@ def node_CheckEnemyLevelMask(node):
     }
 
 # 检查地图标签（水地形、肉鸽、十三章等）
-def node_CheckConatinsMapTags(node):
+def node_CheckConatinsMapTags(node,blackboard):
     map_tags = []
     if isinstance(node["_mapTags"],list):
         for tag in node["_mapTags"]:
@@ -520,7 +520,7 @@ def node_CheckConatinsMapTags(node):
         }
 
 # 检查对象所在地块的相对位置（普罗旺斯专属）
-def node_CheckModifierDirectionOffset(node):
+def node_CheckModifierDirectionOffset(node,blackboard):
     # 未解析参数：_offset.col
     source_name = anne_dictionary("target",node["_source"])
     target_name = anne_dictionary("target",node["_target"])
@@ -543,7 +543,7 @@ def node_CheckModifierDirectionOffset(node):
         }
 
 # 检查对象所处地块是否位于某个攻击范围/半径内
-def node_CheckTargetInRange(node):
+def node_CheckTargetInRange(node,blackboard):
     source_name = anne_dictionary("target",node["_soureceType"]) #对的yj真的多打了个e
     target_name = anne_dictionary("target",node["_targetType"])
     if node["_autoRange"]:
@@ -566,7 +566,7 @@ def node_CheckTargetInRange(node):
         }
 
 # 检查特定范围内是否存在其他友方“可点选”单位
-def node_CheckOtherCharacterInRange(node):
+def node_CheckOtherCharacterInRange(node,blackboard):
     source_name = anne_dictionary("target",node["_source"])
     return {
         "main" : f"检查{source_name}部署位置与方向的特定范围（ID：{node['_rangeId']}）内是否存在其他同阵营\"可点选\"的单位",
@@ -576,7 +576,7 @@ def node_CheckOtherCharacterInRange(node):
     }
 
 # 检查目标重量
-def node_FilterByTargetMassLevel(node):
+def node_FilterByTargetMassLevel(node,blackboard):
     target_name = anne_dictionary("target",node["_target"])
     compare = anne_dictionary("compare",node["_condType"])
     compare_not = anne_dictionary("compare_not",node["_condType"])
@@ -587,11 +587,11 @@ def node_FilterByTargetMassLevel(node):
     }
 
 # 检查目标生命
-def node_FilterByTargetHp(node):
+def node_FilterByTargetHp(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     compare = anne_dictionary("compare",node["_condType"])
     compare_not = anne_dictionary("compare_not",node["_condType"])
-    default_value = analyze_FP(node["_hpValue"])
+    default_value = analyze_fp(node["_hpValue"])
     return {
         "main" : f"检查{target_name}当前生命值",
         "true" : f"若其当前生命值 {compare} [hp]（默认{default_value}）",
@@ -599,7 +599,7 @@ def node_FilterByTargetHp(node):
     }
 
 # 检查目标生命比例
-def node_FilterByTargetHpRatio(node):
+def node_FilterByTargetHpRatio(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     compare = anne_dictionary("compare",node["_condType"])
     compare_not = anne_dictionary("compare_not",node["_condType"])
@@ -620,7 +620,7 @@ def node_FilterByTargetHpRatio(node):
         }
 
 # 检查目标技力比例
-def node_FilterByTargetSpRatio(node):
+def node_FilterByTargetSpRatio(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     compare = anne_dictionary("compare",node["_condType"])
     compare_not = anne_dictionary("compare_not",node["_condType"])
@@ -632,7 +632,7 @@ def node_FilterByTargetSpRatio(node):
     }
 
 # 检查目标当前损伤元素的比例
-def node_FilterByTargetEpRatio(node):
+def node_FilterByTargetEpRatio(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     compare = anne_dictionary("compare",node["_condType"])
     compare_not = anne_dictionary("compare_not",node["_condType"])
@@ -644,7 +644,7 @@ def node_FilterByTargetEpRatio(node):
     }
 
 # 检查目标属性
-def node_FilterByTargetAttribute(node):
+def node_FilterByTargetAttribute(node,blackboard):
     target_name = anne_dictionary("target",node["_target"])
     compare = anne_dictionary("compare",node["_condType"])
     compare_not = anne_dictionary("compare_not",node["_condType"])
@@ -664,7 +664,7 @@ def node_FilterByTargetAttribute(node):
         }
 
 # 检查目标等级
-def node_FilterByTargetDataLevel(node):
+def node_FilterByTargetDataLevel(node,blackboard):
     target_name = anne_dictionary("target",node["_target"])
     compare = anne_dictionary("compare",node["_condType"])
     compare_not = anne_dictionary("compare_not",node["_condType"])
@@ -675,7 +675,7 @@ def node_FilterByTargetDataLevel(node):
     }
 
 # 检查技力类型
-def node_FilterByTargetSPType(node):
+def node_FilterByTargetSPType(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     sp_type = anne_dictionary("sp_type",node["_spType"])
     return {
@@ -685,7 +685,7 @@ def node_FilterByTargetSPType(node):
     }
 
 # 检查所处地块
-def node_CheckCurrentTileKey(node):
+def node_CheckCurrentTileKey(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     tiles = []
     for tile_key in node["_tileKey"]:
@@ -700,7 +700,7 @@ def node_CheckCurrentTileKey(node):
     return result
 
 # 检查敌人类单位的ID
-def node_CheckEnemyId(node):
+def node_CheckEnemyId(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     enemy_names = []
     if not node["_loadIdFromBb"]:
@@ -737,7 +737,7 @@ def node_CheckEnemyId(node):
     return result
 
 # 检查当前单位模式
-def node_CheckUnitCurrentMode(node):
+def node_CheckUnitCurrentMode(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     if node["_loadCurModeBbKey"] != None and node["_loadCurModeBbKey"] != "":
         return {
@@ -753,7 +753,7 @@ def node_CheckUnitCurrentMode(node):
         }
 
 # 检查敌人是否处于失衡状态机
-def node_CheckEnemyUnbalanced(node):
+def node_CheckEnemyUnbalanced(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     return {
         "main" : f"检查{target_name}（敌人类）当前是否处于\"失衡\"状态机",
@@ -762,7 +762,7 @@ def node_CheckEnemyUnbalanced(node):
     }
 
 # 检查所在地块的高度类型
-def node_CheckHeightTypeOfRootTile(node):
+def node_CheckHeightTypeOfRootTile(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     height_type = anne_dictionary("height_type",node["_heightType"])
     return {
@@ -772,7 +772,7 @@ def node_CheckHeightTypeOfRootTile(node):
     }
 
 # 检查所在地块是否被角色类占用
-def node_CheckCharacterOnTile(node):
+def node_CheckCharacterOnTile(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     if node["_checkProfessionCategories"]:
         return {
@@ -788,7 +788,7 @@ def node_CheckCharacterOnTile(node):
         }
 
 # 检查所在地块是否存在特定角色类单位、存在特定敌人类单位、地块Key
-def node_CheckTargetRootTile(node):
+def node_CheckTargetRootTile(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     conditions = []
     # 检测角色类

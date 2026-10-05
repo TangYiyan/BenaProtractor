@@ -1,10 +1,10 @@
 #----------------------------------------
 # 元素损伤相关Node
 #----------------------------------------
-from translator import anne_dictionary
+from dictionary import anne_dictionary
 
 # 施加元素损伤
-def node_ApplyElementDamage(node):
+def node_ApplyElementDamage(node,blackboard):
     source_name = anne_dictionary("target",node["_sourceType"])
     target_name = anne_dictionary("target",node["_targetType"])
     element_type = anne_dictionary("element",node["_elementDamageType"])
@@ -54,7 +54,7 @@ def node_ApplyElementDamage(node):
     return result
 
 # 检查元素爆发类型
-def node_FilterEPBreakRecoveryType(node):
+def node_FilterEPBreakRecoveryType(node,blackboard):
     target_name = anne_dictionary("target",node["_target"])
     result = {}
     if node["_readTypeFromBb"] and node["_bbKey"] != "":
@@ -71,7 +71,7 @@ def node_FilterEPBreakRecoveryType(node):
     return result
     
 # 检查目标元素值是否为全满/特定元素值是否为满
-def node_CheckTargetEpIsFull(node):
+def node_CheckTargetEpIsFull(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     if node["_elementType"] != None and node["_elementType"] != "":
         element = anne_dictionary("element",node["_elementType"])
@@ -88,7 +88,7 @@ def node_CheckTargetEpIsFull(node):
         }
 
 # 损伤倍率
-def node_EpDamageScale(node):
+def node_EpDamageScale(node,blackboard):
     # 未解析参数：_isStackable _isValidStackCnt
     features = []
     if node["_filterApplyWay"] and node["_applyWayFilter"] != None and node["_applyWayFilter"] != "":

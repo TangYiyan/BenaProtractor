@@ -303,7 +303,7 @@
 		"MASS_LEVEL" : "重量",
 		"BASE_FORCE_LEVEL" : "基础力度等级",
 		"DEF_PENETRATE_FIXED" : "物理穿透",
-		"ONE_MINUS_STATUS_RESISTANCE" : "可抵抗状态生效时间倍率",
+		"ONE_MINUS_STATUS_RESISTANCE" : "一减状态抵抗率",
 		"MAGIC_RESIST_PENETRATE_FIXED" : "法术穿透",
 		"MAX_EP" : "最大元素值",
 		"EP_RECOVERY_PER_SEC" : "元素回复速度",

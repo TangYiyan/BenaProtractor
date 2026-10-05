@@ -1,10 +1,10 @@
 #----------------------------------------
 # 能力相关的检测类Node
 #----------------------------------------
-from translator import anne_dictionary
+from dictionary import anne_dictionary
 
 # 检查能力用途
-def node_FilterAbilityFamily(node):
+def node_FilterAbilityFamily(node,blackboard):
     family = anne_dictionary("ability_family",node["_familyGroupMask"])
     return {
         "main" : "检查此能力的类别（或称用途）",
@@ -15,7 +15,7 @@ def node_FilterAbilityFamily(node):
 
 
 # 检查角色技能状态
-def node_CheckCharSkillAffecting(node):
+def node_CheckCharSkillAffecting(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     if node["_checkTargetHost"]:
         return {
@@ -31,7 +31,7 @@ def node_CheckCharSkillAffecting(node):
         }
     
 # 检查携带的技能（仅限角色类可用）
-def node_CheckSkillIndex(node):
+def node_CheckSkillIndex(node,blackboard):
     owner_name = anne_dictionary("target",node["_ownerType"])
     return {
         "main" : f"检查{owner_name}（角色类）携带的技能",
@@ -40,7 +40,7 @@ def node_CheckSkillIndex(node):
     }
 
 # 检查技能触发类型
-def node_CheckCharacterSkillType(node):
+def node_CheckCharacterSkillType(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     skill_type = anne_dictionary("skill_type",node["_skillType"])
     return {
@@ -50,7 +50,7 @@ def node_CheckCharacterSkillType(node):
     }
 
 # 检查上下文能力的当前目标数
-def node_FilterAbilityValidCastTargetCnt(node):
+def node_FilterAbilityValidCastTargetCnt(node,blackboard):
     compare = anne_dictionary("compare",node["_condType"])
     compare_not = anne_dictionary("compare_not",node["_condType"])
     return {
@@ -60,7 +60,7 @@ def node_FilterAbilityValidCastTargetCnt(node):
     }
 
 # 检查能力结束的原因
-def node_FilterByAbilityFinishReason(node):
+def node_FilterByAbilityFinishReason(node,blackboard):
     target = "本Buff所隶属的能力" if node["_useBuffAbility"] else "当前\"上下文\"能力"
     reason = anne_dictionary("ability_finish_reason",node["_finishReason"])
     return {
@@ -70,7 +70,7 @@ def node_FilterByAbilityFinishReason(node):
     }
 
 # 检查能力是否不受麻痹影响
-def node_FilterByAbilityIgnorePalsyInterrupt(node):
+def node_FilterByAbilityIgnorePalsyInterrupt(node,blackboard):
     if node["_skipUnitCheck"]:
         return {
             "main" : f"检查当前\"上下文\"能力是否被定义为\"无视麻痹\"",

@@ -1,11 +1,11 @@
 #----------------------------------------
 # 修改伤害类Node
 #----------------------------------------
-from .analyzer import to_percent
-from translator import anne_dictionary
+from analyzer import to_percent
+from dictionary import anne_dictionary
 
 # 弱点伤害（必须于计算伤害时使用）
-def node_WeakDamage(node):
+def node_WeakDamage(node,blackboard):
     #source_name = anne_dictionary("target",node["_sourceType"])
     return {
         #"main" : f"让{source_name}的本次伤害变为弱点伤害",
@@ -16,13 +16,13 @@ def node_WeakDamage(node):
     }
 
 # “分摊伤害”，实际上是给予其他单位当前伤害的一部分。
-def node_DamageSplit(node):
+def node_DamageSplit(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     attack_type = anne_dictionary("attack_type",node["_attackType"])
     return {"main" : f"将本次伤害的X%以同类型{attack_type}伤害的形式传递给{target_name}（原伤害不会变化）"}
 
 # 伤害倍率
-def node_DamageScale(node):
+def node_DamageScale(node,blackboard):
     # 未解析参数：_isValidStackCnt
     damage_scale = ""
     action = "提升/降低"
@@ -59,7 +59,7 @@ def node_DamageScale(node):
     return {"main" : text}
 
 # 基于距离的伤害倍率提升
-def node_DamageScaleBaseOnDistance(node):
+def node_DamageScaleBaseOnDistance(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     source_name = anne_dictionary("target",node["_sourceType"])
     condition = ""
@@ -93,7 +93,7 @@ def node_DamageScaleBaseOnDistance(node):
     return result
 
 # 格挡/护盾/屏障（还得具体情况具体分析）
-def node_BlockDamage(node):
+def node_BlockDamage(node,blackboard):
     # 未解析参数：_useSource _sourceType
     #source_name = anne_dictionary("target",node["_sourceType"])
     name = "概率格挡/计次护盾"
@@ -134,7 +134,7 @@ def node_BlockDamage(node):
         }
 
 # 闪避伤害
-def node_Evade(node):
+def node_Evade(node,blackboard):
     name = "概率/计次闪避"
     features = []
     # 检查伤害类型
@@ -161,7 +161,7 @@ def node_Evade(node):
         }
     
 # 增加附加攻击力（逻哥2天赋）
-def node_AtkAdditionUpBeforeCalcDamage(node):
+def node_AtkAdditionUpBeforeCalcDamage(node,blackboard):
     if node["_filterDamageType"]:
         damage_type = anne_dictionary("damage_type",node["_damageType"])
         return {

@@ -3,9 +3,9 @@
 #----------------------------------------
 import math
 
-from translator import anne_dictionary
+from dictionary import anne_dictionary
 
-from .analyzer import analyze_item, analyze_item_reward, analyze_timing
+from analyzer import analyze_rogue_item, analyze_rogue_item_reward, analyze_relic_timing
 from .attribute_rune import rogue_char_attribute_mul
 
 # 每过一层，为本藏品叠加一个效果
@@ -22,8 +22,8 @@ def rogue_zone_into_buff(item_type,blackboard):
 
 # 每过一层或进入特定层数时，发放奖励
 def rogue_zone_into_reward(item_type,blackboard):
-    timing = analyze_timing(item_type,blackboard)
-    reward = analyze_item_reward(blackboard)
+    timing = analyze_relic_timing(item_type,blackboard)
+    reward = analyze_rogue_item_reward(blackboard)
     if "zone" in blackboard:
         zone_name = anne_dictionary("rogue_zone",blackboard["zone"])
         timing += f"进入{zone_name}时，"
@@ -34,7 +34,7 @@ def rogue_zone_into_reward(item_type,blackboard):
 
 # 每过一层或进入特定层数时，消耗物品
 def rogue_zone_into_cost(item_type,blackboard):
-    timing = analyze_timing(item_type,blackboard)
+    timing = analyze_relic_timing(item_type,blackboard)
     if "zone" in blackboard:
         zone_name = anne_dictionary("rogue_zone",blackboard["zone"])
         timing += f"进入{zone_name}时，"
@@ -43,7 +43,7 @@ def rogue_zone_into_cost(item_type,blackboard):
     result = {
         "main" : timing + "消耗玩家"
     }
-    item = analyze_item(blackboard)
+    item = analyze_rogue_item(blackboard)
     if item != None:
         result["main"] += f"{item.display_type} {item.display_name} × {math.floor(blackboard.get('count',1))}"
         result["link"] = blackboard['id']

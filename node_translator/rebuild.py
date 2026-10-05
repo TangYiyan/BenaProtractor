@@ -1,11 +1,11 @@
 #----------------------------------------
 # 再部署类Node
 #----------------------------------------
-from .analyzer import analyze_buff
-from translator import anne_dictionary
+from analyzer import analyze_buff
+from dictionary import anne_dictionary
 
 # 在特定范围内再部署此干员
-def node_RebuildCharacterOnTileInRange(node):
+def node_RebuildCharacterOnTileInRange(node,blackboard):
     # 未解析参数：_owner
     target_name = anne_dictionary("target",node["_target"])
     range_id = node["_rangeId"]

@@ -1,9 +1,9 @@
 #----------------------------------------
 # 叠层相关效果
 #----------------------------------------
-from translator import anne_dictionary
+from dictionary import anne_dictionary
 
-from .analyzer import analyze_timing, to_percent
+from analyzer import analyze_relic_timing, to_percent
 
 # 战斗结束时为藏品叠层
 def rogue_layer_after_battle_data(item_type,blackboard):

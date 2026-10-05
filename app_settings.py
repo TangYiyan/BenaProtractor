@@ -15,7 +15,7 @@ DEFAULTS = {"tables": DEFAULT_LOAD, "auto_update": True, "update_hours": 24,
             "font_size": 11, "ui_font_size": 10, "show_hidden": False, "theme": "light",
             "download_source": DEFAULT_SOURCE}
 
-
+# 标准化设置
 def normalize_settings(data):
     result = dict(DEFAULTS, tables=list(DEFAULT_LOAD))
     if not isinstance(data, dict):
@@ -37,21 +37,12 @@ def normalize_settings(data):
             pass
     return result
 
-
+# 加载设置
 def load_settings(path=None):
     path = path or app_path(".settings.json")
-    try:
-        return normalize_settings(json.loads(path.read_text(encoding="utf-8")))
-    except (OSError, ValueError):
-        result = normalize_settings({})
-        try:
-            legacy = app_path(".cache").read_text(encoding="utf-8").splitlines()
-            result["tables"] = [x for x in legacy if x in LOAD_TYPES]
-        except OSError:
-            pass
-        return result
+    return normalize_settings(json.loads(path.read_text(encoding="utf-8")))
 
-
+# 保存设置
 def save_settings(settings, path=None):
     path = path or app_path(".settings.json")
     temporary = path.with_suffix(".tmp")

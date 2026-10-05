@@ -1,14 +1,14 @@
 #----------------------------------------
 # 朝向相关Node
 #----------------------------------------
-from translator import anne_dictionary
+from dictionary import anne_dictionary
 
 DIRECTION_TIP = "朝向仅有上/下/左/右四种状态，敌人类单位未移动的情况下，其移动朝向为上"
 FACE_DIRECTION_TIP = "朝向面向是面向矢量最相近的上/下/左/右方向；面向矢量通常会跟随移动方向、攻击目标、阻挡之类的发生变化"
 FACE_LR_TIP = "左右面向是面向矢量在X轴上的分量，Δx<0则为“左”，Δx≥0则为“左”；面向矢量通常会跟随移动方向、攻击目标、阻挡之类的发生变化"
 
 # 将部署方向记录到黑板上
-def node_AssignDirectionToBB(node):
+def node_AssignDirectionToBB(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     if node['_isReverse']:
         return {
@@ -21,7 +21,7 @@ def node_AssignDirectionToBB(node):
     }
 
 # 检查移动朝向/部署朝向
-def node_CheckFaceDirection(node):
+def node_CheckFaceDirection(node,blackboard):
     target_name = anne_dictionary("target",node["_target"])
     direction = anne_dictionary("direction",node["_direction"])
     direction_not = anne_dictionary("direction_not",node["_direction"])
@@ -33,7 +33,7 @@ def node_CheckFaceDirection(node):
     }
 
 # 检查单位的左右面向
-def node_CheckFaceLOrR(node):
+def node_CheckFaceLOrR(node,blackboard):
     target_name = anne_dictionary("target",node["_target"])
     if node["_direction"] == "LEFT":
         return {
@@ -52,7 +52,7 @@ def node_CheckFaceLOrR(node):
     return node_CheckFaceDirection(node)
 
 # 检查角色类单位的“默认部署朝向”——可你不检查角色类，这不就是检查朝向？
-def node_CheckCharacterDefaultDirection(node):
+def node_CheckCharacterDefaultDirection(node,blackboard):
     target_name = anne_dictionary("target",node["_target"])
     if node["_useBB"] and node["_bbKey"] != None and node["_bbKey"] != "": #唯一的区别
         return {
@@ -64,7 +64,7 @@ def node_CheckCharacterDefaultDirection(node):
     return node_CheckFaceDirection(node)
 
 # 检查两者之间的朝向
-def node_CheckDirection(node):
+def node_CheckDirection(node,blackboard):
     source_name = anne_dictionary("target",node["_source"])
     target_name = anne_dictionary("target",node["_target"])
     if node["_judgeType"] == "FACE_TARGET":

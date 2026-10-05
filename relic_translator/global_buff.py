@@ -3,11 +3,11 @@
 #----------------------------------------
 from bena import translate_buff_name
 
-from .analyzer import analyze_selector, analyze_timing
+from analyzer import analyze_selector, analyze_relic_timing
 
 # 常规的全局Buff
 def rogue_global_buff_normal(item_type,blackboard):
-    timing = analyze_timing(item_type,blackboard)
+    timing = analyze_relic_timing(item_type,blackboard)
     global_buff_key = blackboard["key"]
     result = {
         "main" : f"{timing}生效全局Buff：<{global_buff_key}>",

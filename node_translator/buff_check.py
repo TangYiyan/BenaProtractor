@@ -1,10 +1,10 @@
 #----------------------------------------
 # Buff相关的检查类Node
 #----------------------------------------
-from translator import anne_dictionary
+from dictionary import anne_dictionary
 
 # 检查是否持有某Buff
-def node_CheckContainsBuff(node):
+def node_CheckContainsBuff(node,blackboard):
     # 未解析参数：_checkSourceHost
     target_name = anne_dictionary("target",node["_targetType"])
     condition = f"检查{target_name}是否"
@@ -59,7 +59,7 @@ def node_CheckContainsBuff(node):
         }
 
 # 检查是否持有本Buff的附属Buff
-def node_CheckContainsDerviedBuff(node):
+def node_CheckContainsDerviedBuff(node,blackboard):
     if node["_derviedBuffKey"] != None and node["_derviedBuffKey"] != "":
         return {
             "main" : f"检查持有者是否同时持有本Buff的附属Buff <{node['_derviedBuffKey']}>",
@@ -75,7 +75,7 @@ def node_CheckContainsDerviedBuff(node):
         }
 
 # 检查Buff剩余持续时间
-def node_CheckRemainTime(node):
+def node_CheckRemainTime(node,blackboard):
     remaining_time = node["_checkRemainTime"]
     return {
         "main" : "检查本Buff的剩余持续时间",
@@ -84,7 +84,7 @@ def node_CheckRemainTime(node):
     }
 
 # 检查上下文中的Buff的名称
-def node_CheckMainBuffId(node):
+def node_CheckMainBuffId(node,blackboard):
     return {
         "main" : "检查\"上下文\"中的那个Buff的名称",
         "true" : f"若该Buff名称为 <{node['_idToFilter']}>",

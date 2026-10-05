@@ -991,10 +991,25 @@
 			"calculate" : {
 				"damage" : "计算伤害时"
 			},
+			"hp" : {
+				"less" : "生命值较低时"
+			},
+			"reach" : {
+				"exit" : "抵达终点时"
+			},
+			"skill" : {
+				"start" : "技能开启时",
+				"trigger" : "技能触发时",
+				"finish" : "技能结束时"
+			},
+			"trigger" : "每次触发时",
 			"born" : "登场时",
 			"kill" : "死亡时",
 			"killed" : "被击杀时",
+			"evade" : "闪避时",
 			"start" : "开始时",
+			"finished" : "结束时",
+			"locate" : "部署完成时",
 			"afterAttack" : "攻击后",
 			"creep" : "溟痕上"
 		},
@@ -1145,7 +1160,15 @@
 		"purify" : "净化",
 		"atkorcbt" : "攻击/阻挡攻击",
 		"charge" : {
-			"token" : "获得召唤物",
+			"cost" : "获取费用",
+			"sp" : "获取技力",
+			"shield" : "获取护盾",
+			"one" : "获取一层",
+			"token" : "获取召唤物",
+			"atk" : {
+				"speed" : "获取攻击速度"
+			},
+			"ability" : "获取能力",
 			"" : "蓄力"
 		},
 		"poison" : "中毒",

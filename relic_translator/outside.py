@@ -4,8 +4,8 @@
 import math
 
 from bena import ask_bena, ask_bena_character
-from translator import anne_dictionary
-from .analyzer import analyze_item_reward, analyze_profession, analyze_sub_profession, to_delta, analyze_timing, analyze_item, to_delta_percent
+from dictionary import anne_dictionary
+from analyzer import analyze_rogue_item_reward, analyze_profession, analyze_sub_profession, to_delta, analyze_relic_timing, analyze_rogue_item, to_delta_percent
 
 # 关卡内的可部署人数上限增减
 def rogue_level_char_limit_add(item_type,blackboard):
@@ -19,15 +19,15 @@ def rogue_level_char_limit_add(item_type,blackboard):
 def rogue_immediate_reward(item_type,blackboard):
     if blackboard["id"] == "rogue_6_hp" and blackboard["count"] == 0: # 神秘0个目标生命值
         return {"main" : "占位效果"}
-    timing = analyze_timing(item_type,blackboard)
-    reward = analyze_item_reward(blackboard)
+    timing = analyze_relic_timing(item_type,blackboard)
+    reward = analyze_rogue_item_reward(blackboard)
     reward["main"] = timing + reward["main"]
     return reward
 
 # 立刻消耗
 def rogue_immediate_cost(item_type,blackboard):
-    timing = analyze_timing(item_type,blackboard)
-    item = analyze_item(blackboard)
+    timing = analyze_relic_timing(item_type,blackboard)
+    item = analyze_rogue_item(blackboard)
     if item != None:
         if item.type == "COPPER": # 界园钱的特殊处理
             return {
@@ -42,19 +42,19 @@ def rogue_immediate_cost(item_type,blackboard):
 
 # 开局额外招募券奖励
 def rogue_initial_recruit_reward(item_type,blackboard):
-    reward = analyze_item_reward(blackboard)
+    reward = analyze_rogue_item_reward(blackboard)
     reward["main"] = "初始招募时，额外" + reward["main"]
     return reward
 
 # 下次开局奖励
 def rogue_init_gift(item_type,blackboard):
-    reward = analyze_item_reward(blackboard)
+    reward = analyze_rogue_item_reward(blackboard)
     reward["main"] = "下次开始探索时，额外" + reward["main"]
     return reward
 
 # 物品数量覆盖
 def rogue_item_cover_set(item_type,blackboard):
-    item = analyze_item(blackboard)
+    item = analyze_rogue_item(blackboard)
     if item != None:
         return {
             "main" : f"让玩家的{item.display_type} {item.display_name} 数量增加/减少至 {math.floor(blackboard.get('count',1))}",
@@ -64,21 +64,21 @@ def rogue_item_cover_set(item_type,blackboard):
 
 # 进入岁兽残识发放奖励（仅一次）
 def rogue_secret_into_reward_once(item_type,blackboard):
-    timing = analyze_timing(item_type,blackboard)
-    reward = analyze_item_reward(blackboard)
+    timing = analyze_relic_timing(item_type,blackboard)
+    reward = analyze_rogue_item_reward(blackboard)
     reward["main"] = timing + "首次进入岁兽残识时" + reward["main"]
     return reward
 
 # 进入岁兽残识发放奖励
 def rogue_secret_into_reward(item_type,blackboard):
-    timing = analyze_timing(item_type,blackboard)
-    reward = analyze_item_reward(blackboard)
+    timing = analyze_relic_timing(item_type,blackboard)
+    reward = analyze_rogue_item_reward(blackboard)
     reward["main"] = timing + "每次进入岁兽残识时" + reward["main"]
     return reward
 
 # 钱的自变化
 def rogue_copper_exchange(item_type,blackboard):
-    timing = analyze_timing(item_type,blackboard)
+    timing = analyze_relic_timing(item_type,blackboard)
     if "id" in blackboard:
         if blackboard["id"] == "pool_reroll_copper":
             return {"main" : f"{timing}尝试将钱盒内的该钱替换为随机的钱"}
@@ -104,7 +104,7 @@ def rogue_battle_extra_recruit_ticket(item_type,blackboard):
 
 # 战斗中获得临时生命值
 def rogue_level_life_point_add(item_type,blackboard):
-    timing = analyze_timing(item_type,blackboard)
+    timing = analyze_relic_timing(item_type,blackboard)
     return {"main" : f"{timing}战斗开始时获得{int(blackboard['value'])}点本局专用的生命值（会影响国王套判断）"}
 
 # 特定情况下的奖励增加
@@ -112,21 +112,21 @@ def rogue_up_reward(item_type,blackboard):
     timing = "未知时点，"
     if blackboard["mask"] == "battle":
         timing = "战斗胜利时，"
-    item = analyze_item(blackboard)
+    item = analyze_rogue_item(blackboard)
     percent = to_delta_percent(blackboard["up"])
     return {"main" : f"{timing}使获得的 {item.display_name} 数量{percent}"}
 
 # 玩家升级时的额外奖励
 def rogue_player_level_rewards(item_type,blackboard):
     level = int(blackboard["level"])
-    reward = analyze_item_reward(blackboard)
+    reward = analyze_rogue_item_reward(blackboard)
     reward["main"] = f"玩家指挥等级达到{level}时，立刻" + reward["main"]
     return reward
 
 # 战斗结束时的额外奖励
 def rogue_battle_extra_reward(item_type,blackboard):
-    timing = analyze_timing(item_type,blackboard)
-    reward = analyze_item_reward(blackboard)
+    timing = analyze_relic_timing(item_type,blackboard)
+    reward = analyze_rogue_item_reward(blackboard)
     reward["main"] = f"{timing}战斗结束将额外" + reward["main"]
     return reward
 

@@ -1,10 +1,10 @@
 #----------------------------------------
 # 黑板检查类Node
 #----------------------------------------
-from translator import anne_dictionary
+from dictionary import anne_dictionary
 
 # 检查黑板
-def node_FilterByBlackboardValue(node):
+def node_FilterByBlackboardValue(node,blackboard):
     left_var = "["+node["_blackboardKey"]+"]"
     right_var = node["_valueToCompare"]
     compare = anne_dictionary("compare",node["_condType"])
@@ -39,7 +39,7 @@ def node_FilterByBlackboardValue(node):
         }
 
 # 检查黑板是否等于某个浮点值（带浮点数差值处理）
-def node_IsBlackboardEqualWithFloat(node):
+def node_IsBlackboardEqualWithFloat(node,blackboard):
     left_var = node["_var"]
     right_var = node["_compareValue"]
     if right_var == 0.0:
@@ -56,7 +56,7 @@ def node_IsBlackboardEqualWithFloat(node):
         }
 
 # 检查末影黑板（同UID单位间互通）
-def node_FilterByCharacterSharedBlackboard(node):
+def node_FilterByCharacterSharedBlackboard(node,blackboard):
     target_name = anne_dictionary("target",node["_target"])
     left_var = "["+node["_blackboardKey"]+"]"
     right_var = node["_valueToCompare"]
@@ -73,7 +73,7 @@ def node_FilterByCharacterSharedBlackboard(node):
     }
 
 # 检查末影黑板上是否存在目标的EnemyID（同UID单位间互通）
-def node_CheckHasEnemyIdInCharacterSharedBlackboard(node):
+def node_CheckHasEnemyIdInCharacterSharedBlackboard(node,blackboard):
     source_name = anne_dictionary("target",node["_source"])
     target_name = anne_dictionary("target",node["_target"])
     return {
@@ -85,7 +85,7 @@ def node_CheckHasEnemyIdInCharacterSharedBlackboard(node):
     }
 
 # 检查黑板是否为0或未定义
-def node_IsBlackboardZero(node):
+def node_IsBlackboardZero(node,blackboard):
     return {
         "main" : f"检查黑板 [{node['_var']}] 的值",
         "true" : f"若不存在或 [{node['_var']}] = 0",

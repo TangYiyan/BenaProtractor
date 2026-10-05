@@ -1,11 +1,11 @@
 #----------------------------------------
 # 辞岁行相关Node
 #----------------------------------------
-from translator import anne_dictionary
-from .analyzer import to_percent
+from dictionary import anne_dictionary
+from analyzer import to_percent
 
 # 修改颜色
-def node_Act49SideSetEntityAnimatorColor(node):
+def node_Act49SideSetEntityAnimatorColor(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     color = (node["color"]["r"] , node["color"]["g"] , node["color"]["b"])
     alpha = to_percent(node["color"]["a"])
@@ -37,7 +37,7 @@ def node_Act49SideSetEntityAnimatorColor(node):
     }
 
 # 浪里玄条字形态寻路
-def node_Act49SideEnemyTjglyTryFindNextTile(node):
+def node_Act49SideEnemyTjglyTryFindNextTile(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     return {
         "main" : f"若{target_name}处于字形态下，尝试寻找并移动到下一个地块上",
@@ -46,7 +46,7 @@ def node_Act49SideEnemyTjglyTryFindNextTile(node):
     }
 
 # 浪里玄条绑定字
-def node_Act49SideEnemyTjglyLockSelfWithTile(node):
+def node_Act49SideEnemyTjglyLockSelfWithTile(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     return {
         "main" : f"尝试将{target_name}与当前所在字格地块的\"鱼\"字相绑定",
@@ -55,7 +55,7 @@ def node_Act49SideEnemyTjglyLockSelfWithTile(node):
     }
 
 # 检查所在字格地块是否可部署
-def node_Act49SideCheckWordTileBuildable(node):
+def node_Act49SideCheckWordTileBuildable(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     return {
         "main" : f"检查{target_name}所在的字格地块是否可部署",
@@ -64,7 +64,7 @@ def node_Act49SideCheckWordTileBuildable(node):
     }
 
 # 检查所在字格地块是否为某字
-def node_Act49SideCheckCharacterTileType(node):
+def node_Act49SideCheckCharacterTileType(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     if node["_checkAnyTile"]:
         return {
@@ -86,7 +86,7 @@ def node_Act49SideCheckCharacterTileType(node):
     }
 
 # 将所在字格地块改写为某字
-def node_Act49SideWriteCharacter(node):
+def node_Act49SideWriteCharacter(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     if node["_tileType"] == "None":
         return {

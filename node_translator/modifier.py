@@ -1,10 +1,10 @@
 #----------------------------------------
 # 调整值专用的Node
 #----------------------------------------
-from translator import anne_dictionary
+from dictionary import anne_dictionary
 
 # 是否为伤害？实际判定上为检查是否为伤害+伤害类型不为治疗
-def node_IsDamage(node):
+def node_IsDamage(node,blackboard):
     return {
         "main" : "",
         "true" : f"若本次调整值为治疗以外类型的伤害",
@@ -12,7 +12,7 @@ def node_IsDamage(node):
     }
 
 # 是否为治疗？实际判定上为检查是否为伤害+伤害类型为治疗
-def node_IsHeal(node):
+def node_IsHeal(node,blackboard):
     return {
         "main" : "",
         "true" : f"若本次调整值为治疗（治疗类型的伤害）",
@@ -20,7 +20,7 @@ def node_IsHeal(node):
     }
 
 # 是否为元素损伤？最早明日方舟没有元素伤害这一概念，因此ElementDamage一直都是元素损伤
-def node_IsElementDamage(node):
+def node_IsElementDamage(node,blackboard):
     return {
         "main" : "",
         "true" : f"若本次调整值为元素损伤",
@@ -28,7 +28,7 @@ def node_IsElementDamage(node):
     }
 
 # 伤害的攻击力倍率是否为0？
-def node_IsAtkScaleZero(node):
+def node_IsAtkScaleZero(node,blackboard):
     return {
         "main" : "",
         "true" : f"若本次伤害的攻击力倍率为零",
@@ -36,7 +36,7 @@ def node_IsAtkScaleZero(node):
     }
 
 # 调整值实际产生影响后是否
-def node_FilterModifierByRealDelta(node):
+def node_FilterModifierByRealDelta(node,blackboard):
     modifier_target = anne_dictionary("modifier_target_type",node["_modifierTargetType"])
     compare = anne_dictionary("compare",node["_condType"])
     compare_not = anne_dictionary("compare_not",node["_condType"])
@@ -47,7 +47,7 @@ def node_FilterModifierByRealDelta(node):
     }
 
 # 检查调整值是否带有标记
-def node_CheckModifierContainsKey(node):
+def node_CheckModifierContainsKey(node,blackboard):
     return {
         "main" : f"检查事件调整值是否具有\"{node['_customKey']}\"标记",
         "true" : f"若具有\"{node['_customKey']}\"标记",
@@ -55,12 +55,12 @@ def node_CheckModifierContainsKey(node):
     }
 
 # 取消调整值
-def node_CancelModifier(node):
+def node_CancelModifier(node,blackboard):
     reason = anne_dictionary("cancel_reason",node["_reason"])
     return {"main" : "取消本次调整值，原因："+reason}
 
 # 确保伤害或治疗量至少有...
-def node_EnsureDmgOrHeal(node):
+def node_EnsureDmgOrHeal(node,blackboard):
     return {
         "main" : f"确保本次伤害或治疗量至少有 持有者攻击力 × [{node['_key']}] 点（若低于则设置为这个值）",
         "true" : "若此次调整值是伤害或治疗",
@@ -68,7 +68,7 @@ def node_EnsureDmgOrHeal(node):
     }
 
 # “消耗”致命伤害调整值的处理权
-def node_ConsumeTrySetHpZeroModifier(node):
+def node_ConsumeTrySetHpZeroModifier(node,blackboard):
     result = {
         "main" : "尝试\"消耗\"本次致命伤害的处理权",
         "description" : f"意在\"确保同一时间只有一个致命伤害相关的效果被处理\"",
@@ -84,7 +84,7 @@ def node_ConsumeTrySetHpZeroModifier(node):
     return result
 
 # 致命伤害调整值处理权“消耗”者
-def node_IsConsumerOfTrySetHpZeroModifier(node):
+def node_IsConsumerOfTrySetHpZeroModifier(node,blackboard):
     return {
         "main" : "检查本Buff是否为\"消耗\"了致命伤害的处理权",
         "description" : f"意在\"确保同一时间只有一个致命伤害相关的效果被处理\"",
@@ -94,7 +94,7 @@ def node_IsConsumerOfTrySetHpZeroModifier(node):
     }
 
 # 检查伤害的详细信息
-def node_FilterDamageModifer(node):
+def node_FilterDamageModifer(node,blackboard):
     short_conditions = []
     conditions = []
     can_short = True
@@ -158,7 +158,7 @@ def node_FilterDamageModifer(node):
     return result
 
 # 调整值倍率提升
-def node_ModifierScaleUp(node):
+def node_ModifierScaleUp(node,blackboard):
     if node["_scaleKey"] != None and node["_scaleKey"] != "":
         return {
             "main" : f"令本次调整值的基础值提升至原本的 [{node['_scaleKey']}] 倍"
@@ -170,7 +170,7 @@ def node_ModifierScaleUp(node):
         }
 
 # 检查调整值对象行动类型
-def node_IfModifierTarget(node):
+def node_IfModifierTarget(node,blackboard):
     if node["_mode"] != "ALL":
         motion = anne_dictionary("motion",node["_mode"])
         return {
@@ -186,7 +186,7 @@ def node_IfModifierTarget(node):
         }
 
 # 检查是否为元素损伤/特定类型元素损伤的调整值
-def node_FilterElementDamageModifer(node):
+def node_FilterElementDamageModifer(node,blackboard):
     if node["_filterEPType"]:
         ep_type = anne_dictionary("element",node["_epType"])
         return {
@@ -202,7 +202,7 @@ def node_FilterElementDamageModifer(node):
         }
 
 # 设置无视闪避效果
-def node_SetIgnoreMissFlag(node):
+def node_SetIgnoreMissFlag(node,blackboard):
     if node["_ignoreMissFlag"] == "PHYSICAL":
         return {"main" : "给予本次调整值一个“若为物理，则可以无视闪避”的IgnoreMissFlag"}
     elif node["_ignoreMissFlag"] == "MAGICAL":
@@ -210,7 +210,7 @@ def node_SetIgnoreMissFlag(node):
     return {"main" : "给予本次调整值一个“可以无视闪避”的IgnoreMissFlag"}
 
 # 修改调整值的来源
-def node_ChangeModifierSource(node):
+def node_ChangeModifierSource(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     if node["_targetType"] == "BUFF_SOURCE" or node["_targetType"] == "BUFF_OWNER":
         target_name = "本Buff的"+target_name

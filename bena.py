@@ -5,7 +5,7 @@
 import os
 import json
 from data_class import *
-from translator import bena_dictionary
+from dictionary import bena_dictionary
 
 # 表格数据
 BUFF_KEYS = []

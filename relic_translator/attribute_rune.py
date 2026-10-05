@@ -4,11 +4,11 @@
 import math
 
 from bena import ask_bena
-from .analyzer import analyze_timing, anne_dictionary, to_delta_percent, to_delta, analyze_selector, is_attribute_key, to_percent
+from analyzer import analyze_relic_timing, anne_dictionary, to_delta_percent, to_delta, analyze_selector, is_attribute_key, to_percent
 
 # 角色属性乘法藏品符文
 def rogue_char_attribute_mul(item_type,blackboard):
-    timing = analyze_timing(item_type,blackboard)
+    timing = analyze_relic_timing(item_type,blackboard)
     modifiers = []
     for key,value in blackboard.items():
         if is_attribute_key(key):
@@ -22,7 +22,7 @@ def rogue_char_attribute_mul(item_type,blackboard):
 
 # 角色属性加法藏品符文
 def rogue_char_attribute_add(item_type,blackboard):
-    timing = analyze_timing(item_type,blackboard)
+    timing = analyze_relic_timing(item_type,blackboard)
     modifiers = []
     for key,value in blackboard.items():
         if is_attribute_key(key):
@@ -36,7 +36,7 @@ def rogue_char_attribute_add(item_type,blackboard):
 
 # 依照层数增加角色属性
 def rogue_layer_char_attribute_mul(item_type,blackboard):
-    timing = analyze_timing(item_type,blackboard)
+    timing = analyze_relic_timing(item_type,blackboard)
     modifiers = []
     for key,value in blackboard.items():
         if is_attribute_key(key):
@@ -60,7 +60,7 @@ def rogue_layer_char_attribute_mul(item_type,blackboard):
 
 # 依照层数增加角色属性
 def rogue_layer_char_attribute_add(item_type,blackboard):
-    timing = analyze_timing(item_type,blackboard)
+    timing = analyze_relic_timing(item_type,blackboard)
     modifiers = []
     for key,value in blackboard.items():
         if is_attribute_key(key):
@@ -84,7 +84,7 @@ def rogue_layer_char_attribute_add(item_type,blackboard):
 
 # 敌人属性乘法藏品符文
 def rogue_enemy_attribute_mul(item_type,blackboard):
-    timing = analyze_timing(item_type,blackboard)
+    timing = analyze_relic_timing(item_type,blackboard)
     modifiers = []
     for key,value in blackboard.items():
         if is_attribute_key(key):
@@ -98,7 +98,7 @@ def rogue_enemy_attribute_mul(item_type,blackboard):
 
 # 敌人属性加法藏品符文
 def rogue_enemy_attribute_add(item_type,blackboard):
-    timing = analyze_timing(item_type,blackboard)
+    timing = analyze_relic_timing(item_type,blackboard)
     modifiers = []
     for key,value in blackboard.items():
         if is_attribute_key(key):

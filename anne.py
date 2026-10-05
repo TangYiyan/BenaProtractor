@@ -6,8 +6,8 @@ import math
 import traceback
 from data_class import *
 from bena import ask_bena, translate_buff_name
-from relic_translator.analyzer import analyze_relic_selector, analyze_timing
-from translator import anne_dictionary, get_anne_dictionary
+from analyzer import analyze_relic_selector, analyze_relic_timing
+from dictionary import anne_dictionary, get_anne_dictionary
 
 ANNE_NODE = None
 ANNE_RELIC = None
@@ -39,14 +39,14 @@ class AnneNode:
         
     # 翻译重定向器，本质switch case
     # 翻译返回的结果始终是一层一层的结构体
-    def translate(self,node):
+    def translate(self,node,blackboard=None):
         node_name = node.node_name
-        if node.translation == None:
+        if node.translation == None or blackboard != None:
             #print(f"[安妮]尝试翻译节点 {node_name}")
             method = getattr(self.translator, "node_"+node_name, "")
             try:
                 if method != "" :
-                    node.translation = method(node.node_data)
+                    node.translation = method(node.node_data,{} if blackboard == None else blackboard)
                     # 检查是否有需要嵌套翻译的内容
                     if "sub_nodes" in node.translation:
                         sub_content_list = []
@@ -54,7 +54,7 @@ class AnneNode:
                             sub_content_list.append(Node(sub_content))
                         if "children" not in node.translation:
                             node.translation["children"] = []
-                        node.translation["children"] += self.translate_all(sub_content_list,True)
+                        node.translation["children"] += self.translate_all(sub_content_list)["children"]
                         del node.translation["sub_nodes"]
                 else: # 无法翻译，把所有数据搓成可阅读的格式
                     children = []
@@ -130,8 +130,7 @@ class AnneNode:
         return node.translation
     
     # 全部翻译，包含对一些上下文Node的特殊处理
-    # 可以选择性的要求返回一个列表
-    def translate_all(self,node_list,return_list = False):
+    def translate_all(self,node_list,blackboard=None):
         children = []
         for node in node_list:
             # IfNot：反转前面的处理状态
@@ -152,10 +151,7 @@ class AnneNode:
                 children.append(self.translate_ifconditions(node))
             else:
                 children.append(self.translate(node))
-        if return_list:
-            return children
-        else:
-            return {"main" : "","children" : children}
+        return {"main" : "","children" : children}
     
     # IfElse的特殊处理
     def translate_ifelse(self,node):
@@ -321,7 +317,7 @@ class AnneRelic:
                             rogue_effect.translation["children"].append(gbuff_translation)
                 return rogue_effect.translation
             else: # 无法翻译，把所有数据搓成可阅读的格式
-                prefix = analyze_timing(rogue_effect.type,rogue_effect.blackboard)
+                prefix = analyze_relic_timing(rogue_effect.type,rogue_effect.blackboard)
                 rogue_effect.translation = {
                     "main" : prefix+effect_key+"（未翻译）",
                     "style_closed" : True,
@@ -333,16 +329,12 @@ class AnneRelic:
         return rogue_effect.translation
     
     # 全部翻译
-    # 可以选择性的要求返回一个列表
-    def translate_all(self,rogue_effect_list,return_list = False):
+    def translate_all(self,rogue_effect_list):
         children = []
         for rogue_effect in rogue_effect_list:
             translation = self.translate(rogue_effect)
             children.append(translation)
-        if return_list:
-            return children
-        else:
-            return {"main" : "","children" : children}
+        return {"main" : "","children" : children}
 
 
 ANNE_NODE = AnneNode()
@@ -457,7 +449,7 @@ def translate_whole_global_buff(gbuff: GlobalBuff,relic_selector: dict = None):
     if len(gbuff.deck_buff_datas) > 0:
         deck_buffs_translation = {"main" : f"为待部署区的{target}施加以下DeckBuff：","children" : []}
         for deck_buff_data in gbuff.deck_buff_datas:
-            _buff = ANNE_NODE.translator.analyze_deck_buff(deck_buff_data)
+            _buff = ANNE_NODE.translator.analyze_deckbuff(deck_buff_data)
             buff_data = deck_buff_data["buff"]
             if not buff_data["loadFromDB"] and buff_data["templateKey"] != "empty":
                 buff_template = ask_bena("buff_template",buff_data["templateKey"])
@@ -573,7 +565,7 @@ def translate_whole_rogue_item(rogue_item: RogueItem):
 
     return translation
 
-# 将翻译中的所有黑板值替换为实际值
+# 将翻译中的所有黑板值替换为实际值（等待重构）
 def translation_apply_blackboard(translation: dict,blackboard: dict):
     for i in ["main","description"]:
         if i in translation:
@@ -581,6 +573,8 @@ def translation_apply_blackboard(translation: dict,blackboard: dict):
                 if key in translation[i]:
                     if isinstance(bb,int) or isinstance(bb,float):
                         if bb < 0:
+                            translation[i] = translation[i].replace(f"+[{key}]%",str(bb * 100)+"%")
+                            translation[i] = translation[i].replace(f"+[{key}]",str(bb))
                             translation[i] = translation[i].replace(f"[{key}]%(终乘)",str(bb * 100 + 100)+"%(终乘)")
                         translation[i] = translation[i].replace(f"[{key}]%",str(bb * 100)+"%")
                     translation[i] = translation[i].replace(f"[{key}]",str(bb))
