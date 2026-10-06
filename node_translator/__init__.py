@@ -7,6 +7,7 @@ from .card_buff import *
 from .global_buff import *
 from .damage import *
 from .damage_modify import *
+from .block_damage import *
 from .heal import *
 from .cost import *
 from .element import *

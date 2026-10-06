@@ -4,7 +4,7 @@
 from dictionary import anne_dictionary
 
 # 检查是否持有某Buff
-def node_CheckContainsBuff(node,blackboard):
+def CheckContainsBuff(node,blackboard):
     # 未解析参数：_checkSourceHost
     target_name = anne_dictionary("target",node["_targetType"])
     condition = f"检查{target_name}是否"
@@ -59,34 +59,34 @@ def node_CheckContainsBuff(node,blackboard):
         }
 
 # 检查是否持有本Buff的附属Buff
-def node_CheckContainsDerviedBuff(node,blackboard):
+def CheckContainsDerviedBuff(node,blackboard):
     if node["_derviedBuffKey"] != None and node["_derviedBuffKey"] != "":
         return {
             "main" : f"检查持有者是否同时持有本Buff的附属Buff <{node['_derviedBuffKey']}>",
             "link" : f"buff.{node['_derviedBuffKey']}",
-            "true" : "若其同时持有该附属Buff",
-            "false" : "若其不持有该附属Buff"
+            "true" : "其同时持有该附属Buff",
+            "false" : "其不持有该附属Buff"
         }
     else:
         return {
             "main" : f"检查持有者是否同时持有本Buff的任意附属Buff",
-            "true" : "若其同时持有本Buff的任一附属Buff",
-            "false" : "若其不持有本Buff的任何附属Buff"
+            "true" : "其同时持有本Buff的任一附属Buff",
+            "false" : "其不持有本Buff的任何附属Buff"
         }
 
 # 检查Buff剩余持续时间
-def node_CheckRemainTime(node,blackboard):
+def CheckRemainTime(node,blackboard):
     remaining_time = node["_checkRemainTime"]
     return {
         "main" : "检查本Buff的剩余持续时间",
-        "true" : f"若剩余时间 ≤ {remaining_time}秒",
-        "false" : f"若剩余时间 > {remaining_time}秒"
+        "true" : f"剩余时间 ≤ {remaining_time}秒",
+        "false" : f"剩余时间 > {remaining_time}秒"
     }
 
 # 检查上下文中的Buff的名称
-def node_CheckMainBuffId(node,blackboard):
+def CheckMainBuffId(node,blackboard):
     return {
         "main" : "检查\"上下文\"中的那个Buff的名称",
-        "true" : f"若该Buff名称为 <{node['_idToFilter']}>",
-        "false" : f"若该Buff名称不为 <{node['_idToFilter']}>"
+        "true" : f"该Buff名称为 <{node['_idToFilter']}>",
+        "false" : f"该Buff名称不为 <{node['_idToFilter']}>"
     }

@@ -5,7 +5,7 @@ from dictionary import anne_dictionary
 from analyzer import to_percent
 
 # 触发某个能力
-def node_TriggerAbility(node,blackboard):
+def TriggerAbility(node,blackboard):
     # 未解析参数：_checkCanUseAblityFlag
     target_name = anne_dictionary("target",node["_targetType"])
     ability_name = node["_abilityName"]
@@ -16,12 +16,12 @@ def node_TriggerAbility(node,blackboard):
         return {"main" :f"尝试让{owner_name}向{target_name}触发{ability_name}能力"}
 
 # 触发自动触发技能（无视触发条件）
-def node_TriggerAutoSkill(node,blackboard):
+def TriggerAutoSkill(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     return {"main" : f"尝试让{target_name}触发其自动触发的技能（无视其自动触发条件，其余技能条件不会无视）"}
 
 # 触发敌用技能
-def node_TriggerEnemySkill(node,blackboard):
+def TriggerEnemySkill(node,blackboard):
     owner_name = anne_dictionary("target",node["_ownerType"])
     target_name = anne_dictionary("target",node["_targetType"])
     skill_name = node["_skillName"] if node["_skillName"] != None and node["_skillName"] != "" else " [skill_name] "
@@ -56,7 +56,7 @@ def node_TriggerEnemySkill(node,blackboard):
     return result
 
 # 中断角色类技能
-def node_InterruptCharacterSkill(node,blackboard):
+def InterruptCharacterSkill(node,blackboard):
     target_name = anne_dictionary("target",node["_charFrom"])
     features = []
     if node["_resetAbilityCooldownIgnoreAffecting"]: # 按yj的逻辑，两个都开的话其实是重置两次冷却，意义不明
@@ -71,12 +71,12 @@ def node_InterruptCharacterSkill(node,blackboard):
     return result
 
 # 中断召唤物的技能
-def node_InterruptTokenSkill(node,blackboard):
+def InterruptTokenSkill(node,blackboard):
     host_name = anne_dictionary("target",node["_hostType"])
     return {"main" : f"由{host_name}终止Buff持有者的技能（通常来说，持有者应该是{host_name}的召唤物）"}
 
 # 中断能力
-def node_InterruptAbility(node,blackboard):
+def InterruptAbility(node,blackboard):
     # 未解析参数：_stopAffect
     owner_name = anne_dictionary("target",node["_ownerType"])
     if node["_useBlackboardCardUidAsOwner"]:
@@ -97,7 +97,7 @@ def node_InterruptAbility(node,blackboard):
         return {"main" : f"终止{owner_name}{ability}"}
 
 # 能力的伤害可能致命时（蕾缪安2技能斩杀线逻辑）
-def node_CheckAbilityDamageDeadly(node,blackboard):
+def CheckAbilityDamageDeadly(node,blackboard):
     source_name = anne_dictionary("target",node["_sourceType"])
     if node["_damageType"] != "PHYSICAL": # 如果填入的不是物理伤害——直接失败。这是给设计师的图灵测试？？？
         return {
@@ -107,12 +107,12 @@ def node_CheckAbilityDamageDeadly(node,blackboard):
         }
     return {
         "main" : f"检查{source_name}当前能力的攻击力倍率与目标的状态",
-        "true" : "若 攻击力 × 其攻击力倍率 ≥ 目标当前生命值 + 目标当前防御力",
-        "false" : "若 攻击力 × 其攻击力倍率 < 目标当前生命值 + 目标当前防御力"
+        "true" : " 攻击力 × 其攻击力倍率 ≥ 目标当前生命值 + 目标当前防御力",
+        "false" : " 攻击力 × 其攻击力倍率 < 目标当前生命值 + 目标当前防御力"
     }
 
 # 弹药类技能弹药量修改综合节点
-def node_AmmoSkillCountModifier(node,blackboard):
+def AmmoSkillCountModifier(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     
     if node["_modifyMaxCount"]: # 修改最大弹药数模式
@@ -158,8 +158,8 @@ def node_AmmoSkillCountModifier(node,blackboard):
         else:
             return {
                 "main" : f"令{target_name}（角色类）当前开启的弹药类技能{recover}",
-                "true" : "若恢复了至少1发弹药" if not node["_useEvtRetAsReturnValue"] else "不论弹药是否恢复成功",
-                "false" : "若连1发弹药也无法恢复（恢复已达到上限）" if not node["_useEvtRetAsReturnValue"] else "始终不执行"
+                "true" : "恢复了至少1发弹药" if not node["_useEvtRetAsReturnValue"] else "不论弹药是否恢复成功",
+                "false" : "连1发弹药也无法恢复（恢复已达到上限）" if not node["_useEvtRetAsReturnValue"] else "始终不执行"
             }
     if node["_consumeEventCount"]: # 消耗弹药模式
         consume = "消耗"
@@ -169,8 +169,8 @@ def node_AmmoSkillCountModifier(node,blackboard):
             consume += str(node["_recoverCount"])+"发弹药"
         return {
             "main" : f"令{target_name}（角色类）当前开启的弹药类技能{consume}",
-                "true" : "若弹药消耗成功" if not node["_useEvtRetAsReturnValue"] else "不论弹药是否消耗成功",
-                "false" : "若弹药消耗失败" if not node["_useEvtRetAsReturnValue"] else "始终不执行"
+                "true" : "弹药消耗成功" if not node["_useEvtRetAsReturnValue"] else "不论弹药是否消耗成功",
+                "false" : "弹药消耗失败" if not node["_useEvtRetAsReturnValue"] else "始终不执行"
         }
     if node["_discardRemainingCount"]: # 弃弹模式
         discard = "抛弃所有弹药"
@@ -186,10 +186,10 @@ def node_AmmoSkillCountModifier(node,blackboard):
     }
 
 # 战栗的打断Combat的能力
-def node_InterruptEnemyCombat(node,blackboard):
+def InterruptEnemyCombat(node,blackboard):
     target_name = anne_dictionary("target",node["_ownerType"])
     return {
         "main" : f"若{target_name}目前使用中的动画能力为当前模式下的Combat能力（或同名能力），将该能力打断",
-        "true" : "若为该能力且打断成功",
-        "false" : "若不为改能力或打断失败"
+        "true" : "为该能力且打断成功",
+        "false" : "不为改能力或打断失败"
     }

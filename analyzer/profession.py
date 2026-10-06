@@ -5,32 +5,62 @@ from dictionary import anne_dictionary
 
 # 职业筛选的处理
 # 返回职业的字符串。说明筛选的职业以及“干员”和“召唤物”这样的称呼
-def analyze_profession(profession_mask):
+def analyze_profession(profession_mask,condition_like=False):
     profession_mask = profession_mask.upper()
-    masked_list = [profession_mask]
-    if "," in profession_mask:
-        masked_list = profession_mask.split(",")
-    elif "|" in profession_mask:
-        masked_list = profession_mask.split("|")
+    # 职业掩码分析
+    professions = []
+    has_trap = False
+    has_token = False
+    if "PIONEER" in profession_mask:
+        professions.append("PIONEER")
+    if "WARRIOR" in profession_mask:
+        professions.append("WARRIOR")
+    if "TANK" in profession_mask:
+        professions.append("TANK")
+    if "SNIPER" in profession_mask:
+        professions.append("SNIPER")
+    if "CASTER" in profession_mask:
+        professions.append("CASTER")
+    if "SUPPORT" in profession_mask:
+        professions.append("SUPPORT")
+    if "MEDIC" in profession_mask:
+        professions.append("MEDIC")
+    if "SPECIAL" in profession_mask:
+        professions.append("SPECIAL")
+    if "TRAP" in profession_mask:
+        professions.append("TRAP")
+        has_trap = True
+    if "TOKEN" in profession_mask:
+        professions.append("TOKEN")
+        has_token = True
+    # 全职业，相当于没判
+    if len(professions) >= 10:
+        return "" if condition_like else "干员、召唤物、装置"
     # 如果大于等于8职业的话有可能是用于筛所有干员的，进行缩减处理
-    if len(masked_list) >= 8 and "PIONEER" in masked_list and "WARRIOR" in masked_list and "TANK" in masked_list and "SNIPER" in masked_list and "CASTER" in masked_list and "SUPPORT" in masked_list and "MEDIC" in masked_list and "SPECIAL" in masked_list:
-        if "TOKEN" in masked_list and "TRAP" in masked_list:
-            return "干员、召唤物、装置"
-        elif "TOKEN" in masked_list:
-            return "干员、召唤物"
-        elif "TRAP" in masked_list:
-            return "干员、装置"
+    if len(professions) == 9 and has_trap and not has_token:
+        return "非召唤物职业的" if condition_like else "干员、装置"
+    if len(professions) == 9 and has_token and not has_trap:
+        return "非装置职业的" if condition_like else "干员、召唤物"
+    if len(professions) == 8 and not has_token and not has_trap:
+        return "干员"
+    if len(professions) == 1:
+        if has_token:
+            return "召唤物"
+        if has_trap:
+            return "装置"
+        return anne_dictionary("profession",professions[0])+"干员"
+    # 保留处理
+    if condition_like:
+        if len(professions) > 0:
+            return "职业为" + "/".join([anne_dictionary("profession",profession) for profession in professions]) + "的"
+    op_professions = []
+    objects = []
+    for profession in professions:
+        if profession in ["TOKEN","TRAP"]:
+            objects.append(anne_dictionary("profession",profession))
         else:
-            return "干员"
-    else:
-        professions = []
-        objects = []
-        for masked in masked_list:
-            if masked in ["TOKEN","TRAP"]:
-                objects.append(anne_dictionary("profession",masked))
-            else:
-                professions.append(anne_dictionary("profession",masked))
-        return "、".join(["/".join(professions)+"干员"] + objects)
+            op_professions.append(anne_dictionary("profession",profession))
+    return "、".join(["/".join(op_professions)+"干员"] + objects)
 
 # 子职业筛选的处理
 # 返回子职业的字符串。说明筛选的子职业以及“干员”

@@ -3,16 +3,18 @@
 #----------------------------------------
 import math
 
-from .delta_and_percent import to_delta, to_delta_percent, to_percent
+from .attribute import analyze_attribute_modifiers
 from dictionary import anne_dictionary
+
+STATUS_RESISTABLE_ABNORMAL = ["STUNNED","COLD","FROZEN","FEARED","PALSY","ATTRACTED"]
 
 # 解析Buff的详细信息
 # 返回结构体
-def analyze_buff(buff_data,full_information=False):
+def analyze_buff(buff_data: dict,blackboard: dict = {},full_information=False):
     buff_key = buff_data["buffKey"]
     # 开始解析
     features = []
-    blackboard = {"main" : "黑板数据：","children":[]}
+    blackboard_dict = {"main" : "黑板数据：","children":[]}
     template = "empty"
     has_resistable_flag = False
 
@@ -21,23 +23,22 @@ def analyze_buff(buff_data,full_information=False):
         for bb_data in buff_data["blackboard"]:
             if bb_data["value"]:
                 #blackboard[bb_data["key"]] = bb_data["value"]
-                blackboard["children"].append({"main" : f"[{bb_data['key']}] = {bb_data['value']}"})
+                blackboard_dict["children"].append({"main" : f"[{bb_data['key']}] = {bb_data['value']}"})
             elif bb_data["valueStr"]:
                 #blackboard[bb_data["key"]] = bb_data["valueStr"]
-                blackboard["children"].append({"main" : f"[{bb_data['key']}] = \"{bb_data['valueStr']}\""})
+                blackboard_dict["children"].append({"main" : f"[{bb_data['key']}] = \"{bb_data['valueStr']}\""})
 
     # 读取自数据库，一般是眩晕、寒冷那些，不管他
     if buff_data["loadFromDB"]:
         if full_information:
             features.append("读取自数据库：[" + buff_key + "]")
-        elif len(blackboard["children"]) > 0:
+        elif len(blackboard_dict["children"]) > 0:
             return {
                 "main" : "<" + buff_key + "> (读取自数据库)",
-                "link" : "buff." + buff_key,
-                "children" : [blackboard]
+                "children" : [blackboard_dict]
             }
         else:
-            return {"main" : "<" + buff_key + "> (读取自数据库)","link" : "buff." + buff_key}
+            return {"main" : "<" + buff_key + "> (读取自数据库)"}
     
     # 检查模板与事件优先级
     if buff_data["templateKey"] != "empty" :
@@ -91,7 +92,7 @@ def analyze_buff(buff_data,full_information=False):
             for flag in attrs["abnormalFlags"]:
                 flags.append(anne_dictionary("abnormal",flag))
                 # 包含可抵抗状态
-                if flag in ["STUNNED","COLD","FROZEN"]:
+                if flag in STATUS_RESISTABLE_ABNORMAL:
                     has_resistable_flag = True
             features.append("包含异常效果："+"、".join(flags))
         else:
@@ -99,7 +100,7 @@ def analyze_buff(buff_data,full_information=False):
                 flag_name = anne_dictionary("abnormal",flag)
                 features.append(flag_name)
                 # 包含可抵抗状态
-                if flag in ["STUNNED","COLD","FROZEN"]:
+                if flag in STATUS_RESISTABLE_ABNORMAL:
                     has_resistable_flag = True
     # 异常免疫
     if attrs["abnormalImmunes"] != None and len(attrs["abnormalImmunes"]) > 0:
@@ -150,37 +151,8 @@ def analyze_buff(buff_data,full_information=False):
                 features.append(combo_name+"免疫")
     # 属性加成（四 则 运 算）
     if attrs["attributeModifiers"] != None and len(attrs["attributeModifiers"]) > 0:
-        for modify in attrs["attributeModifiers"]:
-            attr_name = anne_dictionary("attribute",modify["attributeType"])
-            formula = modify["formulaItem"]
-            value = modify["value"]
-            value_str = str(value)
-            # 获取数据加成/减少的写法
-            if modify["loadFromBlackboard"] or modify["fetchBaseValueFromSourceEntity"]: # 读取自黑板或本尊，那value本身没用了，写个未知数
-                if modify["fetchBaseValueFromSourceEntity"]:
-                    value_str = "(来源同值)"
-                else:
-                    value_str = "[" + modify["attributeType"].lower() + "]" # 理论上是和type同名的黑板值
-                #
-                if formula == "ADDITION":
-                    value_str = "+"+value_str+"(直加)"
-                elif formula == "MULTIPLIER":
-                    value_str = "+"+value_str+"%(直乘)"
-                elif formula == "FINAL_ADDITION":
-                    value_str = "+"+value_str+"(终加)"
-                elif formula == "FINAL_SCALER":
-                    value_str = "×"+value_str+"%(终乘)"
-            else:
-                if formula == "FINAL_SCALER": # yj的小巧思会让终乘在负的情况下+1，实际徒增学习和排错成本
-                    value_str = to_percent(value,True) + "(终乘)"
-                elif formula == "MULTIPLIER": # 直乘就没有这种小巧思
-                    value_str = to_delta_percent(value) + "(直乘)"
-                elif formula == "ADDITION": # 剩下两个只看正负号
-                    value_str = to_delta(value) + "(直加)"
-                elif formula == "FINAL_ADDITION": # 剩下两个只看正负号
-                    value_str = to_delta(value) + "(终加)"
-            # 根据算法
-            features.append(attr_name+value_str)
+        features += analyze_attribute_modifiers(attrs["attributeModifiers"],blackboard)
+            
     # 耐久buff
     if buff_data["isDurableBuff"]:
         if full_information:
@@ -189,20 +161,19 @@ def analyze_buff(buff_data,full_information=False):
             features.append("不可清除")
     # 其伤害可未命中
     if buff_data["isDamageMissable"]:
-        if full_information:
-            features.append("该Buff的处理可能受命中率判定影响")
-        else:
-            features.append("受命中率判定影响")
+        features.append("攻击未命中时失效")
     # 几个失效条件，一起展示
     stopby = []
-    if buff_data["isSilenceable"]:
+    if buff_data.get("isSilenceable",False):
         stopby.append("沉默")
-    if buff_data["isStunnable"]:
+    if buff_data.get("isStunnable",False):
         stopby.append("晕眩")
-    if buff_data["isFreezable"]:
+    if buff_data.get("isFreezable",False):
         stopby.append("冻结")
-    if buff_data["isLevitatable"]:
+    if buff_data.get("isLevitatable",False):
         stopby.append("浮空")
+    if buff_data.get("isGroundBoundable",False):
+        stopby.append("缚地")
     if len(stopby) > 0:
         features.append("/".join(stopby)+"期间失效")
     # 属于状态可抵抗Buff？
@@ -344,8 +315,8 @@ def analyze_buff(buff_data,full_information=False):
         result["description"] = "；".join(features)
     
     # 最后写入黑板数据
-    if len(blackboard["children"]) > 0:
+    if len(blackboard_dict["children"]) > 0:
         if "children" not in result:
             result["children"] = []
-        result["children"].append(blackboard)
+        result["children"].append(blackboard_dict)
     return result

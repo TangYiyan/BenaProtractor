@@ -4,7 +4,7 @@
 from bena import ask_bena_character
 
 # 提供支援装置
-def rogue_misc_insert_token_card(item_type,blackboard):
+def misc_insert_token_card(item_type,blackboard):
     token_name = ask_bena_character(blackboard["token_key"])
     if token_name != blackboard["token_key"]:
         token_name += "（" + blackboard["token_key"] + "）"
@@ -21,7 +21,7 @@ def rogue_misc_insert_token_card(item_type,blackboard):
     return result
 
 # 展示消息
-def rogue_push_message(item_type,blackboard):
+def push_message(item_type,blackboard):
     return {
         "main" : "展示消息",
         "description" : f"文本路径：{blackboard['path']}"

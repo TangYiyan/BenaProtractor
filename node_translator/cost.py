@@ -4,7 +4,7 @@
 from dictionary import anne_dictionary
 
 # 修改费用
-def node_ModifyCost(node,blackboard):
+def ModifyCost(node,blackboard):
     source_name = anne_dictionary("target",node["_sourceType"])
     shared_flags = []
     if node["_forceToDisplayNumber"]: # 强制显示正数？
@@ -20,18 +20,18 @@ def node_ModifyCost(node,blackboard):
         return {"main" : f"令持有的部署费用+[{node['_blackboardKey']}]"}
     
 # 检查费用
-def node_CheckCost(node,blackboard):
+def CheckCost(node,blackboard):
     compare = anne_dictionary("compare",node["_compareType"])
     compare_not = anne_dictionary("compare_not",node["_compareType"])
     if node["_considerNegativeCost"]: # 考虑负费
         return {
             "main" : "检查当前关卡的部署费用（可\"贷款\"）",
-            "true" : f"若持有的部署费用 {compare} 部署费用下限 + [{node['_blackboardKey']}]",
-            "false" : f"若持有的部署费用 {compare_not} 部署费用下限 + [{node['_blackboardKey']}]"
+            "true" : f"持有的部署费用 {compare} 部署费用下限 + [{node['_blackboardKey']}]",
+            "false" : f"持有的部署费用 {compare_not} 部署费用下限 + [{node['_blackboardKey']}]"
         }
     else:
         return {
             "main" : "检查当前关卡的部署费用",
-            "true" : f"若持有的部署费用 {compare} [{node['_blackboardKey']}]",
-            "false" : f"若持有的部署费用 {compare_not} [{node['_blackboardKey']}]"
+            "true" : f"持有的部署费用 {compare} [{node['_blackboardKey']}]",
+            "false" : f"持有的部署费用 {compare_not} [{node['_blackboardKey']}]"
         }

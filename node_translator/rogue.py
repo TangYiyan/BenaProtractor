@@ -4,24 +4,24 @@
 from dictionary import anne_dictionary
 
 # 获取源石锭数量
-def node_AssignGoldToBlackboard(node,blackboard):
+def AssignGoldToBlackboard(node,blackboard):
     return {
         "main" : f"将当前“源石锭数量”记录至 [{node['_blackboardKey']}]",
         "description" : "“源石锭数量”是战斗开始时记录的源石锭道具数量，战斗中源石锭的增减不一定会影响此数值"
     }
 
 # 检查角色是否已秉烛
-def node_RoguelikeFilterCharacterInCandleHolder(node,blackboard):
+def RoguelikeFilterCharacterInCandleHolder(node,blackboard):
     target_name = anne_dictionary("target",node["_target"])
     return {
         "main" : f"检查{target_name}（干员）是否已秉烛",
         "description" : "黑流树海中的应急干员实现逻辑同样为“秉烛”",
-        "true" : "若该干员已秉烛",
-        "false" : "若该干员未秉烛，或单位不是干员/非招募所得"
+        "true" : "该干员已秉烛",
+        "false" : "该干员未秉烛，或单位不是干员/非招募所得"
     }
 
 # 获取零件箱内零件数量
-def node_AssignScrapInventoryToBlackboard(node,blackboard):
+def AssignScrapInventoryToBlackboard(node,blackboard):
     actions = []
     # 持有零件数量
     if node["_countBlackboardKey"] != None and node["_countBlackboardKey"] != "":
@@ -36,17 +36,17 @@ def node_AssignScrapInventoryToBlackboard(node,blackboard):
     }
 
 # 各种“源石锭被偷走了！”框
-def node_RoguelikeShowToastRL04(node,blackboard):
+def RoguelikeShowToastRL04(node,blackboard):
     if node["_toastTypeRL04"] == "GOLD_STEAL":
         return {"main" : f"展示{node['_lastTime']}秒“源石锭被偷走了！”（萨卡兹肉鸽风格）"}
     elif node["_toastTypeRL04"] == "DISASTER_CONTINUE":
         return {"main" : f"展示{node['_lastTime']}秒“战士应当视死如归”（萨卡兹肉鸽版）"}
     return {"main" : f"展示{node['_lastTime']}秒“???”（萨卡兹肉鸽风格）"}
-def node_RoguelikeShowToastRL05(node,blackboard):
+def RoguelikeShowToastRL05(node,blackboard):
     if node["_toastTypeRL05"] == "GOLD_STEAL":
         return {"main" : f"展示{node['_lastTime']}秒“源石锭被偷走了！”（界园肉鸽风格）"}
     return {"main" : f"展示{node['_lastTime']}秒“???”（界园肉鸽风格）"}
-def node_RoguelikeShowToastRL06(node,blackboard):
+def RoguelikeShowToastRL06(node,blackboard):
     if node["_toastTypeRL06"] == "GOLD_STEAL":
         return {"main" : f"展示{node['_lastTime']}秒“源石锭被偷走了！”（树海肉鸽风格）"}
     elif node["_toastTypeRL06"] == "STEP_STEAL":

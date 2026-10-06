@@ -5,9 +5,9 @@ from analyzer.buff import analyze_buff
 
 # 解析Buff的详细信息
 # 返回结构体
-def analyze_deckbuff(deck_buff_data,full_information=False):
+def analyze_deckbuff(deck_buff_data: dict,blackboard: dict = {},full_information=False):
     # 未解析参数：showToastWhenAffect
-    result = analyze_buff(deck_buff_data["buff"],full_information)
+    result = analyze_buff(deck_buff_data["buff"],blackboard,full_information)
     if full_information:
         if deck_buff_data["lifeType"] == "ALL_THE_TIME":
             result["children"].append({"main" : "每次对象部署时生效"})

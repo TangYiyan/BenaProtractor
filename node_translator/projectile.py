@@ -4,7 +4,7 @@
 from dictionary import anne_dictionary
 
 # 发出弹道
-def node_EmitProjectile(node,blackboard):
+def EmitProjectile(node,blackboard):
     # 未解析参数：_buffDataList _extraBlackboard _overwriteBlackboard _useProjectileAsTarget _useSnapshotAbilityWhenFromBuff
     source_name = anne_dictionary("target",node["_sourceType"]) if node["_useSourceAsProjectileSource"] else "持有者"
     target_name = anne_dictionary("target",node["_targetType"])
@@ -50,7 +50,7 @@ def node_EmitProjectile(node,blackboard):
     return result
 
 # 结束所有目标的弹道
-def node_FinishManagedProjectiles(node,blackboard):
+def FinishManagedProjectiles(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     return {
         "main" : f"结束所有{target_name}发出的、受管理的弹道（ManagedProjectile)"

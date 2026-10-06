@@ -1,4 +1,6 @@
-"""Create the release archive only after the executable and resources are ready."""
+#----------------------------------------
+# 打包器
+#----------------------------------------
 import datetime
 import os
 from pathlib import Path

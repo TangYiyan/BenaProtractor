@@ -4,7 +4,7 @@
 from dictionary import anne_dictionary
 
 # 记录黑板值
-def node_AssignValueToBB(node,blackboard):
+def AssignValueToBB(node,blackboard):
     result = {
         "main" : f"设 [{node['_blackboardKey']}] = "
     }
@@ -19,7 +19,7 @@ def node_AssignValueToBB(node,blackboard):
     return result
 
 # 将属性值记录到黑板中
-def node_AssignAttributeToBB(node,blackboard):
+def AssignAttributeToBB(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     attribute = anne_dictionary("attribute",node["_attributeType"])
     if node["_scaleVar"] != None and node["_scaleVar"] != "":
@@ -28,7 +28,7 @@ def node_AssignAttributeToBB(node,blackboard):
         return {"main" : f"取{target_name}的{attribute}，设 [{node['_blackboardKey']}] = {attribute}"}
 
 # 将召唤物的数量或最大数量记录到黑板中
-def node_AssignTokenCardCntToBB(node,blackboard):
+def AssignTokenCardCntToBB(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     if node["_assignMaxCount"]:
         return {"main" : f"设 [{node['_countKey']}] = {target_name}的召唤物最大持有数"}
@@ -36,12 +36,12 @@ def node_AssignTokenCardCntToBB(node,blackboard):
         return {"main" : f"设 [{node['_countKey']}] = {target_name}的召唤物当前持有数"}
 
 # 将生命比例记录到黑板中
-def node_AssignHpRatioToBB(node,blackboard):
+def AssignHpRatioToBB(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     return {"main" : f"设 [{node['_blackboardKey']}] = {target_name}的当前生命比例"}
 
 # 三合一节点：记录伤害值、记录模拟的计算伤害值、记录伤害影响差值
-def node_AssignDamageValueToBlackboard(node,blackboard):
+def AssignDamageValueToBlackboard(node,blackboard):
     owner_name = anne_dictionary("target",node["_owner"])
     if node["_assignRealDelta"]:
         return {"main" : "设 [value] 为 本次伤害实际造成的生命值变化量（取绝对值）"}
@@ -55,7 +55,7 @@ def node_AssignDamageValueToBlackboard(node,blackboard):
         }
 
 # 确保黑板默认值，防止出错
-def node_EnsureBlackboardDefaultValue(node,blackboard):
+def EnsureBlackboardDefaultValue(node,blackboard):
     results = []
     has_overrided = False
     if node["_defaultSettings"] != None:
@@ -85,7 +85,7 @@ def node_EnsureBlackboardDefaultValue(node,blackboard):
     return {"main" : "为黑板记录数据，但无事发生"}
 
 # 从其他Buff的黑板中获取黑板值
-def node_AssignBuffBlackboardFromOthers(node,blackboard):
+def AssignBuffBlackboardFromOthers(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     buff_name = " <" + node["_buffKey"] + "> Buff"
     if node["_filterBuffSource"]:
@@ -98,7 +98,7 @@ def node_AssignBuffBlackboardFromOthers(node,blackboard):
     }
 
 # 在Buff之间传递黑板值
-def node_AssignBuffBlackboard(node,blackboard):
+def AssignBuffBlackboard(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     source_buff_name = "本Buff"
     target_buff_name = node["_buffKey"]
@@ -132,7 +132,7 @@ def node_AssignBuffBlackboard(node,blackboard):
         return {"main" : f"设{target_name}的所有 <{target_buff_name}> Buff黑板上的 {target_bb} = {value}"}
 
 # 添加其他Buff的黑板值
-def node_AddBuffBlackboard(node,blackboard):
+def AddBuffBlackboard(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     target_buff_name = node["_buffKey"]
     target_bb = "[" + node["_blackboardKey"] + "]"
@@ -159,7 +159,7 @@ def node_AddBuffBlackboard(node,blackboard):
         return {"main" : f"尝试寻找{target_name}持有的首个 <{target_buff_name}> Buff，设该Buff的 {formula}"}
 
 # 记录末影黑板（同UID单位间互通）
-def node_AddCharacterSharedBlackboard(node,blackboard):
+def AddCharacterSharedBlackboard(node,blackboard):
     target_name = anne_dictionary("target",node["_target"])
     target_value = None
     action = f"将 [{node['_blackboardKey']}] 设置为"
@@ -179,7 +179,7 @@ def node_AddCharacterSharedBlackboard(node,blackboard):
     }
 
 # 将一项基础数据记录到黑板中（计算过符文与直接加算后的数值）
-def node_AssignAttributeRawDataIntoBlackboard(node,blackboard):
+def AssignAttributeRawDataIntoBlackboard(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     attribute = anne_dictionary("attribute",node["_attributeType"])
     return {
@@ -189,7 +189,7 @@ def node_AssignAttributeRawDataIntoBlackboard(node,blackboard):
     }
 
 # 从末影黑板拉取数据（同UID单位间互通）
-def node_AssignCharacterSharedBBToBlackboard(node,blackboard):
+def AssignCharacterSharedBBToBlackboard(node,blackboard):
     character_name = anne_dictionary("target",node["_character"])
     if node["_sourceBBKey"] != node["_targetBBKey"]:
         return {
@@ -205,7 +205,7 @@ def node_AssignCharacterSharedBBToBlackboard(node,blackboard):
         }
     
 # 在末影黑板上记录目标的EnemyID（同UID单位间互通）
-def node_AddEnemyIdToCharacterSharedBlackboard(node,blackboard):
+def AddEnemyIdToCharacterSharedBlackboard(node,blackboard):
     source_name = anne_dictionary("target",node["_source"])
     target_name = anne_dictionary("target",node["_target"])
     return {
@@ -216,7 +216,7 @@ def node_AddEnemyIdToCharacterSharedBlackboard(node,blackboard):
 
 # 将UID记录到黑板上
 # 有两种模式，一种是记录在特定黑板上，一种是把黑板当字典（本来就是），把UID作为Key记录进去占位。
-def node_AssignCardUIDToBlackBoard(node,blackboard):
+def AssignCardUIDToBlackBoard(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     if node["_assignHostOrToken"]:
         target_name = target_name+"的召唤物/主人"
@@ -229,12 +229,12 @@ def node_AssignCardUIDToBlackBoard(node,blackboard):
         return {"main" : f"将{target_name}的UID记录至本Buff的黑板 [{node['_blackBoardKey']}] 中（整数格式）"}
 
 # 将当前重生次数记录到黑板上
-def node_AssignRespawnCntToBlackboard(node,blackboard):
+def AssignRespawnCntToBlackboard(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     return {"main" : f"将{target_name}目前已重生的次数记录至黑板 [{node['_blackboardKey']}] 中"}
 
 # 将技能剩余冷却时间记录到黑板上
-def node_AssignEnemySkillCoolDownToBB(node,blackboard):
+def AssignEnemySkillCoolDownToBB(node,blackboard):
     owner_name = anne_dictionary("target",node["_ownerType"])
     skill_name = node["_skillName"] if node["_skillName"] != "" else "[skill_name]"
     if node["_checkSkillActive"]:
@@ -248,14 +248,14 @@ def node_AssignEnemySkillCoolDownToBB(node,blackboard):
     }
 
 # 将当前阻挡到的单位数量记录到黑板上
-def node_AssignCurrentBlockNumToBB(node,blackboard):
+def AssignCurrentBlockNumToBB(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     return {
         "main" : f"将{target_name}（角色类）当前阻挡的单位数量记录至黑板 [{node['_blackboardKey']}]"
     }
 
 # 将某个属性记录到黑板上
-def node_AssignAttributeToBB(node,blackboard):
+def AssignAttributeToBB(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     attribute = anne_dictionary("attribute",node["_attributeType"])
     if node["_scaleVar"] != None and node["_scaleVar"] != "":
@@ -264,7 +264,7 @@ def node_AssignAttributeToBB(node,blackboard):
         return {"main" : f"将{target_name}的{attribute}数值记录至黑板 [{node['_blackboardKey']}]"}
 
 # 将某个属性记录到黑板的dynamic上（对就是有这么个奇葩Node）
-def node_AssignAttributeAsDynamicVarToBB(node,blackboard):
+def AssignAttributeAsDynamicVarToBB(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     attribute = anne_dictionary("attribute",node["_attributeType"])
     if node["_scaleVar"] != None and node["_scaleVar"] != "":
@@ -273,7 +273,7 @@ def node_AssignAttributeAsDynamicVarToBB(node,blackboard):
         return {"main" : f"将{target_name}的{attribute}数值记录至黑板 [dynamic]"}
 
 # 将某个属性的基础值（符文后四则前）记录到黑板上
-def node_AssignAttributeRawDataIntoBlackboard(node,blackboard):
+def AssignAttributeRawDataIntoBlackboard(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     attribute = anne_dictionary("attribute",node["_attributeType"])
     return {
@@ -282,7 +282,7 @@ def node_AssignAttributeRawDataIntoBlackboard(node,blackboard):
     }
 
 # 将两者间的距离记录到黑板上
-def node_AssignDistanceToBB(node,blackboard):
+def AssignDistanceToBB(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     source_name = anne_dictionary("target",node["_sourceType"])
     if node["_useManhattanDistance"]:
@@ -295,7 +295,7 @@ def node_AssignDistanceToBB(node,blackboard):
         }
 
 # 将两者间的曼哈顿距离记录到黑板上
-def node_AssignManhattanDistanceToBB(node,blackboard):
+def AssignManhattanDistanceToBB(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     source_name = anne_dictionary("target",node["_sourceType"])
     return {
@@ -303,7 +303,7 @@ def node_AssignManhattanDistanceToBB(node,blackboard):
     }
 
 # 将所在地块的网格坐标记录到黑板上
-def node_AssignGridPositionToBlackboard(node,blackboard):
+def AssignGridPositionToBlackboard(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     if node["_useConstLocationKey"]: # 字符串形式，一般用于定义“某个地块”
         return {
@@ -317,7 +317,7 @@ def node_AssignGridPositionToBlackboard(node,blackboard):
         }
 
 # 将当前生命值/生命上限/生命比例记录至黑板
-def node_RecordCurrentHpRatio(node,blackboard):
+def RecordCurrentHpRatio(node,blackboard):
     owner_name = anne_dictionary("target",node["_ownerType"])
     record_type = "当前生命值" if node["_recordType"] == "hp" else ("生命上限" if node["_recordType"] == "maxHp" else "生命比例")
     # _needOffset 和 [hp_ratio_offset] 似乎是让一阶段的生命比例写成1.5之类的格式模拟“多血条”？
@@ -330,14 +330,14 @@ def node_RecordCurrentHpRatio(node,blackboard):
     }
 
 # 将当前战斗计时记录至黑板
-def node_AssignPlayTimeToBB(node,blackboard):
+def AssignPlayTimeToBB(node,blackboard):
     return {
         "main" : f"将当前的战斗计时记录至黑板 [{node['_blackboardKey']}]",
         "description" : "战斗计时为从战斗开始到现在的时间，单位为秒，上限为10000"
     }
 
 # 将单位已部署的次数记录至黑板
-def node_SetBuildCntToBlackboard(node,blackboard):
+def SetBuildCntToBlackboard(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     if node["_force"]: # 这个词怎么是“包括非手动”的意思
         return {

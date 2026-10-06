@@ -1,4 +1,6 @@
-"""Application controller for data loading, navigation and persistent preferences."""
+#----------------------------------------
+# 量角器UI
+#----------------------------------------
 import copy
 import logging
 import queue

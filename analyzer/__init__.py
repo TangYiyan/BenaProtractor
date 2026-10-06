@@ -10,5 +10,4 @@ from .profession import *
 from .selector import *
 
 from .relic_timing import *
-from .relic_selector import *
 from .rogue_item import *

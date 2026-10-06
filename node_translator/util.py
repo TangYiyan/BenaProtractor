@@ -5,7 +5,7 @@ from dictionary import anne_dictionary
 from analyzer import analyze_damage, to_percent
 
 # 补充召唤物数量
-def node_RechargeToken(node,blackboard):
+def RechargeToken(node,blackboard):
     # 未解析参数：_rechargeTiming
     if node["_refreshRemainingCnt"]:
         return {"main" : "将Buff持有者的召唤物数量恢复至默认值"}
@@ -13,7 +13,7 @@ def node_RechargeToken(node,blackboard):
         return {"main" : f"根据黑板上 [{node['_cntKey']}] 的数值，为Buff持有者补充召唤物（不会超过上限）"}
 
 # 临时提升攻击力倍率
-def node_AtkScaleUp(node,blackboard):
+def AtkScaleUp(node,blackboard):
     conditions = []
     result = {
         "main" : ""
@@ -49,7 +49,7 @@ def node_AtkScaleUp(node,blackboard):
     return result
 
 # 修改技力
-def node_ModifySp(node,blackboard):
+def ModifySp(node,blackboard):
     # 未解析参数：_spString
     target_name = anne_dictionary("target",node["_targetType"])
     modify_type = "减少" if node["_isMinis"] else "增加"
@@ -82,7 +82,7 @@ def node_ModifySp(node,blackboard):
     return result
 
 # 增减占用阻挡数
-def node_AddEnemyBlockVolume(node,blackboard):
+def AddEnemyBlockVolume(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     addon = node["_additionVolume"] * (-1 if node["_isMinus"] else 1)
     return {"main" : f"让{target_name}（敌人类）的占用阻挡数{addon}"}
@@ -90,7 +90,7 @@ def node_AddEnemyBlockVolume(node,blackboard):
 
 
 # 调整本buff提供的属性增益
-def node_AttributeModifierWithBB(node,blackboard):
+def AttributeModifierWithBB(node,blackboard):
     # 未解析参数：_targetType
     #target_name = anne_dictionary("target",node["_targetType"])
     attribute_type = anne_dictionary("attribute",node["_attributeType"])
@@ -119,7 +119,7 @@ def node_AttributeModifierWithBB(node,blackboard):
     return result
 
 # 根据技能剩余时间，调整本buff提供的属性增益
-def node_RemainingRatioToAttributeModifier(node,blackboard):
+def RemainingRatioToAttributeModifier(node,blackboard):
     attribute_type = anne_dictionary("attribute",node["_attributeType"])
     result = {
         "main" : f"根据技能剩余时间，更新本Buff提供的{attribute_type}加成："
@@ -147,7 +147,7 @@ def node_RemainingRatioToAttributeModifier(node,blackboard):
     return result
 
 # 切换模式
-def node_SwitchMode(node,blackboard):
+def SwitchMode(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     result = {"main" : f"令{target_name}"}
     if node["_restoreDefault"]:
@@ -162,7 +162,7 @@ def node_SwitchMode(node,blackboard):
     return result
 
 # 强制击倒
-def node_InstantKill(node,blackboard):
+def InstantKill(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     if node["_killSource"]: # 改为击杀上下文中的来源
         target_name = "上下文来源"
@@ -190,20 +190,20 @@ def node_InstantKill(node,blackboard):
     return result
 
 # 闪现或传送
-def node_BlinkNode(node,blackboard):
+def BlinkNode(node,blackboard):
     # 未解析参数：_forceSetDisappear
     # 这个节点默认是将来源闪现走，但目前来源和持有者都是同一人，因此省略
     result = {
         "main" : "[delay] 秒后，",
-        "true" : "若闪现成功",
-        "false" : "若闪现失败"
+        "true" : "闪现成功",
+        "false" : "闪现失败"
     }
     features = []
     if node["_useRowAndColAsWorldPosition"]: # 世界坐标传送
         return {
             "main" : f"[delay] 秒后，传送至世界坐标 [row],[col] 的位置",
-            "true" : "若目的地所在地块对于自己而言可通行",
-            "false" : "若目的地所在地块对于自己而言不可通行"
+            "true" : "目的地所在地块对于自己而言可通行",
+            "false" : "目的地所在地块对于自己而言不可通行"
         }
     elif node["_newRouteStartPointAsTargetPosition"]: # 传送至新Route的初始位置
         # 这里还有个[action_index]的黑板处理，不知道干什么的
@@ -211,14 +211,14 @@ def node_BlinkNode(node,blackboard):
             features.append(f"闪现前改用新的Branch（{node['_branchId']}）")
             return {
                 "main" : f"[delay] 秒后，改用新的Branch（{node['_branchId']}），随后传送至相应Route的起点",
-                "true" : "若闪现成功",
-                "false" : "若闪现失败"
+                "true" : "闪现成功",
+                "false" : "闪现失败"
             }
         else:
             return {
                 "main" : f"[delay] 秒后，改用黑板 [branch_id] 上记述的新的Branch，随后传送至相应Route的起点",
-                "true" : "若闪现成功",
-                "false" : "若闪现失败"
+                "true" : "闪现成功",
+                "false" : "闪现失败"
             }
     elif node["_useRowAndColOnBlackboard"]: # 网格坐标闪现
         if node["_failIfTargetGridIsRoot"]:
@@ -263,7 +263,7 @@ def node_BlinkNode(node,blackboard):
     return result
 
 # 撤退/强制撤退
-def node_Withdraw(node,blackboard):
+def Withdraw(node,blackboard):
     # 未解析参数：_needLog
     target = "Buff来源" if node["_withdrawSource"] else "Buff持有者"
     result = {"main" : "撤退"+target}
@@ -274,7 +274,7 @@ def node_Withdraw(node,blackboard):
     return result
 
 # 清空技力（减少等同于当前技力值的技力）
-def node_ClearCharacterSp(node,blackboard):
+def ClearCharacterSp(node,blackboard):
     target_name = anne_dictionary("target",node["_charFrom"])
     if node["_forceFlag"]:
         return {"main" : f"令{target_name}清空技力（强制流失等同于当前技力值的技力）"}
@@ -282,7 +282,7 @@ def node_ClearCharacterSp(node,blackboard):
         return {"main" : f"令{target_name}清空技力（减少等同于当前技力值的技力，受阻回影响）"}
 
 # 修改目标生命值
-def node_ModifyLifePoint(node,blackboard):
+def ModifyLifePoint(node,blackboard):
     source_name = anne_dictionary("target",node["_sourceType"])
     value = " - ["+node["_blackboardKey"]+"]" if node["_isSub"] else " + ["+node["_blackboardKey"]+"]"
     if node["_isReachExit"]:
@@ -293,7 +293,7 @@ def node_ModifyLifePoint(node,blackboard):
         return {"main" : f"令关卡目标生命值{value}"}
     
 # 修改阻挡模式
-def node_ChangeCharBlockMode(node,blackboard):
+def ChangeCharBlockMode(node,blackboard):
     target_name = anne_dictionary("target",node["_target"])
     if node["_resetToDefault"]:
         return {"main" : f"令{target_name}的阻挡模式切换回初始模式（可能是\"地面阻挡\"）"}
@@ -301,7 +301,7 @@ def node_ChangeCharBlockMode(node,blackboard):
     return {"main" : f"令{target_name}的阻挡模式切换为{block_mode}"}
 
 # 记录战斗LOG（通常用于记录模组任务、藏品掉落、跨关卡生命比例继承等数据）
-def node_LogExtraBattleInfo(node,blackboard):
+def LogExtraBattleInfo(node,blackboard):
     target_name = anne_dictionary("target",node["_target"])
     if node["_countInHostIfToken"]:
         target_name += "（若为召唤物，改为其主人）"
@@ -347,12 +347,12 @@ def node_LogExtraBattleInfo(node,blackboard):
     }
 
 # 触发麻痹
-def node_TriggerPalsy(node,blackboard):
+def TriggerPalsy(node,blackboard):
     target_name = anne_dictionary("target",node["_target"])
     return {"main" : f"让{target_name}触发麻痹"}
 
 # 添加麻痹
-def node_PalsyBuffAdd(node,blackboard):
+def PalsyBuffAdd(node,blackboard):
     # 两者皆是，这就是答案
     target_name = anne_dictionary("target",node.get("_target",node["_targetType"]))
     return {
@@ -361,22 +361,22 @@ def node_PalsyBuffAdd(node,blackboard):
     }
 
 # 召唤师X模组的免费召唤条件
-def node_CheckTheLeftSameDeployedToken(node,blackboard):
+def CheckTheLeftSameDeployedToken(node,blackboard):
     if node["_minCnt"] == 0:
         return {
             "main" : "检查场上的同类同源召唤物（不包括自己）的剩余数量",
-            "true" : "若剩余数量为0（即场上只剩下自己）",
-            "false" : "若剩余数量不为0"
+            "true" : "剩余数量为0（即场上只剩下自己）",
+            "false" : "剩余数量不为0"
         }
     else:
         return {
             "main" : "检查场上的同类同源召唤物（不包括自己）的剩余数量",
-            "true" : f"若剩余数量不超过{node['_minCnt']}个",
-            "false" : f"若剩余数量超过{node['_minCnt']}个"
+            "true" : f"剩余数量不超过{node['_minCnt']}个",
+            "false" : f"剩余数量超过{node['_minCnt']}个"
         }
 
 # 召唤师X模组的免费召唤实现
-def node_SetCharacterDontOccupyDeployCntFlag(node,blackboard):
+def SetCharacterDontOccupyDeployCntFlag(node,blackboard):
     #target_name = anne_dictionary("target",node["_targetType"])
     if node["_isUnset"]:
         return {"main" : f"令手卡中的此召唤物不再享有\"免费召唤\"的特权"}
@@ -385,19 +385,19 @@ def node_SetCharacterDontOccupyDeployCntFlag(node,blackboard):
 
 
 # 播放音效
-def node_PlayAudio(node,blackboard):
+def PlayAudio(node,blackboard):
     target_name = anne_dictionary("target",node["_target"])
     return {"main" : f"让{target_name}播放音效 {node['_audioSignal']}"}
     
 # 创建特效
-def node_CreateEffect(node,blackboard):
+def CreateEffect(node,blackboard):
     # 暂不详细翻译
     target_name = anne_dictionary("target",node["_targetType"])
     effect_id = node["_effectKey"]
     return {"main" : f"为{target_name}创建特效 {effect_id}（暂不翻译）"}
 
 # 创建“BOSS倒计时”UI特效（无实际作用）
-def node_SetBossCountDown(node,blackboard):
+def SetBossCountDown(node,blackboard):
     if node["_cdBBKey"] != None and node["_cdBBKey"] != "":
         return {"main" : f"在UI层上创建一个 [{node['_cdBBKey']}] 秒的关卡倒计时提示（无实际作用）"}
     return {"main" : f"在UI层上创建一个{node['_cdValue']}秒的关卡倒计时提示（无实际作用）"}

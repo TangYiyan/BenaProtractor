@@ -6,11 +6,11 @@ from bena import translate_buff_name
 from analyzer import analyze_selector, analyze_relic_timing
 
 # 常规的全局Buff
-def rogue_global_buff_normal(item_type,blackboard):
+def global_buff_normal(item_type,blackboard):
     timing = analyze_relic_timing(item_type,blackboard)
     global_buff_key = blackboard["key"]
     result = {
-        "main" : f"{timing}生效全局Buff：<{global_buff_key}>",
+        "main" : f"{timing}战斗中将生效全局Buff：<global_buff|{global_buff_key}>",
         "global_buff" : global_buff_key,
         "children" : []
     }
@@ -35,13 +35,13 @@ def rogue_global_buff_normal(item_type,blackboard):
     return result
 
 # 叠层加倍增幅量/减少量的全局Buff（累加时会-1）
-def rogue_global_buff_stack_base_one(item_type,blackboard):
-    result = rogue_global_buff_normal(item_type,blackboard)
+def global_buff_stack_base_one(item_type,blackboard):
+    result = global_buff_normal(item_type,blackboard)
     result["main"] += "（数值增幅量/减少量均乘以当前层数；同名效果间数值取增幅量/减少量累加）"
     return result
 
 # 叠层的全局Buff
-def rogue_global_buff_stack(item_type,blackboard):
-    result = rogue_global_buff_normal(item_type,blackboard)
+def global_buff_stack(item_type,blackboard):
+    result = global_buff_normal(item_type,blackboard)
     result["main"] += "（数值均乘以当前层数）"
     return result

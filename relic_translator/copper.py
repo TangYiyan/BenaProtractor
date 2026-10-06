@@ -6,7 +6,7 @@ import math
 from analyzer import analyze_rogue_item, analyze_rogue_item_reward, analyze_relic_timing
 
 # 钱的叠层，通常是投出时
-def rogue_copper_unlock_layer(item_type,blackboard):
+def copper_unlock_layer(item_type,blackboard):
     timing = analyze_relic_timing(item_type,blackboard)
     if "max" in blackboard and "init" in blackboard and blackboard["init"] != 0:
         return {
@@ -26,7 +26,7 @@ def rogue_copper_unlock_layer(item_type,blackboard):
         }
 
 # 投出特定数量的钱给予特定物品
-def rogue_copper_draw_reward_lucky_level(item_type,blackboard):
+def copper_draw_reward_lucky_level(item_type,blackboard):
     # 未解析黑板：divine_type
     reward = analyze_rogue_item_reward(blackboard)
     conditions = []

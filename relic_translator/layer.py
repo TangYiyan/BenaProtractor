@@ -6,7 +6,7 @@ from dictionary import anne_dictionary
 from analyzer import analyze_relic_timing, to_percent
 
 # 战斗结束时为藏品叠层
-def rogue_layer_after_battle_data(item_type,blackboard):
+def layer_after_battle_data(item_type,blackboard):
     # 未解析黑板：src
     timing = "战斗结束时，"
     if blackboard.get("is_success",0) != 0:
@@ -26,8 +26,8 @@ def rogue_layer_after_battle_data(item_type,blackboard):
     return {"main" : f"{timing}{prob}令本藏品叠加{scale}层"}
 
 # 通过特定关卡后叠层
-def rogue_layer_pass_stage(item_type,blackboard):
-    result = rogue_layer_after_battle_data(item_type,blackboard)
+def layer_pass_stage(item_type,blackboard):
+    result = layer_after_battle_data(item_type,blackboard)
     result["main"] = result["main"].replace("战斗结束","完成特定关卡") + "；包括关卡："
     result["children"] = []
     for stage in blackboard["stage_ids"].split(","):

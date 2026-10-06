@@ -4,7 +4,7 @@
 from analyzer import analyze_selector, analyze_relic_timing
 
 # 给予目标额外的能力
-def rogue_char_ability_new(item_type,blackboard):
+def char_ability_new(item_type,blackboard):
     timing = analyze_relic_timing(item_type,blackboard)
     ability_name = blackboard["key"]
     selector = analyze_selector(blackboard)
@@ -19,6 +19,6 @@ def rogue_char_ability_new(item_type,blackboard):
 
 # 给予目标额外的能力（于根部生效）
 # 暂时不清楚有什么区别
-def rogue_char_ability_new_at_root(item_type,blackboard):
-    result = rogue_char_ability_new(item_type,blackboard)
+def char_ability_new_at_root(item_type,blackboard):
+    result = char_ability_new(item_type,blackboard)
     return result

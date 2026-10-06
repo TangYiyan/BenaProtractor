@@ -361,6 +361,7 @@
 		"ENEMY" : "敌方",
 		"BOTH_ALLY_AND_ENEMY" : "我方/敌方",
 		"NEUTRAL" : "中立",
+		"BOTH_ALLY_AND_NEUTRAL" : "我方/中立",
 		"ALL" : "我方/中立/敌方"
 	},
 	"side_type_relative" : {
@@ -437,6 +438,14 @@
 		"EQUAL" : "不同",
 		"VERTICAL" : "相同或相反",
 		"FACE_TARGET" : "非面向目标"
+	},
+	"direction_lr" : {
+		"LEFT" : "\"左向\"",
+		"RIGHT" : "\"右向\""
+	},
+	"direction_lr_not" : {
+		"LEFT" : "\"右向\"",
+		"RIGHT" : "\"左向\""
 	},
 	"entity_category" : {
 		"NONE" : "无类型",

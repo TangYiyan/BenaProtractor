@@ -7,7 +7,7 @@ from dictionary import anne_dictionary
 from analyzer import analyze_fp, analyze_target_options
 
 # 检查异常效果（带免疫）
-def node_CheckAbnormalFlag(node,blackboard):
+def CheckAbnormalFlag(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     abnormal_flag = ""
     if node["_abnormalFlagKey"]:
@@ -17,35 +17,35 @@ def node_CheckAbnormalFlag(node,blackboard):
     if node["_isUnset"]:
         return {
             "main" : f"检查{target_name}是否持有{abnormal_flag}（考虑免疫）",
-            "true" : f"若不持有{abnormal_flag}",
-            "false" : f"若持有{abnormal_flag}"
+            "true" : f"不持有{abnormal_flag}",
+            "false" : f"持有{abnormal_flag}"
         }
     else:
         return {
             "main" : f"检查{target_name}是否持有{abnormal_flag}（考虑免疫）",
-            "true" : f"若持有{abnormal_flag}",
-            "false" : f"若不持有{abnormal_flag}"
+            "true" : f"持有{abnormal_flag}",
+            "false" : f"不持有{abnormal_flag}"
         }
 
 # 检查异常免疫
-def node_CheckAbnormalImmune(node,blackboard):
+def CheckAbnormalImmune(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     abnormal = anne_dictionary("abnormal",node["_abnormalFlag"])
     if node["_isUnset"]:
         return {
             "main" : f"检查{target_name}的异常免疫",
-            "true" : f"若{target_name}没有{abnormal}免疫",
-            "false" : f"若{target_name}具有{abnormal}免疫"
+            "true" : f"{target_name}没有{abnormal}免疫",
+            "false" : f"{target_name}具有{abnormal}免疫"
         }
     else:
         return {
             "main" : f"检查{target_name}的异常免疫",
-            "true" : f"若{target_name}具有{abnormal}免疫",
-            "false" : f"若{target_name}没有{abnormal}免疫"
+            "true" : f"{target_name}具有{abnormal}免疫",
+            "false" : f"{target_name}没有{abnormal}免疫"
         }
 
 # 检查持有多个异常效果之一（带免疫）
-def node_CheckAbnormalFlags(node,blackboard):
+def CheckAbnormalFlags(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     abnormal_flags = []
     if node["_abnormalFlags"] != None:
@@ -54,41 +54,41 @@ def node_CheckAbnormalFlags(node,blackboard):
     if len(abnormal_flags) > 1:
         return {
             "main" : f"检查{target_name}是否持有"+"、".join(abnormal_flags[:-1]) + "或" + abnormal_flags[-1]+"异常（考虑免疫）",
-            "true" : f"若持有上述异常之一",
-            "false" : f"若不持有这些异常"
+            "true" : f"持有上述异常之一",
+            "false" : f"不持有这些异常"
         }
     else:
         return {
             "main" : f"检查{target_name}是否持有{abnormal_flags[0]}异常（考虑免疫）",
-            "true" : f"若持有{abnormal_flags[0]}",
-            "false" : f"若不持有{abnormal_flags[0]}"
+            "true" : f"持有{abnormal_flags[0]}",
+            "false" : f"不持有{abnormal_flags[0]}"
         }
 
 # 检查异常组合（带免疫）
-def node_CheckAbnormalCombo(node,blackboard):
+def CheckAbnormalCombo(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     abnormal_combo = anne_dictionary("abnormal",node["_abnormalCombo"])+"异常组合"
     if node["_isUnset"]:
         return {
             "main" : f"检查{target_name}是否持有{abnormal_combo}",
-            "true" : f"若不持有{abnormal_combo}或免疫该异常组合",
-            "false" : f"若持有{abnormal_combo}"
+            "true" : f"不持有{abnormal_combo}或免疫该异常组合",
+            "false" : f"持有{abnormal_combo}"
         }
     else:
         return {
             "main" : f"检查{target_name}是否持有{abnormal_combo}",
-            "true" : f"若持有{abnormal_combo}",
-            "false" : f"若不持有{abnormal_combo}或免疫该异常组合"
+            "true" : f"持有{abnormal_combo}",
+            "false" : f"不持有{abnormal_combo}或免疫该异常组合"
         }
 
 # 检查职业
-def node_CheckTargetProfession(node,blackboard):
+def CheckTargetProfession(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     if node["_readProfessionFromBlackboard"]:
         return {
             "main" : f"检查{target_name}的职业是否隶属于黑板记录的职业之一",
-            "true" : "若其隶属于这些职业之一",
-            "false" : "若其不属于这些职业中的任何一个"
+            "true" : "其隶属于这些职业之一",
+            "false" : "其不属于这些职业中的任何一个"
         }
     else:
         professions = [anne_dictionary("profession",p) for p in node["_profession"]]
@@ -99,52 +99,52 @@ def node_CheckTargetProfession(node,blackboard):
             if len(sub_professions) > 1: # 一般不会用到
                 return {
                     "main" : f"检查{target_name}是否为"+"/".join(professions)+"职业，且是否为"+"/".join(sub_professions)+"分支",
-                    "true" : "若其满足职业条件，且属于上述分支之一",
-                    "false" : "若其不满足职业条件或不属于上述分支之一"
+                    "true" : "其满足职业条件，且属于上述分支之一",
+                    "false" : "其不满足职业条件或不属于上述分支之一"
                 }
             elif len(sub_professions) == 1:
                 return {
                     "main" : f"检查{target_name}是否为"+"/".join(professions)+"职业，且是否为"+sub_professions[0]+"分支",
-                    "true" : "若其满足职业条件，且属于该分支",
-                    "false" : "若其不满足职业条件，或不属于该分支"
+                    "true" : "其满足职业条件，且属于该分支",
+                    "false" : "其不满足职业条件，或不属于该分支"
                 }
             else:
                 return {
                     "main" : f"检查{target_name}是否为"+"/".join(professions)+"职业",
-                    "true" : "若其满足职业条件",
-                    "false" : "若其不满足职业条件"
+                    "true" : "其满足职业条件",
+                    "false" : "其不满足职业条件"
                 }
         elif len(professions) == 1:
             if len(sub_professions) > 1: # 一般不会用到
                 return {
                     "main" : f"检查{target_name}是否为"+professions[0]+"职业，且是否为"+"/".join(sub_professions)+"分支",
-                    "true" : "若其为该职业，且属于上述分支之一",
-                    "false" : "若其不为该职业，或不属于上述分支之一"
+                    "true" : "其为该职业，且属于上述分支之一",
+                    "false" : "其不为该职业，或不属于上述分支之一"
                 }
             elif len(sub_professions) == 1:
                 return {
                     "main" : f"检查{target_name}是否为"+"/".join(professions)+"职业，且是否为"+sub_professions[0]+"分支",
-                    "true" : "若其为该职业，且属于该分支",
-                    "false" : "若其不为该职业，或不属于该分支"
+                    "true" : "其为该职业，且属于该分支",
+                    "false" : "其不为该职业，或不属于该分支"
                 }
             else:
                 return {
                     "main" : f"检查{target_name}是否为"+professions[0]+"职业",
-                    "true" : "若其为"+professions[0],
-                    "false" : "若其不为"+professions[0]
+                    "true" : "其为"+professions[0],
+                    "false" : "其不为"+professions[0]
                 }
         else:
             if len(sub_professions) > 1:
                 return {
                     "main" : f"检查{target_name}是否为"+"/".join(sub_professions)+"分支",
-                    "true" : "若其属于上述分支之一",
-                    "false" : "若其不属于上述分支之一"
+                    "true" : "其属于上述分支之一",
+                    "false" : "其不属于上述分支之一"
                 }
             elif len(sub_professions) == 1:
                 return {
                     "main" : f"检查{target_name}是否为"+sub_professions[0]+"分支",
-                    "true" : "若其属于该分支",
-                    "false" : "若其不属于该分支"
+                    "true" : "其属于该分支",
+                    "false" : "其不属于该分支"
                 }
             else:
                 return {
@@ -154,44 +154,44 @@ def node_CheckTargetProfession(node,blackboard):
                 }
 
 # 检查标签
-def node_CheckFilterTag(node,blackboard):
+def CheckFilterTag(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     if node["_bbKey"] != None and node["_bbKey"] != "":
         return {
             "main" : "",
-            "true" : f"若{target_name}具有黑板 [{node['_bbKey']}] 上记录的标签",
-            "false" : f"若{target_name}不具有黑板 [{node['_bbKey']}] 上记录的标签"
+            "true" : f"{target_name}具有黑板 [{node['_bbKey']}] 上记录的标签",
+            "false" : f"{target_name}不具有黑板 [{node['_bbKey']}] 上记录的标签"
         }
     else:
         return {
             "main" : "",
-            "true" : f"若{target_name}具有\"{node['_filterTag']}\"标签",
-            "false" : f"若{target_name}不具有\"{node['_filterTag']}\"标签"
+            "true" : f"{target_name}具有\"{node['_filterTag']}\"标签",
+            "false" : f"{target_name}不具有\"{node['_filterTag']}\"标签"
         }
 
 # 检查势力
-def node_CheckCharacterGroupTag(node,blackboard):
+def CheckCharacterGroupTag(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     group_name = anne_dictionary("group_tag",node["_groupTag"])
     return {
         "main" : f"检查{target_name}的势力标签",
-        "true" : f"若其隶属于{group_name}势力",
-        "false" : f"若其不隶属于{group_name}势力"
+        "true" : f"其隶属于{group_name}势力",
+        "false" : f"其不隶属于{group_name}势力"
     }
 
 
 # 检查阻挡模式
-def node_CheckBlockMode(node,blackboard):
+def CheckBlockMode(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     block_mode = anne_dictionary("block_mode",node["_blockMode"])
     return {
         "main" : f"检查{target_name}的阻挡模式",
-        "true" : f"若其阻挡模式为 {block_mode}",
-        "false" : f"若其阻挡模式为 {block_mode}"
+        "true" : f"其阻挡模式为 {block_mode}",
+        "false" : f"其阻挡模式为 {block_mode}"
     }
 
 # 检查阻挡状态
-def node_CheckBlocked(node,blackboard):
+def CheckBlocked(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     if node["_checkBlockedBySource"]:
         source_name = anne_dictionary("target",node["_sourceType"])
@@ -199,25 +199,25 @@ def node_CheckBlocked(node,blackboard):
             source_name += "或其召唤物"
         return {
             "main" : f"检查{target_name}的阻挡状态",
-            "true" : f"若其正被{source_name}阻挡/阻挡着{source_name}",
-            "false" : f"若其未被{source_name}阻挡/未阻挡{source_name}"
+            "true" : f"其正被{source_name}阻挡/阻挡着{source_name}",
+            "false" : f"其未被{source_name}阻挡/未阻挡{source_name}"
         }
     elif node["_checkBlockedBySourceToken"]:
         source_name = anne_dictionary("target",node["_sourceType"])+"的召唤物"
         return {
             "main" : f"检查{target_name}的阻挡状态",
-            "true" : f"若其正被{source_name}阻挡/阻挡着{source_name}",
-            "false" : f"若其未被{source_name}阻挡/未阻挡{source_name}"
+            "true" : f"其正被{source_name}阻挡/阻挡着{source_name}",
+            "false" : f"其未被{source_name}阻挡/未阻挡{source_name}"
         }
     else:
         return {
             "main" : f"检查{target_name}的阻挡状态",
-            "true" : f"若其正被任意单位阻挡/阻挡着任意单位",
-            "false" : f"若其未阻挡/未被阻挡"
+            "true" : f"其正被任意单位阻挡/阻挡着任意单位",
+            "false" : f"其未阻挡/未被阻挡"
         }
 
 # 通用目标检查
-def node_IfTarget(node,blackboard):
+def IfTarget(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     conditions = []
     last_type = ""
@@ -248,14 +248,14 @@ def node_IfTarget(node,blackboard):
     if len(conditions) > 1:
         return {
             "main" : f"检查{target_name}是否"+"、".join(conditions),
-            "true" : f"若{target_name}均满足上述条件",
-            "false" : f"若{target_name}不满足上述任一条件"
+            "true" : f"{target_name}均满足上述条件",
+            "false" : f"{target_name}不满足上述任一条件"
         }
     elif len(conditions) == 1:
         return {
             "main" : f"检查"+target_name+last_type,
-            "true" : "若"+target_name+conditions[0],
-            "false" : "若"+target_name+conditions[0].replace("属于","不属于").replace("为","不为")
+            "true" : ""+target_name+conditions[0],
+            "false" : ""+target_name+conditions[0].replace("属于","不属于").replace("为","不为")
         }
     else:
         return {
@@ -265,24 +265,24 @@ def node_IfTarget(node,blackboard):
         }
 
 # 检查单位是否存活
-def node_CheckUnitAlive(node,blackboard):
+def CheckUnitAlive(node,blackboard):
     owner_name = anne_dictionary("target",node["_ownerType"])
     return {
         "main" : f"检查{owner_name}目前是否存活",
-        "true" : f"若{owner_name}仍存活（生命值不为0且不处于死亡状态机）",
-        "false" : f"若{owner_name}已被击倒/死亡"
+        "true" : f"{owner_name}仍存活（生命值不为0且不处于死亡状态机）",
+        "false" : f"{owner_name}已被击倒/死亡"
     }
 
 # 检查单位是否可以被选中
-def node_VertifyTarget(node,blackboard):
+def VertifyTarget(node,blackboard):
     source_name = anne_dictionary("target",node["_source"])
     target_name = anne_dictionary("target",node["_target"])
     if node["_targetOptions"] == None:
         return {
             "main" : f"尝试判断对于{source_name}而言，{target_name}是否可以选择",
             "description" : "使用上下文中能力的选择器的配置作为选择条件；不受迷彩制约",
-            "true" : f"若{target_name}可被选择",
-            "false" : f"若{target_name}不可被选择"
+            "true" : f"{target_name}可被选择",
+            "false" : f"{target_name}不可被选择"
         }
     result = analyze_target_options(node["_targetOptions"])
     result["main"] = f"尝试判断对于{source_name}而言，{target_name}是否为可选的{result['main']}"
@@ -296,7 +296,7 @@ def node_VertifyTarget(node,blackboard):
 
 
 # 检查绝对阵营
-def node_IfTargetSide(node,blackboard):
+def IfTargetSide(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     if node["_sideMask"] in ["BOTH_ALLY_AND_ENEMY","ALL","NONE"]: # 无法判断的阵营类型
         #是的，沟槽的yj写的是全等于，因此这几个判定必定失败
@@ -308,68 +308,68 @@ def node_IfTargetSide(node,blackboard):
     side_type = anne_dictionary("side_type",node["_sideMask"])
     return {
         "main" : f"检查{target_name}的阵营（绝对阵营）",
-        "true" : f"若其为{side_type}单位",
-        "false" : f"若其不为{side_type}单位"
+        "true" : f"其为{side_type}单位",
+        "false" : f"其不为{side_type}单位"
     }
 
 # 检查相对阵营
-def node_IfDamageTargetSide(node,blackboard):
+def IfDamageTargetSide(node,blackboard):
     source_name = anne_dictionary("target",node["_sourceType"])
     target_name = anne_dictionary("target",node["_targetType"])
     if node["_sideMask"] == "ALLY":
         return {
             "main" : f"检查{source_name}与{target_name}的阵营关系（相对阵营）",
-            "true" : f"若双方之间为相同阵营",
-            "false" : f"若双方之间为对立/无关阵营"
+            "true" : f"双方之间为相同阵营",
+            "false" : f"双方之间为对立/无关阵营"
         }
     elif node["_sideMask"] == "ENEMY":
         return {
             "main" : f"检查{source_name}与{target_name}的阵营关系（相对阵营）",
-            "true" : f"若双方之间为对立阵营",
-            "false" : f"若双方之间为相同/无关阵营"
+            "true" : f"双方之间为对立阵营",
+            "false" : f"双方之间为相同/无关阵营"
         }
     elif node["_sideMask"] == "BOTH_ALLY_AND_ENEMY":
         return {
             "main" : f"检查{source_name}与{target_name}的阵营关系（相对阵营）",
-            "true" : f"若双方之间为相同/对立阵营",
-            "false" : f"若双方之间为无关阵营"
+            "true" : f"双方之间为相同/对立阵营",
+            "false" : f"双方之间为无关阵营"
         }
     # 不为这三个就是强行按ALL来
     return {
         "main" : f"检查{source_name}与{target_name}的阵营（相对阵营）",
-        "true" : f"若双方均不为无阵营",
-        "false" : f"若双方有任一为无阵营"
+        "true" : f"双方均不为无阵营",
+        "false" : f"双方有任一为无阵营"
     }
     
 # 是否属于干员
-def node_IsCharacter(node,blackboard):
+def IsCharacter(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     return {
         "main" : f"检查{target_name}的单位是否为干员（为角色类且为八大职业之一）",
-        "true" : f"若其为干员",
-        "false" : f"若其不为干员"
+        "true" : f"其为干员",
+        "false" : f"其不为干员"
     }
 
 # 是否属于角色类（干员、召唤物、装置）
-def node_IsCharacterOrTokenOrTrap(node,blackboard):
+def IsCharacterOrTokenOrTrap(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     return {
         "main" : f"检查{target_name}的单位类型",
-        "true" : f"若其为角色类单位",
-        "false" : f"若其不为角色类单位"
+        "true" : f"其为角色类单位",
+        "false" : f"其不为角色类单位"
     }
     
 # 是否属于敌人类
-def node_IsEnemy(node,blackboard):
+def IsEnemy(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     return {
         "main" : f"检查{target_name}的单位类型",
-        "true" : f"若其为敌人类单位",
-        "false" : f"若其不为敌人类单位"
+        "true" : f"其为敌人类单位",
+        "false" : f"其不为敌人类单位"
     }
 
 # 是否为同一人
-def node_IfTargetEqual(node,blackboard):
+def IfTargetEqual(node,blackboard):
     left_target = "Buff来源" if node["_target1"] == "BUFF_SOURCE" else anne_dictionary("target",node["_target1"])
     right_target = "Buff来源" if node["_target1"] == "BUFF_SOURCE" else anne_dictionary("target",node["_target2"])
     if node["_equalIfBothNull"]:
@@ -382,26 +382,26 @@ def node_IfTargetEqual(node,blackboard):
         else:
             return {
                 "main" : f"检查{left_target}和{right_target}",
-                "true" : "若两者为同一个单位（或均不存在）",
-                "false" : "若两者为不同单位（或一方存在一方不存在）"
+                "true" : "两者为同一个单位（或均不存在）",
+                "false" : "两者为不同单位（或一方存在一方不存在）"
             }
     else:
         if left_target == right_target: # 也就是说，不考虑两边对不对等，只考虑存不存在了
             return {
                 "main" : f"检查{left_target}是否存在",
-                "true" : f"若存在{left_target}",
-                "false" : f"若不存在{left_target}"
+                "true" : f"存在{left_target}",
+                "false" : f"不存在{left_target}"
             }
         else:
             return {
                 "main" : f"检查{left_target}和{right_target}",
-                "true" : "若两者为同一个单位",
-                "false" : "若两者为不同单位（或任意一方不存在）"
+                "true" : "两者为同一个单位",
+                "false" : "两者为不同单位（或任意一方不存在）"
             }
 
 # 另一种是否为同一人
 # 没有任何“多余”的处理
-def node_CheckEntityEquals(node,blackboard):
+def CheckEntityEquals(node,blackboard):
     left_target = anne_dictionary("target",node["_lhsType"])
     right_target = anne_dictionary("target",node["_rhsType"])
     if left_target == right_target:
@@ -413,86 +413,86 @@ def node_CheckEntityEquals(node,blackboard):
     else:
         return {
             "main" : f"检查{left_target}和{right_target}",
-            "true" : "若两者为同一个单位（或均不存在）",
-            "false" : "若两者为不同单位（或一方存在一方不存在）"
+            "true" : "两者为同一个单位（或均不存在）",
+            "false" : "两者为不同单位（或一方存在一方不存在）"
         }
     
 # 检查行动类型
-def node_CheckMotionMode(node,blackboard):
+def CheckMotionMode(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     if node["_mode"] != "ALL":
         motion = anne_dictionary("motion",node["_mode"])
         return {
             "main" : f"检查{target_name}的行动类型",
-            "true" : f"若其当前为{motion}单位",
-            "false" : f"若其当前不为{motion}单位"
+            "true" : f"其当前为{motion}单位",
+            "false" : f"其当前不为{motion}单位"
         }
     else:
         return {
             "main" : f"检查{target_name}的行动类型",
-            "true" : f"若其当前不为无行动类型的单位",
-            "false" : f"若其当前为无行动类型的单位"
+            "true" : f"其当前不为无行动类型的单位",
+            "false" : f"其当前为无行动类型的单位"
         }
 
 # 检查单位实体类型
-def node_CheckTargetCategory(node,blackboard):
+def CheckTargetCategory(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     entity_category = anne_dictionary("entity_category",node["_category"])
     return {
         "main" : f"检查{target_name}的实体类型",
-        "true" : f"若其为{entity_category}实体",
-        "false" : f"若其不为{entity_category}实体"
+        "true" : f"其为{entity_category}实体",
+        "false" : f"其不为{entity_category}实体"
     }
 
 # 追溯角色类单位死亡原因
-def node_FilterCharacterLastDeathReason(node,blackboard):
+def FilterCharacterLastDeathReason(node,blackboard):
     target_name = anne_dictionary("target",node["_characterType"])
     finish_reason = anne_dictionary("finish_reason",node["_finishReason"])
     return {
         "main" : f"追溯{target_name}（角色类）最近一次退场/死亡的原因",
-        "true" : f"若该次退场/死亡原因为\"{finish_reason}\"",
-        "false" : f"若该次退场/死亡原因不为\"{finish_reason}\"，或没有退场/死亡"
+        "true" : f"该次退场/死亡原因为\"{finish_reason}\"",
+        "false" : f"该次退场/死亡原因不为\"{finish_reason}\"，或没有退场/死亡"
     }
 
 # 检查单位本次死亡原因
-def node_FilterDeathReason(node,blackboard):
+def FilterDeathReason(node,blackboard):
     target_name = anne_dictionary("target",node["_source"])
     finish_reason = anne_dictionary("finish_reason",node["_finishReason"])
     return {
         "main" : f"检查{target_name}的本次退场/死亡原因",
-        "true" : f"若退场/死亡原因为\"{finish_reason}\"",
-        "false" : f"若退场/死亡原因不为\"{finish_reason}\""
+        "true" : f"退场/死亡原因为\"{finish_reason}\"",
+        "false" : f"退场/死亡原因不为\"{finish_reason}\""
     }
 
 # 检查角色部署类型
-def node_CheckBuildableType(node,blackboard):
+def CheckBuildableType(node,blackboard):
     target_name = anne_dictionary("target",node["_target"])
     buildable_type = anne_dictionary("buildable_type",node["_buildableType"])
     if node["_checkOriginCondition"]:
         return {
             "main" : f"检查{target_name}（角色类）的原始部署类型（不受舞鞋等效果影响）",
-            "true" : f"若其原始部署类型为{buildable_type}",
-            "false" : f"若其原始部署类型不为{buildable_type}"
+            "true" : f"其原始部署类型为{buildable_type}",
+            "false" : f"其原始部署类型不为{buildable_type}"
         }
     else:
         return {
             "main" : f"检查{target_name}（角色类）的部署类型",
-            "true" : f"若其部署类型为{buildable_type}",
-            "false" : f"若其部署类型不为{buildable_type}"
+            "true" : f"其部署类型为{buildable_type}",
+            "false" : f"其部署类型不为{buildable_type}"
         }
 
 # 检查敌人地位级别
-def node_CheckEnemyLevelMask(node,blackboard):
+def CheckEnemyLevelMask(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     enemy_level = anne_dictionary("enemy_level",node["_targetLevelMask"])
     return {
         "main" : f"检查{target_name}（敌人类）的地位级别",
-        "true" : f"若其为{enemy_level}地位的敌人",
-        "false" : f"若其不为{enemy_level}地位的敌人"
+        "true" : f"其为{enemy_level}地位的敌人",
+        "false" : f"其不为{enemy_level}地位的敌人"
     }
 
 # 检查地图标签（水地形、肉鸽、十三章等）
-def node_CheckConatinsMapTags(node,blackboard):
+def CheckConatinsMapTags(node,blackboard):
     map_tags = []
     if isinstance(node["_mapTags"],list):
         for tag in node["_mapTags"]:
@@ -503,14 +503,14 @@ def node_CheckConatinsMapTags(node,blackboard):
         all_map_tag = "、".join(map_tags)
         return {
             "main" : f"检查当前关卡的地图TAG",
-            "true" : f"若当前关卡具有 {all_map_tag} 中的任意一个TAG",
-            "false" : f"若当前关卡均不具有 {all_map_tag} TAG"
+            "true" : f"当前关卡具有 {all_map_tag} 中的任意一个TAG",
+            "false" : f"当前关卡均不具有 {all_map_tag} TAG"
         }
     elif len(map_tags) == 1:
         return {
             "main" : f"检查当前关卡的地图TAG",
-            "true" : f"若当前关卡具有 {map_tags[0]} TAG",
-            "false" : f"若当前关卡没有 {map_tags[0]} TAG"
+            "true" : f"当前关卡具有 {map_tags[0]} TAG",
+            "false" : f"当前关卡没有 {map_tags[0]} TAG"
         }
     else:
         return {
@@ -520,7 +520,7 @@ def node_CheckConatinsMapTags(node,blackboard):
         }
 
 # 检查对象所在地块的相对位置（普罗旺斯专属）
-def node_CheckModifierDirectionOffset(node,blackboard):
+def CheckModifierDirectionOffset(node,blackboard):
     # 未解析参数：_offset.col
     source_name = anne_dictionary("target",node["_source"])
     target_name = anne_dictionary("target",node["_target"])
@@ -532,74 +532,74 @@ def node_CheckModifierDirectionOffset(node,blackboard):
     if node["_exceptThisOffset"]:
         return {
             "main" : f"检查{target_name}所处的地块",
-            "true" : f"若{target_name}位于{source_name}{condition}",
-            "false" : f"若{target_name}位于{source_name}{condition}以外的地块"
+            "true" : f"{target_name}位于{source_name}{condition}",
+            "false" : f"{target_name}位于{source_name}{condition}以外的地块"
         }
     else:
         return {
             "main" : f"检查{target_name}所处的地块",
-            "true" : f"若{target_name}位于{source_name}{condition}以外的地块",
-            "false" : f"若{target_name}位于{source_name}{condition}"
+            "true" : f"{target_name}位于{source_name}{condition}以外的地块",
+            "false" : f"{target_name}位于{source_name}{condition}"
         }
 
 # 检查对象所处地块是否位于某个攻击范围/半径内
-def node_CheckTargetInRange(node,blackboard):
+def CheckTargetInRange(node,blackboard):
     source_name = anne_dictionary("target",node["_soureceType"]) #对的yj真的多打了个e
     target_name = anne_dictionary("target",node["_targetType"])
     if node["_autoRange"]:
         return {
             "main" : f"检查{target_name}是否位于{source_name}当前的攻击范围内（不考虑攻击范围延伸；中心判定）",
-            "true" : f"若{target_name}位于攻击范围内",
-            "false" : f"若{target_name}位于攻击范围外"
+            "true" : f"{target_name}位于攻击范围内",
+            "false" : f"{target_name}位于攻击范围外"
         }
     elif node["_checkRadius"]:
         return {
             "main" : f"检查{target_name}是否位于{source_name}半径{node['_rangeRadius']}格内（中心判定）",
-            "true" : f"若{target_name}位于此半径内",
-            "false" : f"若{target_name}位于此半径外"
+            "true" : f"{target_name}位于此半径内",
+            "false" : f"{target_name}位于此半径外"
         }
     else:
         return {
             "main" : f"检查{target_name}是否位于{source_name}部署位置与方向的特定范围（ID：{node['_rangeId']}）内（中心判定）",
-            "true" : f"若{target_name}位于该范围内",
-            "false" : f"若{target_name}位于该范围外"
+            "true" : f"{target_name}位于该范围内",
+            "false" : f"{target_name}位于该范围外"
         }
 
 # 检查特定范围内是否存在其他友方“可点选”单位
-def node_CheckOtherCharacterInRange(node,blackboard):
+def CheckOtherCharacterInRange(node,blackboard):
     source_name = anne_dictionary("target",node["_source"])
     return {
         "main" : f"检查{source_name}部署位置与方向的特定范围（ID：{node['_rangeId']}）内是否存在其他同阵营\"可点选\"的单位",
         "description" : "\"可点选\"的判定方式如同博士亲手点击该地块中央时可以点击到的所有单位",
-        "true" : "若该范围内存在至少一个此类单位",
-        "false" : "若该范围内不存在此类单位"
+        "true" : "该范围内存在至少一个此类单位",
+        "false" : "该范围内不存在此类单位"
     }
 
 # 检查目标重量
-def node_FilterByTargetMassLevel(node,blackboard):
+def FilterByTargetMassLevel(node,blackboard):
     target_name = anne_dictionary("target",node["_target"])
     compare = anne_dictionary("compare",node["_condType"])
     compare_not = anne_dictionary("compare_not",node["_condType"])
     return {
         "main" : f"检查{target_name}的重量",
-        "true" : f"若其重量 {compare} [value]",
-        "false" : f"若其重量 {compare_not} [value]"
+        "true" : f"其重量 {compare} [value]",
+        "false" : f"其重量 {compare_not} [value]"
     }
 
 # 检查目标生命
-def node_FilterByTargetHp(node,blackboard):
+def FilterByTargetHp(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     compare = anne_dictionary("compare",node["_condType"])
     compare_not = anne_dictionary("compare_not",node["_condType"])
     default_value = analyze_fp(node["_hpValue"])
     return {
         "main" : f"检查{target_name}当前生命值",
-        "true" : f"若其当前生命值 {compare} [hp]（默认{default_value}）",
-        "false" : f"若其当前生命值 {compare_not} [hp]（默认{default_value}）"
+        "true" : f"其当前生命值 {compare} [hp]（默认{default_value}）",
+        "false" : f"其当前生命值 {compare_not} [hp]（默认{default_value}）"
     }
 
 # 检查目标生命比例
-def node_FilterByTargetHpRatio(node,blackboard):
+def FilterByTargetHpRatio(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     compare = anne_dictionary("compare",node["_condType"])
     compare_not = anne_dictionary("compare_not",node["_condType"])
@@ -607,44 +607,44 @@ def node_FilterByTargetHpRatio(node,blackboard):
         source_name = anne_dictionary("target",node["_sourceType"])
         return {
             "main" : f"检查{target_name}与{source_name}当前生命比例（生命/最大生命值）",
-            "true" : f"若{target_name}的生命比例 {compare} {source_name}的生命比例",
-            "false" : f"若{target_name}的生命比例 {compare_not} {source_name}的生命比例"
+            "true" : f"{target_name}的生命比例 {compare} {source_name}的生命比例",
+            "false" : f"{target_name}的生命比例 {compare_not} {source_name}的生命比例"
         }
     else:
         default_value = node["_value"]
         prefix = node["_blackboardPrefix"].lower() if node["_blackboardPrefix"] else "" # 对的这玩意自带一次小写化
         return {
             "main" : f"检查{target_name}当前生命比例（生命/最大生命值）",
-            "true" : f"若其生命比例 {compare} [{prefix}hp_ratio]（默认{default_value}）",
-            "false" : f"若其生命比例 {compare_not} [{prefix}hp_ratio]（默认{default_value}）"
+            "true" : f"其生命比例 {compare} [{prefix}hp_ratio]（默认{default_value}）",
+            "false" : f"其生命比例 {compare_not} [{prefix}hp_ratio]（默认{default_value}）"
         }
 
 # 检查目标技力比例
-def node_FilterByTargetSpRatio(node,blackboard):
+def FilterByTargetSpRatio(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     compare = anne_dictionary("compare",node["_condType"])
     compare_not = anne_dictionary("compare_not",node["_condType"])
     default_value = node["_spRatio"]
     return {
         "main" : f"检查{target_name}当前技力比例（技力/技力上限）",
-        "true" : f"若其技力比例 {compare} [sp_ratio]（默认{default_value}）",
-        "false" : f"若其技力比例 {compare_not} [sp_ratio]（默认{default_value}）"
+        "true" : f"其技力比例 {compare} [sp_ratio]（默认{default_value}）",
+        "false" : f"其技力比例 {compare_not} [sp_ratio]（默认{default_value}）"
     }
 
 # 检查目标当前损伤元素的比例
-def node_FilterByTargetEpRatio(node,blackboard):
+def FilterByTargetEpRatio(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     compare = anne_dictionary("compare",node["_condType"])
     compare_not = anne_dictionary("compare_not",node["_condType"])
     default_value = node["_epRatio"]
     return {
         "main" : f"检查{target_name}当前元素损伤程度（当前损伤元素的元素值/元素上限，\"爆条\"期间视为100%）",
-        "true" : f"若其元素损伤程度 {compare} [ep_ratio]（默认{default_value}）",
-        "false" : f"若其元素损伤程度 {compare_not} [ep_ratio]（默认{default_value}）"
+        "true" : f"其元素损伤程度 {compare} [ep_ratio]（默认{default_value}）",
+        "false" : f"其元素损伤程度 {compare_not} [ep_ratio]（默认{default_value}）"
     }
 
 # 检查目标属性
-def node_FilterByTargetAttribute(node,blackboard):
+def FilterByTargetAttribute(node,blackboard):
     target_name = anne_dictionary("target",node["_target"])
     compare = anne_dictionary("compare",node["_condType"])
     compare_not = anne_dictionary("compare_not",node["_condType"])
@@ -653,54 +653,54 @@ def node_FilterByTargetAttribute(node,blackboard):
     if default_value != 0:
         return {
             "main" : f"检查{target_name}的{attribute}",
-            "true" : f"若其{attribute} {compare} [value]",
-            "false" : f"若其{attribute} {compare_not} [value]"
+            "true" : f"其{attribute} {compare} [value]",
+            "false" : f"其{attribute} {compare_not} [value]"
         }
     else:
         return {
             "main" : f"检查{target_name}的{attribute}",
-            "true" : f"若其{attribute} {compare} [value]（默认{default_value}）",
-            "false" : f"若其{attribute} {compare_not} [value]（默认{default_value}）"
+            "true" : f"其{attribute} {compare} [value]（默认{default_value}）",
+            "false" : f"其{attribute} {compare_not} [value]（默认{default_value}）"
         }
 
 # 检查目标等级
-def node_FilterByTargetDataLevel(node,blackboard):
+def FilterByTargetDataLevel(node,blackboard):
     target_name = anne_dictionary("target",node["_target"])
     compare = anne_dictionary("compare",node["_condType"])
     compare_not = anne_dictionary("compare_not",node["_condType"])
     return {
         "main" : f"检查{target_name}的等级数据（不考虑精英化）",
-        "true" : f"若其等级 {compare} {node['_level']}",
-        "false" : f"若其等级 {compare_not} {node['_level']}"
+        "true" : f"其等级 {compare} {node['_level']}",
+        "false" : f"其等级 {compare_not} {node['_level']}"
     }
 
 # 检查技力类型
-def node_FilterByTargetSPType(node,blackboard):
+def FilterByTargetSPType(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     sp_type = anne_dictionary("sp_type",node["_spType"])
     return {
         "main" : f"检查{target_name}的技力类型",
-        "true" : f"若其技力类型为 {sp_type} ",
-        "false" : f"若其技力类型为 {sp_type} "
+        "true" : f"其技力类型为 {sp_type} ",
+        "false" : f"其技力类型为 {sp_type} "
     }
 
 # 检查所处地块
-def node_CheckCurrentTileKey(node,blackboard):
+def CheckCurrentTileKey(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     tiles = []
     for tile_key in node["_tileKey"]:
         tiles.append(anne_dictionary("tile_key",tile_key))
     result ={
         "main" : f"检查{target_name}所处的是否为"+"/".join(tiles)+"地块",
-        "true" : f"若所处的是这几类地块之一" if len(tiles) > 1 else f"若所处的是此类地块",
-        "false" : f"若所处的均不为这几类地块" if len(tiles) > 1 else f"若所处的不为此类地块"
+        "true" : f"所处的是这几类地块之一" if len(tiles) > 1 else f"若所处的是此类地块",
+        "false" : f"所处的均不为这几类地块" if len(tiles) > 1 else f"若所处的不为此类地块"
     }
     if node["_isExclude"]:
         result["true"],result["false"] = result["false"],result["true"]
     return result
 
 # 检查敌人类单位的ID
-def node_CheckEnemyId(node,blackboard):
+def CheckEnemyId(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     enemy_names = []
     if not node["_loadIdFromBb"]:
@@ -715,80 +715,80 @@ def node_CheckEnemyId(node,blackboard):
     if node["_loadIdFromBb"]:
         result = {
             "main" : f"检查{target_name}（敌人类）的ID是否为黑板[enemy_key]记述的ID",
-            "true" : f"若该敌人为该ID的敌人",
-            "false" : f"若该敌人不为该ID的敌人"
+            "true" : f"该敌人为该ID的敌人",
+            "false" : f"该敌人不为该ID的敌人"
         }
     elif len(enemy_names) > 1:
         result = {
             "main" : f"检查{target_name}（敌人类）是否为 "+"、".join(enemy_names) + " 之一",
             "description" : "即检查ID是否为："+"；".join(node["_filterIds"]),
-            "true" : f"若该敌人在上述敌人之一",
-            "false" : f"若该敌人不为上述敌人之一"
+            "true" : f"该敌人在上述敌人之一",
+            "false" : f"该敌人不为上述敌人之一"
         }
     else:
         result = {
             "main" : f"检查{target_name}（敌人类）是否为 "+enemy_names[0],
             "description" : "即检查ID是否为："+node["_filterIds"][0],
-            "true" : f"若该敌人为 {enemy_names[0]}",
-            "false" : f"若该敌人不为 {enemy_names[0]}"
+            "true" : f"该敌人为 {enemy_names[0]}",
+            "false" : f"该敌人不为 {enemy_names[0]}"
         }
     if node["_isUnset"]:
         result["true"],result["false"] = result["false"],result["true"]
     return result
 
 # 检查当前单位模式
-def node_CheckUnitCurrentMode(node,blackboard):
+def CheckUnitCurrentMode(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     if node["_loadCurModeBbKey"] != None and node["_loadCurModeBbKey"] != "":
         return {
             "main" : f"检查{target_name}当前的模式编号是否为黑板[{node['_loadCurModeBbKey']}]记述的编号",
-            "true" : f"若其当前模式为[{node['_loadCurModeBbKey']}]号模式",
-            "false" : f"若其当前模式不为[{node['_loadCurModeBbKey']}]号模式"
+            "true" : f"其当前模式为[{node['_loadCurModeBbKey']}]号模式",
+            "false" : f"其当前模式不为[{node['_loadCurModeBbKey']}]号模式"
         }
     else:
         return {
             "main" : f"检查{target_name}当前的模式编号",
-            "true" : f"若其当前模式为{node['_checkCurModeIndex']}号模式",
-            "false" : f"若其当前模式不为{node['_checkCurModeIndex']}号模式"
+            "true" : f"其当前模式为{node['_checkCurModeIndex']}号模式",
+            "false" : f"其当前模式不为{node['_checkCurModeIndex']}号模式"
         }
 
 # 检查敌人是否处于失衡状态机
-def node_CheckEnemyUnbalanced(node,blackboard):
+def CheckEnemyUnbalanced(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     return {
         "main" : f"检查{target_name}（敌人类）当前是否处于\"失衡\"状态机",
-        "true" : f"若该单位为敌人类且处于\"失衡\"状态机",
-        "false" : f"若该单位不为敌人类或不处于\"失衡\"状态机"
+        "true" : f"该单位为敌人类且处于\"失衡\"状态机",
+        "false" : f"该单位不为敌人类或不处于\"失衡\"状态机"
     }
 
 # 检查所在地块的高度类型
-def node_CheckHeightTypeOfRootTile(node,blackboard):
+def CheckHeightTypeOfRootTile(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     height_type = anne_dictionary("height_type",node["_heightType"])
     return {
         "main" : f"检查{target_name}所处地块的高度类型",
-        "true" : f"若地块高度类型为{height_type}",
-        "false" : f"若地块高度类型不为{height_type}"
+        "true" : f"地块高度类型为{height_type}",
+        "false" : f"地块高度类型不为{height_type}"
     }
 
 # 检查所在地块是否被角色类占用
-def node_CheckCharacterOnTile(node,blackboard):
+def CheckCharacterOnTile(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     if node["_checkProfessionCategories"]:
         return {
             "main" : f"检查{target_name}所处地块上是否存在干员（角色类且为八大职业之一）",
-            "true" : f"若该地块上存在任意干员",
-            "false" : f"若该地块上不存在干员"
+            "true" : f"该地块上存在任意干员",
+            "false" : f"该地块上不存在干员"
         }
     else:
         return {
             "main" : f"检查{target_name}所处地块上是否存在角色类单位",
-            "true" : f"若该地块上存在任意角色类单位",
-            "false" : f"若该地块上不存在角色类单位"
+            "true" : f"该地块上存在任意角色类单位",
+            "false" : f"该地块上不存在角色类单位"
         }
 
 # 检查所在地块是否存在特定角色类单位、存在特定敌人类单位、地块Key
-def node_CheckTargetRootTile(node,blackboard):
+def CheckTargetRootTile(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     conditions = []
     # 检测角色类
@@ -827,8 +827,8 @@ def node_CheckTargetRootTile(node,blackboard):
             condition = "/".join(tiles)
     return {
         "main" : f"检查{target_name}所在的地块",
-        "true" : f"若为{condition}地块",
-        "false" : f"若不为{condition}地块"
+        "true" : f"为{condition}地块",
+        "false" : f"不为{condition}地块"
     }
 
         

@@ -5,7 +5,7 @@ import math
 
 from analyzer import analyze_relic_timing, to_percent
 # 关卡费用增加间隔乘算
-def rogue_level_cost_increase_time_mul(item_type,blackboard):
+def level_cost_increase_time_mul(item_type,blackboard):
     timing = analyze_relic_timing(item_type,blackboard)
     percent = to_percent(blackboard["scale"])
     anti_percent = to_percent(1. / blackboard["scale"])

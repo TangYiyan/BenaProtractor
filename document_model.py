@@ -4,21 +4,25 @@ import json
 import re
 import bena
 
+REFERENCE_PATTERN = re.compile(r'<([^<>\n]+)>')
 
+# 超链接
 def reference_parts(value, catalog, explicit=''):
     preferred = {}
     for target in str(explicit or '').split(','):
         entry = catalog.resolve(target.strip())
         if entry:
             preferred[entry.key] = entry
-    pattern = re.compile(r'<([^<>\n]+)>')
     parts, offset = [], 0
 
     value = str(value)
-    for match in pattern.finditer(value):
+    for match in REFERENCE_PATTERN.finditer(value):
         if match.start() > offset:
             parts.append((value[offset:match.start()], None))
         key = match.group(1)
+        key_type = ""
+        if "|" in key:
+            key_type, key = tuple(key.split("|",1))
         entry = preferred.get(key) or catalog.resolve(key)
         label = entry.name if entry else bena.translate_buff_name(key)
         if entry is None and label != key:
@@ -73,19 +77,25 @@ def document_rows(document, collapsed=frozenset()):
             children = part.get('children') or []
             foldable = bool(children or part.get('description'))
             role = 'heading' if depth == 0 else 'section' if children else 'body'
-            if part.get('main'):
-                if part.get('true'):
-                    yield DocumentRow(path, depth, str(part['main'])+"，"+str(part['true'])+"...", role, part.get('link', ''), foldable)
-                elif part.get('false'):
-                    yield DocumentRow(path, depth, str(part['main'])+"，"+str(part['false'])+"，直接跳出", role, part.get('link', ''), foldable)
-                else:
+            if part.get("last_one"):
+                if part.get('main'):
                     yield DocumentRow(path, depth, str(part['main']), role, part.get('link', ''), foldable)
-            elif part.get('true') :
-                yield DocumentRow(path, depth, str(part['true'])+"...", role, part.get('link', ''), foldable)
-            elif part.get('false'):
-                yield DocumentRow(path, depth, str(part['false'])+"，直接跳出", role, part.get('link', ''), foldable)
+                else:
+                    yield DocumentRow(path, depth, "......", role, part.get('link', ''), foldable)
             else:
-                yield DocumentRow(path, depth, "......", role, part.get('link', ''), foldable)
+                if part.get('main'):
+                    if part.get('true'):
+                        yield DocumentRow(path, depth, str(part['main'])+"，若"+str(part['true'])+"...", role, part.get('link', ''), foldable)
+                    elif part.get('false'):
+                        yield DocumentRow(path, depth, str(part['main'])+"，若"+str(part['false'])+"，则直接跳出", role, part.get('link', ''), foldable)
+                    else:
+                        yield DocumentRow(path, depth, str(part['main']), role, part.get('link', ''), foldable)
+                elif part.get('true') :
+                    yield DocumentRow(path, depth, "若"+str(part['true'])+"...", role, part.get('link', ''), foldable)
+                elif part.get('false'):
+                    yield DocumentRow(path, depth, "若"+str(part['false'])+"，则直接跳出", role, part.get('link', ''), foldable)
+                else:
+                    yield DocumentRow(path, depth, "......", role, part.get('link', ''), foldable)
 
             # 子部分
             if path not in collapsed:

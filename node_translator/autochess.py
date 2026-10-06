@@ -4,36 +4,36 @@
 from dictionary import anne_dictionary
 
 # 检查战斗中
-def node_AutoChessIsInBattle(node,blackboard):
+def AutoChessIsInBattle(node,blackboard):
     return {
         "main" : "检查当前是否处于卫戍协议的战斗中（战斗未正式开始或已结束不计数）",
-        "true" : "若当前处于战斗中",
-        "false" : "若当前不处于战斗中"
+        "true" : "当前处于战斗中",
+        "false" : "当前不处于战斗中"
     }
 
 # 检查难度
-def node_AutoChessCheckDifficulty(node,blackboard):
+def AutoChessCheckDifficulty(node,blackboard):
     if node["_difficultyMode"] == "TRAINING":
         return {
             "main" : "检查当前卫戍协议的关卡难度",
-            "true" : "若当前为入门协议（教学模式）",
-            "false" : "若当前不为入门协议（教学模式）"
+            "true" : "当前为入门协议（教学模式）",
+            "false" : "当前不为入门协议（教学模式）"
         }
     elif node["_difficultyMode"] == "FUNNY":
         return {
             "main" : "检查当前卫戍协议的关卡难度",
-            "true" : "若当前为标准模拟（简单难度）",
-            "false" : "若当前为标准模拟（简单难度）"
+            "true" : "当前为标准模拟（简单难度）",
+            "false" : "当前为标准模拟（简单难度）"
         }
     elif node["_difficultyMode"] == "NORMAL":
         return {
             "main" : "检查当前卫戍协议的关卡难度",
-            "true" : "若当前为险境模拟/绝境模拟/终极模拟（普通/困难/深渊难度）",
-            "false" : "若当前不为险境模拟/绝境模拟/终极模拟（普通/困难/深渊难度）"
+            "true" : "当前为险境模拟/绝境模拟/终极模拟（普通/困难/深渊难度）",
+            "false" : "当前不为险境模拟/绝境模拟/终极模拟（普通/困难/深渊难度）"
         }
 
 # 在黑板记录盟约生效人数
-def node_AutoChessAssignBondCharCntToBB(node,blackboard):
+def AutoChessAssignBondCharCntToBB(node,blackboard):
     # 未解析参数：_target、_filterAllSides
     bond_id = anne_dictionary("bond_id",node["_bondId"])
     if node["_filterCount"]: # 判断模式
@@ -41,8 +41,8 @@ def node_AutoChessAssignBondCharCntToBB(node,blackboard):
         compare_not = anne_dictionary("compare_not",node["_condType"])
         return {
             "main" : f"将{bond_id}盟约生效人数记录至黑板[{node['_keyToStoreCnt']}]，并判断人数",
-            "true" : f"若生效人数 {compare} [{node['_keyToCompare']}]",
-            "false" : f"若生效人数 {compare_not} [{node['_keyToCompare']}]"
+            "true" : f"生效人数 {compare} [{node['_keyToCompare']}]",
+            "false" : f"生效人数 {compare_not} [{node['_keyToCompare']}]"
         }
     else:
         return {
@@ -50,7 +50,7 @@ def node_AutoChessAssignBondCharCntToBB(node,blackboard):
         }
 
 # 在黑板记录盟约生效层数
-def node_AutoChessAssignBondStackCntToBB(node,blackboard):
+def AutoChessAssignBondStackCntToBB(node,blackboard):
     # 未解析参数：_target、_assignAllPlayerIndex
     bond_id = "???"
     if node["_assignCurrentMaxBond"]:
@@ -73,7 +73,7 @@ def node_AutoChessAssignBondStackCntToBB(node,blackboard):
     return result
 
 # 在黑板记录装备数量
-def node_AutochessAssignEquipCntToBlackboard(node,blackboard):
+def AutochessAssignEquipCntToBlackboard(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     if node["_onlyGoldenEquip"]:
         return {
@@ -87,7 +87,7 @@ def node_AutochessAssignEquipCntToBlackboard(node,blackboard):
         }
 
 # 在黑板记录同名/精锐人数
-def node_AutoChessAssignChessCntToBB(node,blackboard):
+def AutoChessAssignChessCntToBB(node,blackboard):
     bb_key = node["_assignKey"]
     if node["_assignGoldenChess"]: # 罗素队的检查
         return {"main" : f"统计在场精锐单位，将数量记录至黑板[{bb_key}]"}
@@ -99,23 +99,23 @@ def node_AutoChessAssignChessCntToBB(node,blackboard):
         
 
 # 检查角色是否已进阶
-def node_AutoChessFilterChess(node,blackboard):
+def AutoChessFilterChess(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     if node["_filterGolden"]:
         return {
             "main" : f"检查{target_name}进阶状态",
-            "true" : f"若{target_name}已进阶",
-            "false" : f"若{target_name}还未进阶",
+            "true" : f"{target_name}已进阶",
+            "false" : f"{target_name}还未进阶",
         }
     else:
         return {
             "main" : f"检查{target_name}进阶状态",
-            "true" : f"若{target_name}还未进阶",
-            "false" : f"若{target_name}已进阶",
+            "true" : f"{target_name}还未进阶",
+            "false" : f"{target_name}已进阶",
         }
 
 # 检查角色/范围内角色是否属于XX盟约
-def node_AutoChessFilterCharacterBondIds(node,blackboard):
+def AutoChessFilterCharacterBondIds(node,blackboard):
     bond_ids = [anne_dictionary("bond_id",bond) for bond in node["_bondIds"]]
     bond_filter = ""
     
@@ -140,31 +140,31 @@ def node_AutoChessFilterCharacterBondIds(node,blackboard):
     if node["_checkTargetInRangeId"]: # 检查目标范围内是否存在符合盟约单位
         return {
             "main" : f"检查{target_name}的{node['_checkTargetInRangeId']}范围内所有角色的盟约",
-            "true" : f"若任一角色{bond_filter}",
-            "false" : f"若所有角色均不{bond_filter}"
+            "true" : f"任一角色{bond_filter}",
+            "false" : f"所有角色均不{bond_filter}"
         }
     else: # 检查目标盟约
         return {
             "main" : f"检查{target_name}的盟约",
-            "true" : f"若其{bond_filter}",
-            "false" : f"若其不{bond_filter}"
+            "true" : f"其{bond_filter}",
+            "false" : f"其不{bond_filter}"
         }
 
 # 检查目标的InstID，或者检查黑板里是否有目标的UID
-def node_AutochessCheckTarget(node,blackboard):
+def AutochessCheckTarget(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     if node["_checkCardUidInBlackboard"]:
         return {
             "main" : f"检查本Buff的黑板上是否记录有{target_name}的UID",
             "description" : "通常是以AssignCardUIDToBlackBoard，格式为{\"UID\" : 1.0}的格式记录",
-            "true" : f"若黑板中存在{target_name}的UID",
-            "false" : f"若黑板中不存在{target_name}的UID"
+            "true" : f"黑板中存在{target_name}的UID",
+            "false" : f"黑板中不存在{target_name}的UID"
         }
     elif node["_checkTargetIsBlackboardInstID"]: # 这个我也没看懂
         return {
             "main" : f"检查{target_name}的InstID是否为黑板中记载的InsId",
-            "true" : f"若其InstID正确",
-            "false" : f"若其不InstID不正确"
+            "true" : f"其InstID正确",
+            "false" : f"其不InstID不正确"
         }
     else:
         return {
@@ -174,6 +174,6 @@ def node_AutochessCheckTarget(node,blackboard):
         }
 
 # 触发核心盟约能力
-def node_AutoChessTriggerGarrisonAbility(node,blackboard):
+def AutoChessTriggerGarrisonAbility(node,blackboard):
     target_name = anne_dictionary("target",node["_target"])
     return {"main" : f"触发{target_name}自身的盟约特质（通常为叠层效果）"}

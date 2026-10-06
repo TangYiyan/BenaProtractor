@@ -5,7 +5,7 @@ from dictionary import anne_dictionary
 from analyzer import analyze_buff, analyze_damage, analyze_target_options, to_percent
     
 # 造成伤害
-def node_AdvancedApplyDamage(node,blackboard):
+def AdvancedApplyDamage(node,blackboard):
     # 未解析参数：_emitSourceOnCalculateDamage
     source_name = anne_dictionary("target",node["_sourceType"])
     target_name = anne_dictionary("target",node["_targetType"])
@@ -36,21 +36,21 @@ def node_AdvancedApplyDamage(node,blackboard):
     return result
 
 # 造成无来源伤害
-def node_NoSourceDamage(node,blackboard):
+def NoSourceDamage(node,blackboard):
     damage_name = analyze_damage(node,"无来源的") # 直接把整个node传参进去
     if node["_multiplierByKey"] and node["_multiplierKey"] != None and node["_multiplierKey"] != "":
             return {"main" : f"对持有者造成 [{node['_damageKey']}] × [{node['_multiplierKey']}] 点{damage_name}"}
     return {"main" : f"对持有者造成 [{node['_damageKey']}] 点{damage_name}"}
 
 # 造成无来源伤害（新，但毫无区别）
-def node_NoSourceDamageNew(node,blackboard):
+def NoSourceDamageNew(node,blackboard):
     damage_name = analyze_damage(node,"无来源的") # 直接把整个node传参进去
     if node["_multiplierByKey"] and node["_multiplierKey"] != None and node["_multiplierKey"] != "":
             return {"main" : f"对持有者造成 [{node['_damageKey']}] × [{node['_multiplierKey']}] 点{damage_name}"}
     return {"main" : f"对持有者造成 [{node['_damageKey']}] 点{damage_name}"}
 
 # 造成固定值伤害
-def node_FixedValueDamage(node,blackboard):
+def FixedValueDamage(node,blackboard):
     # 未解析参数：_devideDamageFromAbilityCnt
     source_name = anne_dictionary("target",node["_damageSourceType"])
     target_name = anne_dictionary("target",node["_damageTargetType"])
@@ -80,7 +80,7 @@ def node_FixedValueDamage(node,blackboard):
     return result
 
 # 造成基于某种属性的伤害（主要由刻俄柏与泡泡使用）
-def node_DamageViaAttr(node,blackboard):
+def DamageViaAttr(node,blackboard):
     source_name = anne_dictionary("target",node["_sourceType"])
     target_name = anne_dictionary("target",node["_targetType"])
     attribute = anne_dictionary("attribute",node["_attributeType"])+"属性"
@@ -103,7 +103,7 @@ def node_DamageViaAttr(node,blackboard):
     return result
 
 # 根据记录生命值，制造一次伤害来匹配记录的生命值
-def node_FetchHpToBlackboard(node,blackboard):
+def FetchHpToBlackboard(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     damage_type = anne_dictionary("damage_type",node["_damageType"])
     if node["_skipModifierEvent"]:
@@ -125,7 +125,7 @@ def node_FetchHpToBlackboard(node,blackboard):
         }
 
 # 根据最大生命值，制造一次伤害
-def node_DamageViaMaxHpRatio(node,blackboard):
+def DamageViaMaxHpRatio(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     damage_num = "造成 其最大生命值 × [hp_ratio] "
     damage_name = analyze_damage(node,"预计算") # 直接把整个node传参进去
@@ -140,7 +140,7 @@ def node_DamageViaMaxHpRatio(node,blackboard):
     return result
 
 # 根据当前生命值，制造一次伤害
-def node_DamageViaCurHpRatio(node,blackboard):
+def DamageViaCurHpRatio(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     damage_num = "造成 来源当前生命值 × [hp_ratio] "
     damage_name = analyze_damage(node,"预计算") # 直接把整个node传参进去
@@ -163,7 +163,7 @@ def node_DamageViaCurHpRatio(node,blackboard):
     return result
 
 # 根据移动距离差，制造一次伤害
-def node_DamageByDistance(node,blackboard):
+def DamageByDistance(node,blackboard):
     # 未解析参数：_isInit
     source_name = anne_dictionary("target",node["_sourceType"])
     target_name = anne_dictionary("target",node["_targetType"])
@@ -175,7 +175,7 @@ def node_DamageByDistance(node,blackboard):
     }
 
 # 造成群体伤害
-def node_AOEDamage(node,blackboard):
+def AOEDamage(node,blackboard):
     # 未解析参数：_createEffect、_hitEffectKey、_hitEffectUseSourceFaceTo
     source_name = anne_dictionary("target",node["_sourceType"])
     target_name = anne_dictionary("target",node["_targetType"])
@@ -227,7 +227,7 @@ def node_AOEDamage(node,blackboard):
         if len(node["_buffs"]) > 1:
             result["children"] = [{"main" : "...并对每个目标创建以下这些Buff："}]
             for buff in node["_buffs"]:
-                result["children"].append(analyze_buff(buff))
+                result["children"].append(analyze_buff(buff,blackboard,blackboard))
         else:
             buff = analyze_buff(node["_buffs"][0])
             buff["main"] = "...并对每个目标创建Buff："+buff["main"]
@@ -236,11 +236,11 @@ def node_AOEDamage(node,blackboard):
     return result
 
 # 持续流血 - 重置
-def node_BleedingDamageIncreasingReset(node,blackboard):
+def BleedingDamageIncreasingReset(node,blackboard):
     return {"main" : "\"持续流血\"：重置流血计算时间（设 [dynamic] = 0.0）"}
 
 # 持续流血
-def node_BleedingDamagePerSec(node,blackboard):
+def BleedingDamagePerSec(node,blackboard):
     damage_prefix = ""
     damage = ""
     if node["_elementDamageType"] != "NONE": # 损伤模式
@@ -284,7 +284,7 @@ def node_BleedingDamagePerSec(node,blackboard):
     return result
 
 # 反弹伤害
-def node_InverseDamage(node,blackboard):
+def InverseDamage(node,blackboard):
     source_name = anne_dictionary("target",node["_sourceType"]) if node["_hasSource"] else ""
     if node["_sourceType"] == "BUFF_SOURCE": # 防止混淆
         source_name = "BUFF来源"

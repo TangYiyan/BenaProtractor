@@ -5,7 +5,7 @@ import math
 from dictionary import anne_dictionary
 from analyzer import to_delta
 # 用各种参数计算黑板值
-def node_CalculateBlackboardValueViaParams(node,blackboard):
+def CalculateBlackboardValueViaParams(node,blackboard):
     # 未解析参数：
     place_name = ""
     input_key = node["_inputKey"]
@@ -47,7 +47,7 @@ def node_CalculateBlackboardValueViaParams(node,blackboard):
     return {"main" : f"{place_name}将 [{output_key}] 设置为 {formula}"}
 
 # 令黑板值+X
-def node_BlackboardAdd(node,blackboard):
+def BlackboardAdd(node,blackboard):
     bb_key = node["_blackboardKey"]
     if node["_additionKey"] != None and node["_additionKey"] != "":
         if node["_isFloat"]: # 这玩意是“不向下取整”的意思
@@ -65,7 +65,7 @@ def node_BlackboardAdd(node,blackboard):
     return {"main" : f"尝试修改 [{bb_key}] ，但是无事发生"}
 
 # 修改黑板值/检查黑板值后再修改
-def node_ModifyBlackboard(node,blackboard):
+def ModifyBlackboard(node,blackboard):
     bb_key = node["_blackboardKeys"]
     if node["_fromBlackboardKeys"] != None and node["_fromBlackboardKeys"] != "":
         from_key = node["_fromBlackboardKeys"]

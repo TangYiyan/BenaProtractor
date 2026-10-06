@@ -1,4 +1,6 @@
-"""Conditional downloads with validated staging and rollback."""
+#----------------------------------------
+# 下载器
+#----------------------------------------
 import json
 import os
 from pathlib import Path

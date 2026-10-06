@@ -5,7 +5,7 @@ from dictionary import anne_dictionary
 from analyzer import to_percent
 
 # 修改颜色
-def node_Act49SideSetEntityAnimatorColor(node,blackboard):
+def Act49SideSetEntityAnimatorColor(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     color = (node["color"]["r"] , node["color"]["g"] , node["color"]["b"])
     alpha = to_percent(node["color"]["a"])
@@ -37,7 +37,7 @@ def node_Act49SideSetEntityAnimatorColor(node,blackboard):
     }
 
 # 浪里玄条字形态寻路
-def node_Act49SideEnemyTjglyTryFindNextTile(node,blackboard):
+def Act49SideEnemyTjglyTryFindNextTile(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     return {
         "main" : f"若{target_name}处于字形态下，尝试寻找并移动到下一个地块上",
@@ -46,7 +46,7 @@ def node_Act49SideEnemyTjglyTryFindNextTile(node,blackboard):
     }
 
 # 浪里玄条绑定字
-def node_Act49SideEnemyTjglyLockSelfWithTile(node,blackboard):
+def Act49SideEnemyTjglyLockSelfWithTile(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     return {
         "main" : f"尝试将{target_name}与当前所在字格地块的\"鱼\"字相绑定",
@@ -55,48 +55,48 @@ def node_Act49SideEnemyTjglyLockSelfWithTile(node,blackboard):
     }
 
 # 检查所在字格地块是否可部署
-def node_Act49SideCheckWordTileBuildable(node,blackboard):
+def Act49SideCheckWordTileBuildable(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     return {
         "main" : f"检查{target_name}所在的字格地块是否可部署",
-        "true" : "若该地块为可部署的字格地块",
-        "false" : "若该地块不为字格或是不可部署"
+        "true" : "该地块为可部署的字格地块",
+        "false" : "该地块不为字格或是不可部署"
     }
 
 # 检查所在字格地块是否为某字
-def node_Act49SideCheckCharacterTileType(node,blackboard):
+def Act49SideCheckCharacterTileType(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     if node["_checkAnyTile"]:
         return {
             "main" : f"检查{target_name}所在的地块",
-            "true" : "若该地块是字格地块",
-            "false" : "若该地块不是字格地块"
+            "true" : "该地块是字格地块",
+            "false" : "该地块不是字格地块"
         }
     if node["_tileType"] == "None":
         return {
             "main" : f"检查{target_name}所在的地块",
-            "true" : "若该地块不是字格地块",
-            "false" : "若该地块是字格地块"
+            "true" : "该地块不是字格地块",
+            "false" : "该地块是字格地块"
         }
     tile = anne_dictionary("act49side_char",node["_tileType"])
     return {
         "main" : f"检查{target_name}所在的字格地块上的字",
-        "true" : f"若该地块上的字为\"{tile}\"字",
-        "false" : f"若该地块不为字格或是字不为\"{tile}\"字"
+        "true" : f"该地块上的字为\"{tile}\"字",
+        "false" : f"该地块不为字格或是字不为\"{tile}\"字"
     }
 
 # 将所在字格地块改写为某字
-def node_Act49SideWriteCharacter(node,blackboard):
+def Act49SideWriteCharacter(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     if node["_tileType"] == "None":
         return {
             "main" : f"尝试将{target_name}所在字格地块改写为\"不是字格\"",
-            "true" : "若改写成功",
-            "false" : "若该地块已不为字格或是改写失败"
+            "true" : "改写成功",
+            "false" : "该地块已不为字格或是改写失败"
         }
     tile = anne_dictionary("act49side_char",node["_tileType"])
     return {
         "main" : f"尝试将{target_name}所在字格地块上的字改写为\"{tile}\"字",
-        "true" : "若改写成功",
-        "false" : "若该地块不为字格或是改写失败"
+        "true" : "改写成功",
+        "false" : "该地块不为字格或是改写失败"
     }

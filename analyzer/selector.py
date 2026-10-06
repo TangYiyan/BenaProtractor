@@ -66,3 +66,31 @@ def analyze_selector(blackboard,prefix="",suffix=""):
     if len(features) > 0:
         return f"{'、'.join(features)}的{prefix}{target_name}{suffix}"
     return f"{prefix}{target_name}{suffix}"
+
+# 藏品Gbuff选择器的覆写
+def analyze_selector_target_options_override(target_options: dict,blackboard: dict={}):
+    new_target_options = target_options.copy()
+    # 部署类型
+    if "selector.buildable" in blackboard:
+        new_target_options["_buildableType"] = blackboard["selector.buildable"].upper()
+    # 地位级别
+    if "selector.enemy_level_type" in blackboard:
+        new_target_options["_enemyLevelMask"] = blackboard["selector.enemy_level_type"]
+    elif "selector.boss_option" in blackboard: # 另一种写法
+        new_target_options["_enemyLevelMask"] = "BOSS"
+    # 阵营筛选处理
+    if "selector.side" in blackboard:
+        new_target_options["targetSide"] = blackboard["selector.side"].upper()
+    # 角色类单位ID筛选
+    if "selector.char" in blackboard:
+        new_target_options["_charId"] = blackboard["selector.char"]
+    # 敌人类单位ID筛选
+    if "selector.enemy" in blackboard:
+        new_target_options["_enemyId"] = blackboard["selector.enemy"]
+    # 敌人ID反向筛选
+    if "selector.enemy_exclude" in blackboard:
+        new_target_options["_excludeEnemyId"] = blackboard["selector.enemy_exclude"]
+    # 职业筛选
+    if "selector.profession" in blackboard:
+        new_target_options["professionMask"] = blackboard["selector.profession"].upper().replace("|",", ")
+    return new_target_options

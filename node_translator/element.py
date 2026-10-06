@@ -4,7 +4,7 @@
 from dictionary import anne_dictionary
 
 # 施加元素损伤
-def node_ApplyElementDamage(node,blackboard):
+def ApplyElementDamage(node,blackboard):
     source_name = anne_dictionary("target",node["_sourceType"])
     target_name = anne_dictionary("target",node["_targetType"])
     element_type = anne_dictionary("element",node["_elementDamageType"])
@@ -54,7 +54,7 @@ def node_ApplyElementDamage(node,blackboard):
     return result
 
 # 检查元素爆发类型
-def node_FilterEPBreakRecoveryType(node,blackboard):
+def FilterEPBreakRecoveryType(node,blackboard):
     target_name = anne_dictionary("target",node["_target"])
     result = {}
     if node["_readTypeFromBb"] and node["_bbKey"] != "":
@@ -71,24 +71,24 @@ def node_FilterEPBreakRecoveryType(node,blackboard):
     return result
     
 # 检查目标元素值是否为全满/特定元素值是否为满
-def node_CheckTargetEpIsFull(node,blackboard):
+def CheckTargetEpIsFull(node,blackboard):
     target_name = anne_dictionary("target",node["_targetType"])
     if node["_elementType"] != None and node["_elementType"] != "":
         element = anne_dictionary("element",node["_elementType"])
         return {
             "main" : f"检查{target_name}的{element}元素值",
-            "true" : f"若其{element}元素值 ≥ 其元素上限且不处于\"爆条\"状态",
-            "false" : f"若其{element}元素值 < 其元素上限或处于\"爆条\"状态"
+            "true" : f"其{element}元素值 ≥ 其元素上限且不处于\"爆条\"状态",
+            "false" : f"其{element}元素值 < 其元素上限或处于\"爆条\"状态"
         }
     else:
         return {
             "main" : f"检查{target_name}的所有类型的元素值",
-            "true" : f"若其所有元素值均 ≥ 其元素上限且不处于\"爆条\"状态",
-            "false" : f"若其任何一项元素值 < 其元素上限，或其处于\"爆条\"状态"
+            "true" : f"其所有元素值均 ≥ 其元素上限且不处于\"爆条\"状态",
+            "false" : f"其任何一项元素值 < 其元素上限，或其处于\"爆条\"状态"
         }
 
 # 损伤倍率
-def node_EpDamageScale(node,blackboard):
+def EpDamageScale(node,blackboard):
     # 未解析参数：_isStackable _isValidStackCnt
     features = []
     if node["_filterApplyWay"] and node["_applyWayFilter"] != None and node["_applyWayFilter"] != "":
