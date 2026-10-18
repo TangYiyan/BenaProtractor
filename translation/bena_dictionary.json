@@ -27,7 +27,8 @@
 		"wang_stone3_t[damage]" : "棋子_3技能[伤害]",
 		"wang_stone3_t[damage][token]" : "棋子_3技能[伤害][召唤物]",
 		"free_summon[card]" : "召唤师_X模组_免费召唤[手卡]",
-		"free_summon[token]" : "召唤师_X模组_免费召唤[召唤物]"
+		"free_summon[token]" : "召唤师_X模组_免费召唤[召唤物]",
+		"enemy[reborn]_absorb_fireseed" : "敌人[重生]_吸收_塑能基质"
 	},
 	"buff_prefix" : {
 		"mainline12" : "惊霆无声",
@@ -1376,6 +1377,7 @@
 		"spchain" : "SP链",
 		"spChain" : "SP链",
 		"castSkill" : "释放技能",
+		"absorb" : "吸收",
 		"MassLoss" : "失重",
 		"MassLossCore" : "失重核心",
 		"inRange" : "范围内",
@@ -1452,6 +1454,10 @@
 		"blord2" : "杜卡雷",
 		"mcreep" : "矿工游击队",
 		"magiccircuit" : "重整束流",
+		"fireseed" : "塑能基质",
+		"over" : {
+			"fireseed" : "溢出_塑能基质"
+		},
 
 		"douququ" : "斗蛐蛐",
 

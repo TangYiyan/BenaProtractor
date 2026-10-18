@@ -29,6 +29,9 @@ def AssignScrapInventoryToBlackboard(node,blackboard):
     # 零件箱上限
     if node["_limitBlackboardKey"] != None and node["_limitBlackboardKey"] != "":
         actions.append(f"将零件箱上限记录至 [{node['_limitBlackboardKey']}]")
+    # 零件箱总价值
+    if node["_valueBlackboardKey"] != None and node["_valueBlackboardKey"] != "":
+        actions.append(f"将零件箱总价值记录至 [{node['_valueBlackboardKey']}]")
     if len(actions) == 0:
         return {"main" : "（猎狗Proto把这个Node的效果嚼嚼嚼掉了）"}
     return {

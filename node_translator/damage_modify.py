@@ -33,23 +33,35 @@ def DamageScale(node,blackboard):
     # 减伤值
     if bb_key in blackboard:
         damage_scale_var = 1
-        if node["_isOneMinus"]:
+        if node["_isStackable"] and node["_isOneMinus"]: # 公式：(1-nx)
+            damage_scale = f"(1 - {blackboard[bb_key]} × Buff层数) 倍"
+        elif node["_isOneMinus"]: # 公式：(1-x)
             damage_scale_var = 1 - blackboard[bb_key]
+            if damage_scale_var > 1:
+                action = "提升"
+            if damage_scale_var < 1:
+                action = "降低"
+            damage_scale = to_percent(damage_scale_var)
+        elif node["_isStackable"]: # 公式：(1+nx)
+            damage_scale = f"(1 + {blackboard[bb_key]} × Buff层数) 倍"
         else:
             damage_scale_var = blackboard[bb_key]
-        if damage_scale_var < 1:
-            action = "降低"
-        damage_scale = to_percent(damage_scale_var)
+            if damage_scale_var > 1:
+                action = "提升"
+            if damage_scale_var < 1:
+                action = "降低"
+            damage_scale = to_percent(damage_scale_var)
     else:
-        # 需要把减伤值改为*(1-X)
-        if node["_isOneMinus"]:
+        if node["_isStackable"] and node["_isOneMinus"]: # 公式：(1-nx)
+            damage_scale = f"(1 - [{bb_key}] × Buff层数) 倍"
+            action = "降低"
+        elif node["_isOneMinus"]: # 公式：(1-x)
             damage_scale = f"(1 - [{bb_key}]) 倍"
             action = "降低"
-        else:
+        elif node["_isStackable"]: # 公式：(1+nx)
+            damage_scale = f"(1 + [{bb_key}] × Buff层数) 倍"
+        else: # 公式：x
             damage_scale = f" [{bb_key}] 倍"
-    # 根据Buff层数加倍
-    if node["_isStackable"]:
-        damage_scale = f"({damage_scale} × Buff层数)"
     text = f"令本次伤害{action}至{damage_scale}"
     # 检查伤害类型与施加方式
     conditions = []
