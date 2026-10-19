@@ -127,30 +127,31 @@ def DamageScaleBaseOnDistance(node,blackboard):
 
 # 闪避伤害
 def Evade(node,blackboard):
-    name = "概率/计次闪避"
     features = []
     # 检查伤害类型
     if node["_damageMask"] != "ALL":
         damage_type = anne_dictionary("damage_type",node["_damageMask"])
-        features.append(f"伤害类型为{damage_type}")
+        features.append(f"{damage_type}")
     # 检查伤害的施加方式
     if node["_applyWayFilter"] == "NONE": # 仅无类型
-        features.append("施加方式为“无”")
+        features.append("无途径")
     elif node["_applyWayFilter"] == "MELEE": # 无类型与近战
-        features.append("施加方式为“近战”或“无”")
+        features.append("近战")
     elif node["_applyWayFilter"] == "RANGED": # 无类型与远程
-        features.append("施加方式为“远程”或“无”")
+        features.append("远程")
     #elif node["_applyWayFilter"] == "ALL": # 全部都可以就不用写了
+    result = {
+        "main" : "有 [prob] 概率闪避此次伤害（\"骰子\"判定）",
+        "true" : "闪避成功",
+        "false" : "闪避失败或无法处理"
+    }
+    if "prob" in blackboard:
+        result["main"] = "有" + to_percent(blackboard["prob"]) + "概率闪避此次伤害（\"骰子\"判定）"
     if len(features) > 0:
-        return {
-            "main" : name + "（仅响应"+",".join(features)+"的伤害）",
-            "description" : "若无法响应/伤害已被无效化将不会消耗次数（若有），本节点视为无法处理；闪避失败也会视为无法处理，但会消耗次数（若有）"
-        }
-    else:
-        return {
-            "main" : name,
-            "description" : "若无法响应/伤害已被无效化将不会消耗次数（若有），本节点视为无法处理；闪避失败也会视为无法处理，但会消耗次数（若有）"
-        }
+        result["main"] = "若此次伤害为" + ",".join(features) + "伤害，" + result["main"]
+        result["true"] = "伤害合规且闪避成功"
+        result["false"] = "伤害不合规、闪避失败、或无法处理"
+    return result
     
 # 增加附加攻击力（逻哥2天赋）
 def AtkAdditionUpBeforeCalcDamage(node,blackboard):

@@ -49,6 +49,23 @@ def CheckCharacterSkillType(node,blackboard):
         "false" : f"其不为 {skill_type} 技能"
     }
 
+# 检查技能持续类型（目前仅用作弹药类处理）
+def CheckTargetSkillDurationType(node,blackboard):
+    target_name = anne_dictionary("target",node["_targetType"])
+    if len(node["_checkTypes"]) == 1 and node["_checkTypes"][0] == "AMMO":
+        return {
+            "main" : f"检查{target_name}（角色类）携带技能的持续类型",
+            "true" : f"其为\"弹药类\"技能",
+            "false" : f"其不为\"弹药类\"技能"
+        }
+    else:
+        allow_types = [anne_dictionary("skill_duration_type",_type) for _type in node["_checkTypes"]]
+        return {
+            "main" : f"检查{target_name}（角色类）携带技能的持续类型",
+            "true" : f"其隶属于 {'/'.join(allow_types)}",
+            "false" : f"其不隶属于 {'/'.join(allow_types)}"
+        }
+
 # 检查上下文能力的当前目标数
 def FilterAbilityValidCastTargetCnt(node,blackboard):
     compare = anne_dictionary("compare",node["_condType"])
