@@ -27,7 +27,8 @@
 		"wang_stone3_t[damage]" : "棋子_3技能[伤害]",
 		"wang_stone3_t[damage][token]" : "棋子_3技能[伤害][召唤物]",
 		"free_summon[card]" : "召唤师_X模组_免费召唤[手卡]",
-		"free_summon[token]" : "召唤师_X模组_免费召唤[召唤物]"
+		"free_summon[token]" : "召唤师_X模组_免费召唤[召唤物]",
+		"enemy[reborn]_absorb_fireseed" : "敌人[重生]_吸收_塑能基质"
 	},
 	"buff_prefix" : {
 		"mainline12" : "惊霆无声",
@@ -1264,29 +1265,28 @@
 		},
 		"enroll" : {
 			"3" : {
-				"ascension" : "新排异反应_进化",
+				"ascension" : "潮起潮又起_进化",
 				"attribute" : {
-					"auto" : "新排异反应_失调与畸变",
-					"bleed" : "新排异反应_障碍与畸变",
-					"frozen" : "新排异反应_退行与畸变",
-					"" : "新排异反应_血肉畸变"
+					"auto" : "潮起潮又起_失调与畸变",
+					"bleed" : "潮起潮又起_障碍与畸变",
+					"frozen" : "潮起潮又起_退行与畸变",
+					"" : "潮起潮又起_血肉畸变"
 				},
 				"auto" : {
-					"bleed" : "新排异反应_失调与障碍",
-					"frozen" : "新排异反应_退行与失调",
-					"" : "新排异反应_专注失调"
+					"bleed" : "潮起潮又起_失调与障碍",
+					"frozen" : "潮起潮又起_退行与失调",
+					"" : "潮起潮又起_专注失调"
 				},
 				"bleed" : {
-					"frozen" : "新排异反应_退行与障碍",
-					"" : "新排异反应_造血障碍"
+					"frozen" : "潮起潮又起_退行与障碍",
+					"" : "潮起潮又起_造血障碍"
 				},
-				"frozen" : "新排异反应_神经退行",
+				"frozen" : "潮起潮又起_神经退行",
 				"difficulty" : {
-					"18" : "新排异反应_难度18"
+					"18" : "潮起潮又起_难度18"
 				},
-				"" : "新排异反应"
-			},
-			"" : "排异反应"
+				"" : "潮起潮又起"
+			}
 		},
 		"wooden" : {
 			"weather" : "乌托邦幸福论"
@@ -1376,6 +1376,7 @@
 		"spchain" : "SP链",
 		"spChain" : "SP链",
 		"castSkill" : "释放技能",
+		"absorb" : "吸收",
 		"MassLoss" : "失重",
 		"MassLossCore" : "失重核心",
 		"inRange" : "范围内",
@@ -1452,6 +1453,10 @@
 		"blord2" : "杜卡雷",
 		"mcreep" : "矿工游击队",
 		"magiccircuit" : "重整束流",
+		"fireseed" : "塑能基质",
+		"over" : {
+			"fireseed" : "溢出_塑能基质"
+		},
 
 		"douququ" : "斗蛐蛐",
 

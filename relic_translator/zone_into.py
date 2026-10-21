@@ -26,7 +26,7 @@ def zone_into_reward(item_type,blackboard):
     reward = analyze_rogue_item_reward(blackboard)
     if "zone" in blackboard:
         zone_name = anne_dictionary("rogue_zone",blackboard["zone"])
-        timing += f"进入{zone_name}时，"
+        timing += f"每次进入{zone_name}时，"
     else:
         timing += f"每次进入下一层时，"
     reward["main"] = timing + reward["main"]
@@ -38,19 +38,13 @@ def zone_into_cost(item_type,blackboard):
     if "zone" in blackboard:
         zone_name = anne_dictionary("rogue_zone",blackboard["zone"])
         timing += f"进入{zone_name}时，"
-    else:
-        timing += f"每次进入下一层时，"
+    elif "is_zone_end_battle" in blackboard:
+        timing += f"本层最终战结束后，进入下一层时，"
     result = {
         "main" : timing + "消耗玩家"
     }
-    item = analyze_rogue_item(blackboard)
-    if item != None:
-        result["main"] += f"{item.display_type} {item.display_name} × {math.floor(blackboard.get('count',1))}"
-        result["link"] = blackboard['id']
-    else:
-        result["main"] += f" {blackboard['id']} × {math.floor(blackboard.get('count',1))}"
-    if "is_zone_end_battle":
-        result["description"] = "is_zone_end_battle = 1.0"
+    result["main"] += f" <rogue_item|{blackboard['id']}> × {math.floor(blackboard.get('count',1))}"
+
     return result
 
 # 过一层或进入特定层数时，仅一次奖励物品
@@ -64,3 +58,25 @@ def zone_into_cost_once(item_type,blackboard):
     result = zone_into_cost(item_type,blackboard)
     result["main"] = result["main"].replace("每次进入下一层","进入下一层") + "（仅一次）"
     return result
+
+# 进入岁兽残识发放奖励（仅一次）
+def secret_into_reward_once(item_type,blackboard):
+    timing = analyze_relic_timing(item_type,blackboard)
+    reward = analyze_rogue_item_reward(blackboard)
+    if "type" in blackboard:
+        zone_name = anne_dictionary("rogue_zone",blackboard["zone"])
+        reward["main"] = timing + "首次进入" + zone_name + "时" + reward["main"]
+    else: # 默认树洞
+        reward["main"] = timing + "首次进入隐藏层（包括岁兽残识）时" + reward["main"]
+    return reward
+
+# 进入岁兽残识发放奖励
+def secret_into_reward(item_type,blackboard):
+    timing = analyze_relic_timing(item_type,blackboard)
+    reward = analyze_rogue_item_reward(blackboard)
+    if "type" in blackboard:
+        zone_name = anne_dictionary("rogue_zone",blackboard["zone"])
+        reward["main"] = timing + "每次进入" + zone_name + "时" + reward["main"]
+    else: # 默认树洞
+        reward["main"] = timing + "每次进入隐藏层（包括岁兽残识）时" + reward["main"]
+    return reward

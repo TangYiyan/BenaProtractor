@@ -218,6 +218,7 @@ def ask_bena(_type,input_id):
         if input_id in BUFF_TEMPLATE_KEYS:
             return BUFF_TEMPLATE_DATA[input_id]
     elif _type == "global_buff":
+        print(input_id)
         if input_id in GLOBAL_BUFF_KEYS:
             return GLOBAL_BUFF_DUMMY[input_id]
     elif _type == "rogue_item":

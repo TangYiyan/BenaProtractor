@@ -198,6 +198,7 @@ class RogueItem:
             self.display_type = "节点强化"
         elif self.type == "CHARACTER":
             self.display_type = "应急干员"
+            self.display_name += "（应急）"
             self.hidden = True # 隐藏
         elif self.type in RESOURCE_TYPES:
             self.display_type = "资源"

@@ -36,7 +36,7 @@ def analyze_attribute_modifiers(modifiers: list,blackboard: dict = {}):
             if bb_str in blackboard:
                 value = float(blackboard[bb_str])
                 if formula == "FINAL_SCALER": # yj的小巧思会让终乘在负的情况下+1，实际徒增学习和排错成本
-                    value_str = to_percent(value,True) + "(终乘)"
+                    value_str = "×" + to_percent(value,True) + "(终乘)"
                 elif formula == "MULTIPLIER": # 直乘就没有这种小巧思
                     value_str = to_delta_percent(value) + "(直乘)"
                 elif formula == "ADDITION": # 剩下两个只看正负号

@@ -305,6 +305,8 @@ class AnneRelic:
             if "global_buff" in translation: # 翻译全局Buff
                 # 尝试寻找全局Buff
                 gbuff = ask_bena("global_buff",translation["global_buff"])
+                if gbuff == None:
+                    gbuff = ask_bena("global_buff",translation["global_buff"].lower()) #试试小写，Assetbundle的问题
                 if gbuff != None:
                     gbuff_translation = translate_whole_global_buff(gbuff,rogue_effect.blackboard)
                     gbuff_translation["main"] = "战斗中："

@@ -274,6 +274,27 @@ def CheckUnitAlive(node,blackboard):
         "false" : f"{owner_name}已被击倒/死亡"
     }
 
+# 检查单位是否为精英/是否为领袖
+def CheckEnemyLevelType(node,blackboard):
+    target_name = anne_dictionary("target",node["_targetType"])
+    if node["_targetLevelType"] == "ELITE":
+        return {
+            "main" : f"检查{target_name}的地位级别",
+            "true" : f"若{target_name}是\"精英\"单位",
+            "false" : f"若{target_name}不是\"精英\"单位"
+        }
+    elif node["_targetLevelType"] == "BOSS":
+        return {
+            "main" : f"检查{target_name}的地位级别",
+            "true" : f"若{target_name}是\"领袖\"单位",
+            "false" : f"若{target_name}不是\"领袖\"单位"
+        }
+    return {
+        "main" : f"检查{target_name}的地位级别",
+        "true" : f"若{target_name}是\"{node['_targetLevelType']}\"单位",
+        "false" : f"若{target_name}不是\"{node['_targetLevelType']}\"单位"
+    }
+
 # 检查单位是否可以被选中
 def VertifyTarget(node,blackboard):
     source_name = anne_dictionary("target",node["_source"])
