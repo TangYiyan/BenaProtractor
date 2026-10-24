@@ -24,15 +24,15 @@ class ReferenceTests(unittest.TestCase):
         self.catalog.add('buff', 'long_id_extra', Buff('long_id_extra', {}))
         self.catalog.install()
 
-    def test_marker_preference_and_missing_target(self):
-        parts = reference_parts('添加 <same_id>，找不到 <missing_id>', self.catalog, 'buff_template.same_id')
+    def test_typed_marker_and_missing_target(self):
+        parts = reference_parts('添加 <buff_template|same_id>，找不到 <buff|missing_id>', self.catalog)
         links = [target for _, target in parts if target]
         self.assertEqual(links, ['buff_template.same_id'])
-        self.assertIn(('<missing_id>', None), parts)
+        self.assertIn(('missing_id', None), parts)
 
-    def test_multiple_links_and_word_boundaries(self):
+    def test_bare_ids_do_not_create_links(self):
         parts = reference_parts('same_id / long_id_extra / xsame_id / same_id_tail / same_id[unknown] / [same_id]', self.catalog)
-        self.assertEqual([t for _, t in parts if t], ['buff.same_id', 'buff.long_id_extra'])
+        self.assertEqual([t for _, t in parts if t], [])
 
     def test_hidden_table_remains_navigable(self):
         self.assertEqual(len(self.catalog.visible()), 2)

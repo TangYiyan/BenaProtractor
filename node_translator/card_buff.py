@@ -38,7 +38,7 @@ def CreateCardBuff(node,blackboard):
     cardbuff_actions.append("为头像上添加[card_anim]特效（若有）")
     result["children"] = [{"main" : action} for action in cardbuff_actions]
     if node["_useCardBuffKey"] and node["_cardBuffKey"] != None:
-        result["main"] += f"（<{node['_cardBuffKey']}>）"
+        result["main"] += f"（<cardbuff|{node['_cardBuffKey']}>）"
         result["link"] = "cardbuff." + node["_cardBuffKey"]
     return result
 
@@ -49,4 +49,4 @@ def FinishCardBuff(node,blackboard):
 # 结束自己召唤物的特定CardBuff
 def FinishTokenCardBuffByKey(node,blackboard):
     source_name = anne_dictionary("target",node["_sourceType"])
-    return {"main" : f"结束{source_name}的召唤物的，名为 <{node['_cardBuffKey']}> 的CardBuff"}
+    return {"main" : f"结束{source_name}的召唤物的，名为 <cardbuff|{node['_cardBuffKey']}> 的CardBuff"}

@@ -1,7 +1,6 @@
 """Build snapshots off the UI thread; install them between UI events."""
 from dataclasses import dataclass
 import json
-import re
 import bena
 from app_paths import app_path
 from data_class import Buff, BuffTemplate, GlobalBuff, RogueItem
@@ -40,7 +39,6 @@ class Catalog:
         self.paths = paths or {}
         self.warnings = []
         self.names = {}
-        self.key_pattern = None
 
     def read(self, name):
         with open(self.paths.get(name, app_path("tables", name)), encoding="utf-8-sig") as stream:
@@ -97,24 +95,14 @@ class Catalog:
                 entry.obj.display_name = bena.translate_buff_name(entry.key)
         self.names = {}
         for entry in self.entries.values():
-            self.names.setdefault(entry.name, []).append(entry)
-        # Automatic links match IDs only; translated names also occur in prose.
-        keys = {entry.key for entry in self.entries.values()}
-        self.key_pattern = re.compile(r"(?<![a-zA-Z0-9_\[\]])(?:" + "|".join(re.escape(key) for key in sorted(keys, key=len, reverse=True)) + r")(?![a-zA-Z0-9_\[\]])") if keys else None
+            if entry.category != "rogue_item":
+                self.names.setdefault(entry.name, []).append(entry)
 
     def visible(self, show_hidden=False):
         return [entry for entry in self.entries.values() if entry.table in self.tables
                 and (show_hidden or not entry.obj.hidden)]
 
-    def resolve(self, target, prefer=None, *, category=None):
-        if category is not None:
-            if category not in self.groups:
-                return None
-            entry = self.entries.get(f"{category}.{target}")
-            if entry:
-                return entry
-            matches = [entry for entry in self.names.get(target, []) if entry.category == category]
-            return matches[0] if len(matches) == 1 else None
+    def resolve(self, target, prefer=None):
         if target in self.entries:
             return self.entries[target]
         if target.split(".", 1)[0] in self.groups and "." in target:

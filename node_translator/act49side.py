@@ -42,7 +42,6 @@ def Act49SideEnemyTjglyTryFindNextTile(node,blackboard):
     return {
         "main" : f"若{target_name}处于字形态下，尝试寻找并移动到下一个地块上",
         "description" : "具体逻辑请见PRTS的 浪里玄条 页面",
-        "link" : "prts.浪里玄条"
     }
 
 # 浪里玄条绑定字
@@ -51,7 +50,6 @@ def Act49SideEnemyTjglyLockSelfWithTile(node,blackboard):
     return {
         "main" : f"尝试将{target_name}与当前所在字格地块的\"鱼\"字相绑定",
         "description" : "具体逻辑请见PRTS的 浪里玄条 页面",
-        "link" : "prts.浪里玄条"
     }
 
 # 检查所在字格地块是否可部署
