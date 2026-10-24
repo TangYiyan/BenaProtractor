@@ -2,35 +2,49 @@
 from dataclasses import dataclass
 import json
 import re
-import bena
 
-REFERENCE_PATTERN = re.compile(r'<([^<>\n]+)>')
+REFERENCE_PATTERN = re.compile(r'<([^<>\n]*)>')
 
-# 超链接
+
 def reference_parts(value, catalog, explicit=''):
+    """Resolve declared references; leave unknown text and prose unchanged."""
     preferred = {}
     for target in str(explicit or '').split(','):
         entry = catalog.resolve(target.strip())
         if entry:
             preferred[entry.key] = entry
-    parts, offset = [], 0
-
+    parts = []
     value = str(value)
+
+    def plain(start, end):
+        offset = start
+        if catalog.key_pattern:
+            for match in catalog.key_pattern.finditer(value, start, end):
+                if match.start() > offset:
+                    parts.append((value[offset:match.start()], None))
+                key = match.group()
+                entry = preferred.get(key) or catalog.resolve(key)
+                # Bare IDs gain a link, but never replace the author's wording.
+                parts.append((key, entry.target if entry and entry.key == key else None))
+                offset = match.end()
+        if offset < end:
+            parts.append((value[offset:end], None))
+
+    offset = 0
     for match in REFERENCE_PATTERN.finditer(value):
-        if match.start() > offset:
-            parts.append((value[offset:match.start()], None))
+        plain(offset, match.start())
         key = match.group(1)
-        key_type = ""
-        if "|" in key:
-            key_type, key = tuple(key.split("|",1))
-        entry = preferred.get(key) or catalog.resolve(key)
-        label = entry.name if entry else bena.translate_buff_name(key)
-        if entry is None and label != key:
-            label = f'{label}（{key}）'
-        parts.append((label, entry.target if entry else None))
+        if '|' in key:
+            category, key = key.split('|', 1)
+            entry = catalog.resolve(key, category=category)
+        else:
+            entry = preferred.get(key) or catalog.resolve(key)
+            # Untyped Chinese names may be ordinary game prose, not Buff IDs.
+            if entry and entry.key != key:
+                entry = None
+        parts.append((entry.name, entry.target) if entry else (match.group(), None))
         offset = match.end()
-    if offset < len(value):
-        parts.append((value[offset:], None))
+    plain(offset, len(value))
     return parts
 
 
@@ -81,9 +95,9 @@ def document_rows(document, collapsed=frozenset()):
                 yield DocumentRow(path, depth, str(part['main']), role, part.get('link', ''), foldable)
             if not part.get("last_one"):
                 if part.get('true') :
-                    yield DocumentRow(path, depth, "若"+str(part['true'])+"...", role, part.get('link', ''), foldable)
+                    yield DocumentRow(path, depth, "若"+str(part['true'])+"，则继续执行后续节点", 'condition', part.get('link', ''), foldable)
                 elif part.get('false'):
-                    yield DocumentRow(path, depth, "若"+str(part['false'])+"，则直接跳出", role, part.get('link', ''), foldable)
+                    yield DocumentRow(path, depth, "若"+str(part['false'])+"，则停止执行后续节点", 'condition', part.get('link', ''), foldable)
 
             # 子部分
             if path not in collapsed:

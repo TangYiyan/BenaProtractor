@@ -28,7 +28,7 @@ class ReferenceTests(unittest.TestCase):
         parts = reference_parts('添加 <same_id>，找不到 <missing_id>', self.catalog, 'buff_template.same_id')
         links = [target for _, target in parts if target]
         self.assertEqual(links, ['buff_template.same_id'])
-        self.assertIn(('missing_id', None), parts)
+        self.assertIn(('<missing_id>', None), parts)
 
     def test_multiple_links_and_word_boundaries(self):
         parts = reference_parts('same_id / long_id_extra / xsame_id / same_id_tail / same_id[unknown] / [same_id]', self.catalog)
