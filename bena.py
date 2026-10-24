@@ -4,6 +4,7 @@
 #----------------------------------------
 import os
 import json
+import re
 from data_class import *
 from dictionary import bena_dictionary
 
@@ -263,23 +264,16 @@ def ask_bena_enemy(enemy_id: str):
         return ENEMY_NAMES[enemy_id]
     return enemy_id
 
-# 将一段文本中所有以<>框起来的文本进行“翻译”
+# 只替换已收录的Buff ID引用，未知引用和普通文本保持原样
 def translate_buff_name_in_text(text: str):
-    while "<" in text and ">" in text:
-        left_place = text.find("<")
-        right_place = text.find(">")
-        middle = text[left_place+1:right_place]
-        while "<" in middle:
-            left_place = text.find("<",left_place+1)
-            middle = text[left_place+1:right_place]
-        if middle in BUFF_KEYS:
-            middle = BUFF_TABLE[middle].display_name
-        elif middle in BUFF_TEMPLATE_KEYS:
-            middle = BUFF_TEMPLATE_DATA[middle].display_name
-        else:
-            middle = translate_buff_name(middle)+"("+middle+")" #现场进行翻译
-        text = text[:left_place] + middle + text[right_place+1:]
-    return text
+    def replace(match):
+        key = match.group(1)
+        for table in (BUFF_TABLE, BUFF_TEMPLATE_DATA):
+            if key in table:
+                return table[key].display_name
+        return match.group()
+    return re.sub(r"<([^<>\n]+)>", replace, text)
+
 
 
 

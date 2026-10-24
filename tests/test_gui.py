@@ -55,6 +55,14 @@ class WorkbenchIntegrationTests(unittest.TestCase):
         self.assertEqual(self.app.current.target, 'buff_template.skadi2_t_2')
 
 
+    def test_relic_title_does_not_link_to_same_named_buff(self):
+        with redirect_stdout(io.StringIO()):
+            self.assertTrue(self.app.navigate('rogue_item.rogue_6_relic_fight_7'))
+        view = self.app.translation
+        self.assertTrue(view.text.get('1.0', '1.end').startswith('“庇护”'))
+        for position in ('1.1', '1.2'):
+            self.assertFalse(any(tag in view.links for tag in view.text.tag_names(position)))
+
     def test_repeated_translation_preserves_raw_template(self):
         import anne
         template = self.catalog.groups['buff_template']['skadi2_t_2']
