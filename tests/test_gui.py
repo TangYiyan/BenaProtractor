@@ -46,7 +46,7 @@ class WorkbenchIntegrationTests(unittest.TestCase):
 
     def test_inline_links_keep_correct_targets(self):
         self.app.translation.show({'main': '引用测试', 'children': [
-            {'main': '停顿 <sluggish> / <skadi2_t_2> / <not_an_existing_buff>'}]}, self.catalog)
+            {'main': '停顿 <buff|sluggish> / <buff_template|skadi2_t_2> / <buff|not_an_existing_buff>'}]}, self.catalog)
         self.assertIn('buff.sluggish', self.app.translation.links.values())
         self.assertIn('buff_template.skadi2_t_2', self.app.translation.links.values())
         self.assertFalse(any('not_an_existing_buff' in t for t in self.app.translation.links.values()))
@@ -54,6 +54,47 @@ class WorkbenchIntegrationTests(unittest.TestCase):
             self.app.translation.follow('buff_template.skadi2_t_2')
         self.assertEqual(self.app.current.target, 'buff_template.skadi2_t_2')
 
+
+    def test_only_typed_markers_create_links(self):
+        view = self.app.translation
+        plain = '庇护 / sluggish / <sluggish> / <buff_template|庇护>'
+        view.show({'main': plain, 'link': 'buff.sluggish,prts.浪里玄条'}, self.catalog)
+        self.assertFalse(view.links)
+        self.assertNotIn('[PRTS]', view.text.get('1.0', 'end-1c'))
+        marked = '庇护 / <buff|sluggish> / <buff_template|damage_resistance>'
+        view.show({'main': marked}, self.catalog)
+        self.assertEqual(list(view.links.values()), ['buff.sluggish', 'buff_template.damage_resistance'])
+        self.assertEqual(view.text.get('1.0', 'end-1c').rstrip('\n'), view.full_text())
+
+    def test_create_buff_color_does_not_depend_on_blackboard_children(self):
+        from vs_theme import THEMES
+        app = self.app
+        original_theme = app.settings['theme']
+        raw = copy.deepcopy(self.catalog.resolve('buff_template.trap_dice_effects').obj.buff_data)
+        try:
+            with redirect_stdout(io.StringIO()):
+                self.assertTrue(app.navigate('buff_template.trap_dice_effects'))
+            view = app.translation
+            before = view.full_text()
+            for theme in ('dark', 'light'):
+                with patch('protractor.save_settings'):
+                    self.assertTrue(app.change_theme(theme))
+                self.assertEqual(view.full_text(), before)
+                lines = view.text.get('1.0', 'end-1c').splitlines()
+                for key in ('dice_3[effct]', 'dice_4[effct]'):
+                    matches = [(i, line) for i, line in enumerate(lines, 1)
+                               if key in line and '创建' in line]
+                    self.assertEqual(len(matches), 1)
+                    line_number, line = matches[0]
+                    indent = len(line) - len(line.lstrip())
+                    tags = view.text.tag_names(f'{line_number}.{indent}')
+                    self.assertIn('body', tags)
+                    self.assertNotIn('section', tags)
+                    self.assertEqual(view.text.tag_cget('body', 'foreground'), THEMES[theme]['text'])
+            self.assertEqual(self.catalog.resolve('buff_template.trap_dice_effects').obj.buff_data, raw)
+        finally:
+            with patch('protractor.save_settings'):
+                app.change_theme(original_theme)
 
     def test_relic_title_does_not_link_to_same_named_buff(self):
         with redirect_stdout(io.StringIO()):

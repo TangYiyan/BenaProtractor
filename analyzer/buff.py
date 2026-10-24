@@ -34,11 +34,11 @@ def analyze_buff(buff_data: dict,blackboard: dict = {},full_information=False):
             features.append("读取自数据库：[" + buff_key + "]")
         elif len(blackboard_dict["children"]) > 0:
             return {
-                "main" : "<" + buff_key + "> (读取自数据库)",
+                "main" : "<buff|" + buff_key + "> (读取自数据库)",
                 "children" : [blackboard_dict]
             }
         else:
-            return {"main" : "<" + buff_key + "> (读取自数据库)"}
+            return {"main" : "<buff|" + buff_key + "> (读取自数据库)"}
     
     # 检查模板与事件优先级
     if buff_data["templateKey"] != "empty" :
@@ -200,11 +200,11 @@ def analyze_buff(buff_data: dict,blackboard: dict = {},full_information=False):
     # 处理覆盖时使用的Key
     if buff_data["overrideKey"] and buff_data["overrideKey"] != "empty" :
         if buff_data["independentCharacterSource"]: #每个来源独立OverrideKey
-            features.append(f"处理覆盖时视为 (Buff来源名称)+<{buff_data['overrideKey']}>")
+            features.append(f"处理覆盖时视为 (Buff来源名称)+<buff|{buff_data['overrideKey']}>")
         else:
-            features.append(f"处理覆盖时视为 <{buff_data['overrideKey']}>")
+            features.append(f"处理覆盖时视为 <buff|{buff_data['overrideKey']}>")
     elif "independentCharacterSource" in buff_data and buff_data["independentCharacterSource"]:
-        features.append(f"处理覆盖时视为 (Buff来源名称)+<{buff_key}>")
+        features.append(f"处理覆盖时视为 (Buff来源名称)+<buff|{buff_key}>")
     # 触发配置
     if buff_data["triggerLifeType"] == "INFINITY" : # 无限次触发
         if buff_data["waitFirstTriggerInterval"] and buff_data["firstTriggerInterval"] >= 0:
@@ -296,13 +296,13 @@ def analyze_buff(buff_data: dict,blackboard: dict = {},full_information=False):
         features.append(f"根据来源位置旋转特效方向")
 
     # 准备返回buff
-    result = {"main" : "<" + buff_key + ">"}
+    result = {"main" : "<buff|" + buff_key + ">"}
     if buff_data["loadFromDB"]:
         result["link"] = "buff."+buff_key
     elif template != "empty":
         if full_information: # 完整显示
             result["children"] = [{
-                "main" : f"Buff模板：<{template}>",
+                "main" : f"Buff模板：<buff_template|{template}>",
                 "link" : "buff_template."+template
             }]
         else: # 简短显示
@@ -312,7 +312,7 @@ def analyze_buff(buff_data: dict,blackboard: dict = {},full_information=False):
             elif template == "empty":
                 result["main"] += "（不使用模板）"
             else:
-                result["main"] += f"（模板：<{template}>）"
+                result["main"] += f"（模板：<buff_template|{template}>）"
                 result["link"] = "buff_template."+template
     if full_information: # 按需返回子列表
         if "children" not in result:

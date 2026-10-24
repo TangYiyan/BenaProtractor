@@ -7,8 +7,6 @@ import queue
 import threading
 import time
 import tkinter as tk
-import webbrowser
-from urllib.parse import quote
 
 import anne
 from app_paths import app_path
@@ -108,9 +106,6 @@ class Protractor:
             self.navigate(selection[0])
 
     def navigate(self, target, record=True):
-        if target.startswith('prts.'):
-            webbrowser.open('https://prts.wiki/w/' + quote(target[5:]))
-            return True
         if self.catalog is None:
             return False
         entry = self.catalog.resolve(target)

@@ -2,49 +2,37 @@
 from dataclasses import dataclass
 import json
 import re
+import bena
 
-REFERENCE_PATTERN = re.compile(r'<([^<>\n]*)>')
+REFERENCE_PATTERN = re.compile(r'<([a-z_]+)\|([^<>|\r\n]+)>')
 
 
-def reference_parts(value, catalog, explicit=''):
-    """Resolve declared references; leave unknown text and prose unchanged."""
-    preferred = {}
-    for target in str(explicit or '').split(','):
-        entry = catalog.resolve(target.strip())
-        if entry:
-            preferred[entry.key] = entry
-    parts = []
+def reference_parts(value, catalog):
+    """Link only explicit <category|raw key> references, before translation."""
+    parts, offset = [], 0
     value = str(value)
-
-    def plain(start, end):
-        offset = start
-        if catalog.key_pattern:
-            for match in catalog.key_pattern.finditer(value, start, end):
-                if match.start() > offset:
-                    parts.append((value[offset:match.start()], None))
-                key = match.group()
-                entry = preferred.get(key) or catalog.resolve(key)
-                # Bare IDs gain a link, but never replace the author's wording.
-                parts.append((key, entry.target if entry and entry.key == key else None))
-                offset = match.end()
-        if offset < end:
-            parts.append((value[offset:end], None))
-
-    offset = 0
     for match in REFERENCE_PATTERN.finditer(value):
-        plain(offset, match.start())
-        key = match.group(1)
-        if '|' in key:
-            category, key = key.split('|', 1)
-            entry = catalog.resolve(key, category=category)
+        if match.start() > offset:
+            parts.append((value[offset:match.start()], None))
+        category, key = match.groups()
+        target = f'{category}.{key}'
+        entry = catalog.entries.get(target)
+        if entry is not None:
+            parts.append((entry.name, entry.target))
+        elif category == 'prts':
+            parts.append((key, target))
+        elif category in ('buff', 'buff_template', 'global_buff', 'cardbuff'):
+            # Prefab-only Buff names still use the original translation fallback.
+            # Its result is display text only, never another lookup key.
+            label = bena.translate_buff_name(key)
+            parts.append((f'{label}（{key}）' if label != key else key, None))
+        elif category == 'rogue_item':
+            parts.append((key, None))
         else:
-            entry = preferred.get(key) or catalog.resolve(key)
-            # Untyped Chinese names may be ordinary game prose, not Buff IDs.
-            if entry and entry.key != key:
-                entry = None
-        parts.append((entry.name, entry.target) if entry else (match.group(), None))
+            parts.append((match.group(), None))
         offset = match.end()
-    plain(offset, len(value))
+    if offset < len(value):
+        parts.append((value[offset:], None))
     return parts
 
 
@@ -75,7 +63,6 @@ class DocumentRow:
     depth: int
     text: str
     role: str = 'body'
-    explicit: str = ''
     foldable: bool = False
 
 # 文档嵌套解析
@@ -90,14 +77,17 @@ def document_rows(document, collapsed=frozenset()):
             # 正文
             children = part.get('children') or []
             foldable = bool(children or part.get('description'))
-            role = 'heading' if depth == 0 else 'section' if children else 'body'
+            # Children control folding, never the semantic color of an action.
+            role = part.get('role')
+            if role not in ('heading', 'section', 'condition', 'description', 'body'):
+                role = 'heading' if depth == 0 else 'body'
             if part.get('main'):
-                yield DocumentRow(path, depth, str(part['main']), role, part.get('link', ''), foldable)
+                yield DocumentRow(path, depth, str(part['main']), role, foldable=foldable)
             if not part.get("last_one"):
                 if part.get('true') :
-                    yield DocumentRow(path, depth, "若"+str(part['true'])+"，则继续执行后续节点", 'condition', part.get('link', ''), foldable)
+                    yield DocumentRow(path, depth, "若"+str(part['true'])+"...", 'condition', foldable=foldable)
                 elif part.get('false'):
-                    yield DocumentRow(path, depth, "若"+str(part['false'])+"，则停止执行后续节点", 'condition', part.get('link', ''), foldable)
+                    yield DocumentRow(path, depth, "若"+str(part['false'])+"，则直接跳出", 'condition', foldable=foldable)
 
             # 子部分
             if path not in collapsed:

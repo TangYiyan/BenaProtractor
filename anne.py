@@ -195,6 +195,7 @@ class AnneNode:
                     success_translation["main"] = true_flag
                 else:
                     success_translation["main"] = "若" + true_flag
+                success_translation["role"] = "condition"
                 struct["children"].append(success_translation)
             # 失败时执行的节点
             if node.fail_nodes != None and len(node.fail_nodes) > 0:
@@ -203,6 +204,7 @@ class AnneNode:
                     fail_translation["main"] = false_flag
                 else:
                     fail_translation["main"] = "若" + false_flag
+                fail_translation["role"] = "condition"
                 struct["children"].append(fail_translation)
             # 存储翻译
             node.translation = struct
@@ -272,11 +274,13 @@ class AnneNode:
             if node.succeed_nodes != None and len(node.succeed_nodes) > 0:
                 success_translation = self.translate_all(node.succeed_nodes,blackboard)
                 success_translation["main"] = true_flag
+                success_translation["role"] = "condition"
                 struct["children"].append(success_translation)
             # 失败时执行的节点
             if node.fail_nodes != None and len(node.fail_nodes) > 0:
                 fail_translation = self.translate_all(node.fail_nodes,blackboard)
                 fail_translation["main"] = false_flag
+                fail_translation["role"] = "condition"
                 struct["children"].append(fail_translation)
             # 存储翻译
             node.translation = struct
@@ -376,7 +380,7 @@ def translate_whole_buff(buff: Buff,blackboard: dict = {}):
     translation = analyze_buff(buff.buff_data,blackboard,True)
     # 如果内部有自己的小巧思BuffKey
     if buff.buff_key != buff.buff_data["buffKey"]: 
-        translation["description"] = "这个Buff的卡名在规则上被视为 <"+buff.buff_data["buffKey"]+"> "
+        translation["description"] = "这个Buff的卡名在规则上被视为 <buff|"+buff.buff_data["buffKey"]+"> "
         if "（" in translation["main"]:
             translation["main"] = buff.buff_key + "（" + translation["main"].split("（",1)[1]
         else:
@@ -547,6 +551,7 @@ def translate_whole_buff_template(buff_template: BuffTemplate,blackboard : dict 
         event_name = anne_dictionary("buff_event",event_key)
         event_translation = ANNE_NODE.translate_all(event.node_list,blackboard)
         event_translation["main"] = f"{event_name}（{event_key}）"
+        event_translation["role"] = "section"
         translation["children"].append(event_translation)
     return translation
 

@@ -170,26 +170,14 @@ class TranslationView(TextPane):
             indent = f'indent_{row.depth}'
             self.text.tag_configure(indent, lmargin2=self.reading_font.measure('    ' * row.depth))
             self.text.insert('end', '    ' * row.depth, (indent,))
-            used = set()
-            for label, target in reference_parts(row.text, self.catalog, row.explicit):
+            for label, target in reference_parts(row.text, self.catalog):
                 tags = (row.role, indent)
                 if target:
                     tag = f'reference_{len(self.links)}'
                     self.links[tag] = target
                     self.text.tag_configure(tag, foreground=COLORS['blue'], underline=True)
                     tags += (tag,)
-                    used.add(target)
                 self.text.insert('end', label, tags)
-            for target in str(row.explicit or '').split(','):
-                target = target.strip()
-                entry = self.catalog.resolve(target)
-                destination = entry.target if entry else target if target.startswith('prts.') else None
-                if destination and destination not in used:
-                    tag = f'reference_{len(self.links)}'
-                    self.links[tag] = destination
-                    self.text.tag_configure(tag, foreground=COLORS['blue'], underline=True)
-                    self.text.insert('end', '  [' + (entry.name if entry else 'PRTS') + ']', (tag, indent))
-                    used.add(destination)
             self.text.insert('end', '\n')
         self.text.configure(state='disabled')
         self.draw_margin()
@@ -224,7 +212,7 @@ class TranslationView(TextPane):
     def full_text(self):
         if self.document is None:
             return self.text.get('1.0', 'end-1c')
-        return '\n'.join('    ' * row.depth + ''.join(text for text, _ in reference_parts(row.text, self.catalog, row.explicit))
+        return '\n'.join('    ' * row.depth + ''.join(text for text, _ in reference_parts(row.text, self.catalog))
                          for row in document_rows(self.document))
 
     def copy_all(self):
