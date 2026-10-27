@@ -1152,6 +1152,7 @@
 		"blockfree" : "无法阻挡",
 		"attract" : "诱导",
 		"stun&cold&frozen" : "晕眩&寒冷&冻结",
+		"stun&frozen&unmovable" : "晕眩&冻结&束缚",
 
 		"push" : "推",
 		"pull" : "拉",

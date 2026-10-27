@@ -406,11 +406,26 @@ def PlayAudio(node,blackboard):
 def CreateEffect(node,blackboard):
     # 暂不详细翻译
     target_name = anne_dictionary("target",node["_targetType"])
-    effect_id = node["_effectKey"]
-    return {"main" : f"为{target_name}创建特效 {effect_id}（暂不翻译）"}
+    effect_id = ""
+    if node["_effectKey"] != None and node["_effectKey"] != "":
+        if node["_effectKey"] in blackboard:
+            effect_id = blackboard[node["_effectKey"]]
+        else:
+            effect_id = "[" + node["_effectKey"] + "]"
+    elif "effect" in blackboard:
+        effect_id = blackboard["effect"]
+    else:
+        effect_id = "[effect]"
+    if effect_id != "":
+        return {"main" : f"为{target_name}创建特效 {effect_id}（暂不翻译）"}
+    else:
+        return {"main" : f"为{target_name}创建未知特效（暂不翻译）"}
 
 # 创建“BOSS倒计时”UI特效（无实际作用）
 def SetBossCountDown(node,blackboard):
     if node["_cdBBKey"] != None and node["_cdBBKey"] != "":
-        return {"main" : f"在UI层上创建一个 [{node['_cdBBKey']}] 秒的关卡倒计时提示（无实际作用）"}
+        if node["_cdBBKey"] in blackboard:
+            return {"main" : f"在UI层上创建一个{blackboard[node['_cdBBKey']]}秒的关卡倒计时提示（无实际作用）"}
+        else:
+            return {"main" : f"在UI层上创建一个 [{node['_cdBBKey']}] 秒的关卡倒计时提示（无实际作用）"}
     return {"main" : f"在UI层上创建一个{node['_cdValue']}秒的关卡倒计时提示（无实际作用）"}

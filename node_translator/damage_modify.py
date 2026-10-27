@@ -166,3 +166,10 @@ def AtkAdditionUpBeforeCalcDamage(node,blackboard):
         return {
             "main" : f"令本次伤害的附加攻击力增加 {node['_atkAdditionKey']}（默认{node['_defaultValue']}点）"
         }
+
+# 修改伤害类型（弱点伤害相关机制）
+def ModifyDamageType(node,blackboard):
+    damage_type = anne_dictionary("damage_type",node["_damageType"])
+    return {
+        "main" : f"将本次伤害的类型改为{damage_type}"
+    }

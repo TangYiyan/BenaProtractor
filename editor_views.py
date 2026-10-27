@@ -20,7 +20,7 @@ class TextPane(ttk.Frame):
         self.number_font = font.Font(self, family=self.code_family, size=size)
         self.gutter = tk.Canvas(self, width=54, highlightthickness=0, borderwidth=0)
         self.gutter.grid(row=0, column=0, sticky='ns')
-        self.text = tk.Text(self, width=1, height=1, wrap='none' if code else 'word',
+        self.text = tk.Text(self, width=1, height=1, wrap='none' if code else 'char',
                             font=self.reading_font, relief='flat', borderwidth=0, highlightthickness=0,
                             padx=10, pady=10, spacing1=1 if code else 2, spacing3=1 if code else 2,
                             state='disabled', cursor='xterm', undo=False)
