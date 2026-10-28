@@ -472,9 +472,10 @@
 		"UNHURTABLE" : "不受伤",
 		"MISS" : "闪避",
 		"BLOCKED" : "格挡",
-		"BLOCKED_WITH_DAMAGE_NUMBER" : "格挡(带伤害)",
+		"BLOCKED_WITH_DAMAGE_NUMBER" : "格挡（蓝字）",
 		"INTERRUPT" : "处理终止",
-		"HIT_FAILED" : "命中率判定失败"
+		"HIT_FAILED" : "未命中",
+		"MINUS_HEALTH" : "负生命值"
 	},
 	"sharedflag" : {
 		"IS_CONTINUOUS" : "IS_CONTINUOUS",
