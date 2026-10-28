@@ -6,30 +6,32 @@ from app_settings import LOAD_TYPES, normalize_settings
 from downloader import read_metadata
 from data_sources import DEFAULT_SOURCE, SOURCE_LABELS
 from vs_theme import COLORS, style_titlebar
+from dpi import DpiScale
 
 
 class Preferences(tk.Toplevel):
     def __init__(self, app):
         super().__init__(app.window)
         self.app = app
+        px = self.px = DpiScale(self)
         self.title('选项')
         self.configure(bg=COLORS['panel'])
         scale = font.nametofont('TkDefaultFont').metrics('linespace') / 19
-        width = min(round(760 * scale), self.winfo_screenwidth() - 64)
-        height = min(round(560 * scale), self.winfo_screenheight() - 96)
+        width = min(round(760 * scale), max(1, self.winfo_screenwidth() - px(64)))
+        height = min(round(560 * scale), max(1, self.winfo_screenheight() - px(96)))
         left = min(max(0, app.window.winfo_x() + (app.window.winfo_width() - width) // 2), self.winfo_screenwidth() - width)
-        top = min(max(0, app.window.winfo_y() + (app.window.winfo_height() - height) // 2), self.winfo_screenheight() - height - 64)
+        top = min(max(0, app.window.winfo_y() + (app.window.winfo_height() - height) // 2), self.winfo_screenheight() - height - px(64))
         self.geometry(f'{width}x{height}+{left}+{max(0, top)}')
-        self.minsize(min(width, 680), height)
+        self.minsize(min(width, px(680)), height)
         self.transient(app.window)
         self.columnconfigure(1, weight=1)
         self.rowconfigure(0, weight=1)
         self.navigation = ttk.Treeview(self, show='tree', selectmode='browse', height=8)
-        self.navigation.column('#0', width=140, stretch=False)
-        self.navigation.grid(row=0, column=0, sticky='ns', padx=(8, 4), pady=8)
+        self.navigation.column('#0', width=px(140), minwidth=px(20), stretch=False)
+        self.navigation.grid(row=0, column=0, sticky='ns', padx=px(8, 4), pady=px(8))
         self.pages = {}
-        self.content = ttk.Frame(self, padding=15)
-        self.content.grid(row=0, column=1, sticky='nsew', padx=(0, 8), pady=8)
+        self.content = ttk.Frame(self, padding=px(15))
+        self.content.grid(row=0, column=1, sticky='nsew', padx=px(0, 8), pady=px(8))
         self.content.columnconfigure(0, weight=1)
         self.content.rowconfigure(0, weight=1)
         for key, name in [('environment', '环境'), ('tables', '数据 table'), ('updates', '数据更新')]:
@@ -49,12 +51,12 @@ class Preferences(tk.Toplevel):
         self.build_environment()
         self.build_tables()
         self.build_updates()
-        actions = ttk.Frame(self, padding=(10, 8))
+        actions = ttk.Frame(self, padding=px(10, 8))
         actions.grid(row=1, column=0, columnspan=2, sticky='ew')
-        self.error = ttk.Label(actions, text='', foreground=COLORS['red'], wraplength=400)
+        self.error = ttk.Label(actions, text='', foreground=COLORS['red'], wraplength=px(400))
         self.error.pack(side='left')
         ttk.Button(actions, text='取消', command=self.destroy, width=9).pack(side='right')
-        ttk.Button(actions, text='确定', style='Primary.TButton', command=self.apply, width=9).pack(side='right', padx=8)
+        ttk.Button(actions, text='确定', style='Primary.TButton', command=self.apply, width=9).pack(side='right', padx=px(8))
         self.navigation.selection_set('environment')
         self.select_page()
         self.bind('<Escape>', lambda event: self.destroy())
@@ -63,34 +65,37 @@ class Preferences(tk.Toplevel):
         self.grab_set()
 
     def build_environment(self):
+        px = self.px
         page = self.pages['environment']
-        ttk.Label(page, text='环境', font=('Microsoft YaHei UI', 11, 'bold')).grid(row=0, column=0, sticky='w', pady=(0, 20))
-        ttk.Label(page, text='颜色主题').grid(row=1, column=0, sticky='w', padx=(0, 20), pady=8)
+        ttk.Label(page, text='环境', font=('Microsoft YaHei UI', 11, 'bold')).grid(row=0, column=0, sticky='w', pady=px(0, 20))
+        ttk.Label(page, text='颜色主题').grid(row=1, column=0, sticky='w', padx=px(0, 20), pady=px(8))
         ttk.Combobox(page, state='readonly', textvariable=self.theme, values=['浅色', '深色'], width=16).grid(row=1, column=1, sticky='w')
-        ttk.Label(page, text='界面字号').grid(row=2, column=0, sticky='w', pady=8)
+        ttk.Label(page, text='界面字号').grid(row=2, column=0, sticky='w', pady=px(8))
         ttk.Spinbox(page, from_=9, to=12, textvariable=self.ui_size, width=7).grid(row=2, column=1, sticky='w')
-        ttk.Label(page, text='阅读字号').grid(row=3, column=0, sticky='w', pady=8)
+        ttk.Label(page, text='阅读字号').grid(row=3, column=0, sticky='w', pady=px(8))
         ttk.Spinbox(page, from_=10, to=18, textvariable=self.size, width=7).grid(row=3, column=1, sticky='w')
 
     def build_tables(self):
+        px = self.px
         page = self.pages['tables']
-        ttk.Label(page, text='显示的 table', font=('Microsoft YaHei UI', 11, 'bold')).pack(anchor='w', pady=(0, 12))
+        ttk.Label(page, text='显示的 table', font=('Microsoft YaHei UI', 11, 'bold')).pack(anchor='w', pady=px(0, 12))
         for key, label in LOAD_TYPES.items():
             ttk.Checkbutton(page, text=label, variable=self.tables[key]).pack(anchor='w')
-        ttk.Separator(page).pack(fill='x', pady=10)
+        ttk.Separator(page).pack(fill='x', pady=px(10))
         ttk.Checkbutton(page, text='显示隐藏条目', variable=self.hidden).pack(anchor='w')
 
     def build_updates(self):
+        px = self.px
         page = self.pages['updates']
-        ttk.Label(page, text='游戏数据更新', font=('Microsoft YaHei UI', 11, 'bold')).pack(anchor='w', pady=(0, 16))
+        ttk.Label(page, text='游戏数据更新', font=('Microsoft YaHei UI', 11, 'bold')).pack(anchor='w', pady=px(0, 16))
         ttk.Checkbutton(page, text='自动检查更新', variable=self.auto).pack(anchor='w')
         row = ttk.Frame(page)
-        row.pack(fill='x', pady=12)
-        ttk.Label(row, text='检查间隔（小时）').pack(side='left', padx=(0, 15))
+        row.pack(fill='x', pady=px(12))
+        ttk.Label(row, text='检查间隔（小时）').pack(side='left', padx=px(0, 15))
         ttk.Spinbox(row, from_=1, to=168, textvariable=self.hours, width=7).pack(side='left')
         source_row = ttk.Frame(page)
-        source_row.pack(fill='x', pady=8)
-        ttk.Label(source_row, text='下载源').pack(side='left', padx=(0, 15))
+        source_row.pack(fill='x', pady=px(8))
+        ttk.Label(source_row, text='下载源').pack(side='left', padx=px(0, 15))
         self.source_picker = ttk.Combobox(source_row, state='readonly', textvariable=self.source,
                                          values=list(SOURCE_LABELS.values()), width=16)
         self.source_picker.pack(side='left')

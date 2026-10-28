@@ -4,12 +4,14 @@ import tkinter as tk
 from tkinter import ttk, font
 from document_model import reference_parts, json_spans, document_rows, default_folds
 from vs_theme import COLORS, menu
+from dpi import DpiScale
 
 
 class TextPane(ttk.Frame):
     def __init__(self, master, size=11, code=False):
         super().__init__(master, style='Editor.TFrame')
         self.size, self.code = size, code
+        px = self.px = DpiScale(self)
         self.folds = {}
         self.columnconfigure(1, weight=1)
         self.rowconfigure(0, weight=1)
@@ -18,11 +20,11 @@ class TextPane(ttk.Frame):
         self.family = self.code_family if code else 'Microsoft YaHei UI'
         self.reading_font = font.Font(self, family=self.family, size=size)
         self.number_font = font.Font(self, family=self.code_family, size=size)
-        self.gutter = tk.Canvas(self, width=54, highlightthickness=0, borderwidth=0)
+        self.gutter = tk.Canvas(self, width=px(54), highlightthickness=0, borderwidth=0)
         self.gutter.grid(row=0, column=0, sticky='ns')
-        self.text = tk.Text(self, width=1, height=1, wrap='none' if code else 'word',
+        self.text = tk.Text(self, width=1, height=1, wrap='none' if code else 'char',
                             font=self.reading_font, relief='flat', borderwidth=0, highlightthickness=0,
-                            padx=10, pady=10, spacing1=1 if code else 2, spacing3=1 if code else 2,
+                            padx=px(10), pady=px(10), spacing1=px(1 if code else 2), spacing3=px(1 if code else 2),
                             state='disabled', cursor='xterm', undo=False)
         self.text.grid(row=0, column=1, sticky='nsew')
         self.vertical = ttk.Scrollbar(self, orient='vertical', command=self.text.yview)
@@ -49,12 +51,13 @@ class TextPane(ttk.Frame):
     def draw_margin(self):
         if not hasattr(self, 'text'):
             return
+        px = self.px
         self.gutter.delete('all')
         digits = max(3, len(self.text.index('end-1c').split('.')[0]))
-        margin = self.number_font.measure('0' * digits) + 30
+        margin = self.number_font.measure('0' * digits) + px(30)
         if int(self.gutter.cget('width')) != margin:
             self.gutter.configure(width=margin)
-        number_x, fold_x = margin - 23, margin - 12
+        number_x, fold_x = margin - px(23), margin - px(12)
         index = self.text.index('@0,0')
         while True:
             geometry = self.text.dlineinfo(index)
@@ -66,10 +69,10 @@ class TextPane(ttk.Frame):
             if line in self.folds:
                 path, collapsed = self.folds[line]
                 tag = 'fold_' + str(line)
-                self.gutter.create_rectangle(fold_x - 5, y - 5, fold_x + 5, y + 5, fill=COLORS['editor'], outline=COLORS['muted'], tags=(tag,))
-                self.gutter.create_line(fold_x - 3, y, fold_x + 3, y, fill=COLORS['muted'], tags=(tag,))
+                self.gutter.create_rectangle(fold_x - px(5), y - px(5), fold_x + px(5), y + px(5), fill=COLORS['editor'], outline=COLORS['muted'], width=px(1), tags=(tag,))
+                self.gutter.create_line(fold_x - px(3), y, fold_x + px(3), y, fill=COLORS['muted'], width=px(1), tags=(tag,))
                 if collapsed:
-                    self.gutter.create_line(fold_x, y - 3, fold_x, y + 3, fill=COLORS['muted'], tags=(tag,))
+                    self.gutter.create_line(fold_x, y - px(3), fold_x, y + px(3), fill=COLORS['muted'], width=px(1), tags=(tag,))
                 self.gutter.tag_bind(tag, '<Button-1>', lambda event, p=path: self.toggle(p))
             index = self.text.index(f'{line + 1}.0')
 

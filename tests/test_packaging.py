@@ -1,5 +1,6 @@
 """Release archives must be complete and leave prior releases intact on failure."""
 import datetime
+import json
 import os
 from pathlib import Path
 import tempfile
@@ -8,6 +9,7 @@ from unittest.mock import patch
 import zipfile
 
 import packer
+from app_settings import load_settings, normalize_settings
 
 
 class PackagingTests(unittest.TestCase):
@@ -36,10 +38,42 @@ class PackagingTests(unittest.TestCase):
             self.assertEqual(archive.parent, source / 'output')
             with zipfile.ZipFile(archive) as package:
                 self.assertIsNone(package.testzip())
-                self.assertEqual(set(package.namelist()), {'贝娜的量角器.exe', *packer.RESOURCES})
+                self.assertEqual(set(package.namelist()), {'贝娜的量角器.exe', '.settings.json', *packer.RESOURCES})
                 self.assertEqual(package.read('贝娜的量角器.exe'), files['dist/main.exe'])
                 for name in packer.RESOURCES:
                     self.assertEqual(package.read(name), files[name])
+
+    def test_archive_generates_loadable_defaults_without_source_settings(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            source = Path(temporary) / 'source'
+            self.prepare_files(source)
+            archive = packer.create_archive(source)
+            released = Path(temporary) / 'released'
+            with zipfile.ZipFile(archive) as package:
+                self.assertIn('.settings.json', package.namelist())
+                package.extractall(released)
+            other = Path(temporary) / 'other'
+            other.mkdir()
+            previous = Path.cwd()
+            try:
+                os.chdir(other)
+                with patch('app_paths.BASE_DIR', released):
+                    self.assertEqual(load_settings(), normalize_settings({}))
+            finally:
+                os.chdir(previous)
+            self.assertFalse((source / '.settings.json').exists())
+
+    def test_archive_does_not_copy_or_change_personal_settings(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            source = Path(temporary)
+            self.prepare_files(source)
+            local = source / '.settings.json'
+            personal = b'{"theme":"dark","download_source":"prts","tables":["buff"],"font_size":18}'
+            local.write_bytes(personal)
+            archive = packer.create_archive(source)
+            with zipfile.ZipFile(archive) as package:
+                self.assertEqual(json.loads(package.read('.settings.json')), normalize_settings({}))
+            self.assertEqual(local.read_bytes(), personal)
 
     def test_missing_executable_or_resource_does_not_create_an_empty_archive(self):
         for missing in ('dist/main.exe', 'translation/anne_dictionary.json'):
