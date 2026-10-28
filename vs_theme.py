@@ -2,6 +2,7 @@
 import sys
 import tkinter as tk
 from tkinter import ttk, font
+from dpi import DpiScale
 
 THEMES = {
     'light': {
@@ -31,6 +32,7 @@ COLORS = dict(THEMES['light'])
 def install_theme(root, name='light', ui_size=10):
     COLORS.update(THEMES[name])
     p = COLORS
+    px = DpiScale(root)
     style = ttk.Style(root)
     if 'bena_vs2022' not in style.theme_names():
         style.theme_create('bena_vs2022', parent='clam')
@@ -39,7 +41,7 @@ def install_theme(root, name='light', ui_size=10):
     ui_font.configure(family='Microsoft YaHei UI', size=ui_size)
     font.nametofont('TkMenuFont').configure(family='Microsoft YaHei UI', size=ui_size)
     font.nametofont('TkTextFont').configure(family='Microsoft YaHei UI', size=ui_size)
-    row_height = max(24, ui_font.metrics('linespace') + 6)
+    row_height = max(px(24), ui_font.metrics('linespace') + px(6))
     style.configure('.', background=p['bg'], foreground=p['text'], bordercolor=p['border'],
                     lightcolor=p['border'], darkcolor=p['border'], focuscolor=p['accent'], font=('Microsoft YaHei UI', ui_size))
     style.configure('TFrame', background=p['bg'])
@@ -48,40 +50,40 @@ def install_theme(root, name='light', ui_size=10):
     style.configure('TLabel', padding=0, background=p['bg'], foreground=p['text'])
     style.configure('Chrome.TLabel', background=p['panel'])
     style.configure('Muted.TLabel', foreground=p['muted'])
-    style.configure('Dock.TLabel', background=p['panel'], font=('Microsoft YaHei UI', ui_size, 'bold'), padding=(8, 4))
-    style.configure('TButton', padding=(9, 3), background=p['button'], borderwidth=1, relief='flat')
+    style.configure('Dock.TLabel', background=p['panel'], font=('Microsoft YaHei UI', ui_size, 'bold'), padding=px(8, 4))
+    style.configure('TButton', padding=px(9, 3), background=p['button'], borderwidth=px(1), relief='flat')
     style.map('TButton', background=[('pressed', p['selection']), ('active', p['hover'])],
               foreground=[('disabled', p['muted'])], bordercolor=[('focus', p['accent'])])
-    style.configure('Tool.TButton', padding=(6, 3), background=p['panel'], borderwidth=0)
+    style.configure('Tool.TButton', padding=px(6, 3), background=p['panel'], borderwidth=0)
     style.configure('Primary.TButton', background=p['accent'], foreground='white', bordercolor=p['accent'])
     style.map('Primary.TButton', background=[('active', '#1c97ea'), ('pressed', '#005a9e')])
-    style.configure('TEntry', fieldbackground=p['field'], foreground=p['text'], insertcolor=p['text'], padding=(6, 3))
-    style.configure('TCombobox', fieldbackground=p['field'], foreground=p['text'], padding=(5, 3), arrowsize=12)
+    style.configure('TEntry', fieldbackground=p['field'], foreground=p['text'], insertcolor=p['text'], padding=px(6, 3))
+    style.configure('TCombobox', fieldbackground=p['field'], foreground=p['text'], padding=px(5, 3), arrowsize=px(12))
     style.map('TCombobox', fieldbackground=[('readonly', p['field'])], foreground=[('readonly', p['text'])],
               selectbackground=[('readonly', p['field'])], selectforeground=[('readonly', p['text'])])
-    style.configure('TSpinbox', fieldbackground=p['field'], foreground=p['text'], padding=(5, 3), arrowsize=11)
-    style.configure('TCheckbutton', padding=(0, 4), indicatorbackground=p['field'])
+    style.configure('TSpinbox', fieldbackground=p['field'], foreground=p['text'], padding=px(5, 3), arrowsize=px(11))
+    style.configure('TCheckbutton', padding=px(0, 4), indicatorbackground=p['field'])
     style.map('TCheckbutton', background=[('active', p['bg'])], indicatorbackground=[('selected', p['accent'])])
     style.configure('TNotebook', background=p['panel'], borderwidth=0, tabmargins=0)
-    style.configure('TNotebook.Tab', background=p['panel'], foreground=p['muted'], padding=(13, 6),
+    style.configure('TNotebook.Tab', background=p['panel'], foreground=p['muted'], padding=px(13, 6),
                     borderwidth=0, lightcolor=p['panel'], darkcolor=p['panel'])
     style.map('TNotebook.Tab', background=[('selected', p['editor']), ('active', p['hover'])],
-              foreground=[('disabled', p['muted']), ('selected', p['text'])], padding=[('selected', (13, 6))],
+              foreground=[('disabled', p['muted']), ('selected', p['text'])], padding=[('selected', px(13, 6))],
               lightcolor=[('selected', p['accent'])], darkcolor=[('selected', p['accent'])])
-    style.configure('Treeview', background=p['bg'], fieldbackground=p['bg'], foreground=p['text'], rowheight=row_height, borderwidth=0, indent=16)
+    style.configure('Treeview', background=p['bg'], fieldbackground=p['bg'], foreground=p['text'], rowheight=row_height, borderwidth=0, indent=px(16))
     style.map('Treeview', background=[('selected', p['selection'])], foreground=[('selected', p['selected_text'])])
-    style.configure('Treeview.Heading', background=p['panel'], foreground=p['text'], relief='flat', padding=(6, 4))
-    style.configure('TPanedwindow', background=p['panel'], sashwidth=4)
+    style.configure('Treeview.Heading', background=p['panel'], foreground=p['text'], relief='flat', padding=px(6, 4))
+    style.configure('TPanedwindow', background=p['panel'], sashwidth=px(4))
     style.configure('TSeparator', background=p['border'])
     for orientation in ('Horizontal', 'Vertical'):
         control = orientation + '.TScrollbar'
         style.layout(control, [(f'{orientation}.Scrollbar.trough', {'sticky': 'nswe', 'children': [
             (f'{orientation}.Scrollbar.thumb', {'sticky': 'nswe', 'expand': 1})]})])
-        style.configure(control, background=p['scroll'], troughcolor=p['bg'], borderwidth=0, arrowsize=11,
+        style.configure(control, background=p['scroll'], troughcolor=p['bg'], borderwidth=0, arrowsize=px(11),
                         lightcolor=p['scroll'], darkcolor=p['scroll'])
         style.map(control, background=[('active', p['muted']), ('!active', p['scroll'])])
     style.configure('Horizontal.TProgressbar', background=p['accent'], troughcolor=p['panel'],
-                    lightcolor=p['accent'], darkcolor=p['accent'], borderwidth=0, thickness=2)
+                    lightcolor=p['accent'], darkcolor=p['accent'], borderwidth=0, thickness=px(2))
     root.option_add('*TCombobox*Listbox.background', p['field'])
     root.option_add('*TCombobox*Listbox.foreground', p['text'])
     root.option_add('*TCombobox*Listbox.selectBackground', p['selection'])
@@ -110,5 +112,6 @@ def style_titlebar(window, theme):
 
 
 def menu(master):
+    px = DpiScale(master)
     return tk.Menu(master, tearoff=False, background=COLORS['panel'], foreground=COLORS['text'],
-                   activebackground=COLORS['selection'], activeforeground=COLORS['selected_text'], borderwidth=1, relief='flat')
+                   activebackground=COLORS['selection'], activeforeground=COLORS['selected_text'], borderwidth=px(1), relief='flat')

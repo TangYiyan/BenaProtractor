@@ -16,22 +16,26 @@ from downloader import prepare_files, update_due
 from vs_theme import install_theme
 from ide_shell import Workspace
 from preferences_view import Preferences
+from dpi import DpiScale, enable_dpi_awareness
 
 log = logging.getLogger(__name__)
 
 
 class Protractor:
     def __init__(self, window=None, settings=None):
+        if window is None:
+            enable_dpi_awareness()
         self.window = window or tk.Tk()
+        px = DpiScale(self.window)
         self.settings = normalize_settings(settings) if settings is not None else load_settings()
         self.window.title('贝娜的量角器')
         screen_width, screen_height = self.window.winfo_screenwidth(), self.window.winfo_screenheight()
-        width = min(1280, screen_width - 64)
-        height = min(800, screen_height - 96)
+        width = min(px(1280), max(1, screen_width - px(64)))
+        height = min(px(800), max(1, screen_height - px(96)))
         left = max(0, (screen_width - width) // 2)
-        top = max(0, (screen_height - height - 64) // 2)
+        top = max(0, (screen_height - height - px(64)) // 2)
         self.window.geometry(f'{width}x{height}+{left}+{top}')
-        self.window.minsize(min(960, width), min(600, height))
+        self.window.minsize(min(px(960), width), min(px(600), height))
         icon = app_path('icon', 'icon.ico')
         if icon.exists():
             self.window.iconbitmap(str(icon))

@@ -52,7 +52,11 @@ def normalize_settings(data):
 # 加载设置
 def load_settings(path=None):
     path = path or app_path(".settings.json")
-    return normalize_settings(json.loads(path.read_text(encoding="utf-8")))
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except FileNotFoundError:
+        return normalize_settings({})
+    return normalize_settings(data)
 
 # 保存设置
 def save_settings(settings, path=None):
