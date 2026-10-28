@@ -2,6 +2,8 @@
 import copy
 import io
 import json
+import tempfile
+from pathlib import Path
 import unittest
 from contextlib import redirect_stdout, redirect_stderr
 from unittest.mock import patch
@@ -11,6 +13,27 @@ from app_paths import app_path
 from app_settings import DEFAULT_LOAD, LOAD_TYPES, normalize_settings
 from catalog import Catalog, required_files
 from protractor import Protractor
+
+
+class StartupSettingsTests(unittest.TestCase):
+    def test_window_starts_without_settings_file(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / '.settings.json'
+            root = tk.Tk()
+            root.withdraw()
+            app = None
+            try:
+                with patch('app_settings.app_path', return_value=path):
+                    app = Protractor(root)
+                root.update_idletasks()
+                self.assertEqual(app.settings, normalize_settings({}))
+                self.assertTrue(app.translation.winfo_exists())
+                self.assertFalse(path.exists())
+            finally:
+                if app is not None:
+                    app.close()
+                else:
+                    root.destroy()
 
 
 @unittest.skipUnless(all(app_path('tables', name).exists() for name in required_files(DEFAULT_LOAD)), 'Local game tables not available')

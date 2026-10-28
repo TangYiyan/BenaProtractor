@@ -213,6 +213,12 @@ class UpdateTests(unittest.TestCase):
 
 
 class SettingsTests(unittest.TestCase):
+    def test_missing_settings_use_defaults(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / '.settings.json'
+            self.assertEqual(load_settings(path), normalize_settings({}))
+            self.assertFalse(path.exists())
+
     def test_download_source_defaults_validation_and_roundtrip(self):
         for value in (None, 'unknown', [], 1):
             self.assertEqual(normalize_settings({'download_source': value})['download_source'], 'github')

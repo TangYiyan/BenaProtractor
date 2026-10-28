@@ -2,11 +2,14 @@
 # 打包器
 #----------------------------------------
 import datetime
+import json
 import os
 from pathlib import Path
 import sys
 import tempfile
 import zipfile
+
+from app_settings import normalize_settings
 
 
 SOURCE_DIR = Path(__file__).resolve().parent
@@ -40,6 +43,9 @@ def create_archive(source_dir=None, output_dir=None, date=None):
         with zipfile.ZipFile(temporary, 'w', compression=zipfile.ZIP_DEFLATED) as package:
             for path, name in files:
                 package.write(path, arcname=name)
+            # Release defaults come from the application, never the builder's preferences.
+            package.writestr('.settings.json', json.dumps(
+                normalize_settings({}), ensure_ascii=False, indent=2) + '\n')
         with zipfile.ZipFile(temporary) as package:
             invalid = package.testzip()
             if invalid:
